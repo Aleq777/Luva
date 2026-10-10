@@ -1,2 +1,2 @@
-from = dofile("import.lua")
+from, namespace, export, switch = dofile("import.lua")
 
