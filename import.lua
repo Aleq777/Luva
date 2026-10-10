@@ -306,11 +306,5 @@ function select(...)
     }
 end
 
-local x = { 1, 2, 3, 4 }
-
-local y = select():from(x)
-    :where(function (item) return item % 2 == 0 end)
-    :get()
-
 
 return from, namespace, export, default, switch, try, xor, copy, select
