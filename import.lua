@@ -10,20 +10,40 @@
 
 do
     ---@class Luva.ImportExpression
-    ---@field public import fun(self: Luva.ImportExpression, ...: string): Luva.Package|Luva.LuaObject|any Imports module (if ... is empty), one component (if #... is 1) or selected components (if #... is more than 1)
+    ---@field public import fun(self: Luva.ImportExpression, ...: string): Luva.Package|Luva.LuaObject|any # Imports module (if ... is empty), one component (if #... is 1) or selected components (if #... is more than 1)
     ---@
-    ---@field private _Path string Path to the Lua module
+    ---@field private _Path string # Path to the Lua module
     local __ImportExpression = { }
 
 
     ---@class Luva.TryExpression
-    ---@field public catch fun(self: Luva.TryExpression, onCatch: fun(err: any): boolean): Luva.TryExpression
-    ---@field public finally fun(self: Luva.TryExpression, finalFunc: (fun(): any|nil?)|nil?): any|nil?
+    ---@field public catch fun(self: Luva.TryExpression, onCatch: fun(err: any): boolean): Luva.TryExpression # return `true` if succesfully catches error
+    ---@field public finally fun(self: Luva.TryExpression, finalFunc: (fun(): any|nil?)|nil?): any|nil? # if no errors, returns `try`'s function, else may return `finally`'s function
     ---@
     ---@field private _Thrown any|nil?
     ---@field private _FuncTry fun(throw: fun(err: any)): any|nil?
     ---@field private _Catchers (fun(err: any): boolean)[]
     local __TryExpression = { }
+
+
+    ---@generic T
+    ---@generic U
+    ---@class Luva.SelectExpression
+    ---@field public from fun(self: Luva.SelectExpression, array: table<T, U>): Luva.WhereExpression
+    ---@
+    ---@field private _Fields string[]
+    local __SelectExpression = { }
+    
+    
+    ---@generic T
+    ---@generic U
+    ---@class Luva.WhereExpression
+    ---@field public where fun(self: Luva.WhereExpression, query: fun(item: U, index?: T): boolean): Luva.WhereExpression
+    ---@field public get fun(self: Luva.WhereExpression): table<T, U>
+    ---@
+    ---@field private _Result table<T, U>
+    ---@field private _Fields string[]
+    local __WhereExpression = { }
 end
 
 
@@ -206,5 +226,91 @@ function xor(a, b)
 end
 
 
+--- Copies by value (perfect for tables)
+---@generic T
+---@param value T
+---@return T
+---@nodiscard
+function copy(value)
+    if type (value) ~= "table" then return value end
 
-return from, namespace, export, default, switch, try
+    ---@generic T
+    ---@type T
+    local result = { }
+
+    for k, v in pairs(value) do
+        result[k] = copy(v)
+    end
+
+    return result
+end
+
+--- Selects properties with `where` conditions from an array (like SQL query `SELECT`)
+---@param ... string Properties. If empty, selects all
+---@return Luva.SelectExpression
+---@nodiscard
+function select(...)
+    local fields = { ... }
+    ---@type Luva.SelectExpression
+    return {
+        _Fields = fields,
+
+        from = function (self, array)
+            ---@type Luva.WhereExpression
+            return {
+                _Result = copy(array),
+                ---@diagnostic disable-next-line : invisible
+                _Fields = self._Fields,
+
+                where = function (this, query)
+                    local result = { }
+
+                    ---@diagnostic disable-next-line : invisible
+                    for k, v in pairs(this._Result) do
+                        if query(v, k) then
+                            result[k] = v
+                        end
+                    end
+
+                    ---@diagnostic disable-next-line : invisible
+                    this._Result = result
+                    return this
+                end,
+
+                get = function (this)
+                    ---@diagnostic disable-next-line : invisible
+                    if #this._Fields > 0 then
+
+                        ---@diagnostic disable-next-line : invisible
+                        for k in pairs(this._Result) do
+                            ---@diagnostic disable-next-line : invisible
+                            for _, property in ipairs(this._Fields) do
+                                if property == k then
+                                    goto continue
+                                end
+                            end
+
+                            ---@diagnostic disable-next-line : invisible
+                            this._Result[k] = nil
+
+                            ::continue::
+                        end
+
+                    end
+
+                    ---@diagnostic disable-next-line : invisible
+                    return this._Result
+                end
+            }
+        end
+    }
+end
+
+local x = { 1, 2, 3, 4 }
+
+local y = select():from(x)
+    :where(function (item) return item % 2 == 0 end)
+    :get()
+
+
+return from, namespace, export, default, switch, try, xor, copy, select
