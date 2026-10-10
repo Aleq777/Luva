@@ -176,6 +176,8 @@ local function _getByType(name, typ)
 
         return _GLOBAL_VARIABLES[name]
     end
+
+    return nil
 end
 
 
