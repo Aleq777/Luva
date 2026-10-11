@@ -11,7 +11,6 @@ do
     ---@field private _IsThrown boolean
     ---@field private _Result any|nil
     ---@field private _Catchers (fun(err: any, handled?: fun(returnValue: any|nil?): (boolean, any|nil?)): any|nil?)[]
-    ---@field private _Catched boolean
     local __TryExpression = { }
 
 end
@@ -30,7 +29,6 @@ function try(funcTry)
         _IsThrown = isThrown,
         _Result = result,
         _Catchers = { },
-        _Catched = false,
 
         _Handle = function (...)
             return true, ...
@@ -44,6 +42,8 @@ function try(funcTry)
         end,
 
         finally = function (self, funcFinally)
+
+            (funcFinally or function () end)();
 
             ---@diagnostic disable-next-line : invisible
             if not self._IsThrown then
@@ -68,13 +68,7 @@ function try(funcTry)
             end
 
             ---@diagnostic disable-next-line : invisible
-            if not self._Catched then
-                ---@diagnostic disable-next-line : invisible
-                error(self._Result)
-            end
-
-
-
+            error(self._Result)
         end,
     }
 end

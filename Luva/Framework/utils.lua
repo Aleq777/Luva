@@ -1,9 +1,8 @@
 
+Luva = dofile("Luva/Framework/base.lua")
 
-Luva = {
-    Utils = { }
-}
-
+---@type Luva.Namespace
+Luva.Utils = { }
 
 --- Returns any multi-dimensional array as an 1D array
 ---@param array table<integer, any>
@@ -23,3 +22,5 @@ function Luva.Utils.FlattenArray(array)
 
     return result
 end
+
+return Luva.Utils
