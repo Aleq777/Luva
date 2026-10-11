@@ -78,10 +78,8 @@ function select(...)
                         ---@diagnostic disable-next-line : invisible
                         for key, _ in pairs(this._Result) do
                             ---@diagnostic disable-next-line : invisible
-                            for _, property in this._Properties do
-                                if key == property then
-                                    goto continue
-                                end
+                            if Luva.Utils.Has(this._Properties, key) then
+                                goto continue
                             end
 
                             ---@diagnostic disable-next-line : invisible

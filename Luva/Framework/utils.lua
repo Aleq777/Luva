@@ -45,6 +45,29 @@ Luva.Utils = {
     end,
 
 
+    --- Checks, if table `array` has `value`
+    ---@generic T
+    ---@generic U
+    ---@param array table<T, U>
+    ---@param value U 
+    ---@return boolean
+    ---@nodiscard
+    Has = function (array, value)
+        for _, v in pairs(array) do
+            if v == value then
+                return true
+            end
+        end
+
+        return false
+    end,
+
+    --- Returns keys of table `array`
+    GetKeys = function (array)
+
+    end,
+
+
 }
 
 
