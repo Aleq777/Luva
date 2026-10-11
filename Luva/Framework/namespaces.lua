@@ -1,9 +1,6 @@
 
 ---@diagnostic disable : lowercase-global
 
----@alias Luva.Path string As `folderA.folderB.fileName`
----@alias Luva.LuaObject table<string, any>
----@alias Luva.Namespace table<string, any>
 
 do
 
