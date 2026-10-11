@@ -31,6 +31,8 @@ function switch(value, cases)
     if cases[default] then
         return cases[default]()
     end
+
+    error("No case found to match the value " .. value)
 end
 
 
