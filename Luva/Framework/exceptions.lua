@@ -20,7 +20,6 @@ end
 --- Use built-in `error` function to throw an error inside the function
 ---@param funcTry fun(): any|nil?
 ---@return Luva.TryExpression
----@nodiscard
 function try(funcTry)
     local isThrown, result = pcall(funcTry)
 

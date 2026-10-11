@@ -5,7 +5,7 @@
 do
 
     ---@class Luva.ImportExpression
-    ---@field public import fun(self: Luva.ImportExpression, ...?: string|string[]): Luva.Namespace Imports full namespace (empty), selected components (array of names as strings) or one self-component (single name as string)
+    ---@field public import fun(self: Luva.ImportExpression, ...?: string|string[]): table Imports full namespace (empty), selected components (array of names as strings) or one self-component (single name as string)
     ---@
     ---@field private _Path Luva.Path
     local __ImportExpression = { }
@@ -72,7 +72,7 @@ end
 
 
 --- Attaches to a namespace
----@param toNamespace Luva.Namespace
+---@param toNamespace table
 ---@param name string
 ---@param component any
 function export(toNamespace, name, component)
