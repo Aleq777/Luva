@@ -63,12 +63,61 @@ Luva.Utils = {
     end,
 
     --- Returns keys of table `array`
+    ---@generic T
+    ---@param array table<T, any>
+    ---@return T[]
+    ---@nodiscard
     GetKeys = function (array)
+        local result = { }
 
+        for k in pairs(array) do
+            table.insert(result, k)
+        end
+
+        return result
     end,
 
 
+    Metamethods = {
+        "__add",
+        "__sub",
+        "__mul",
+        "__div",
+        "__mod",
+        "__pow",
+        "__unm",
+        "__idiv",
+        "__band",
+        "__bor",
+        "__bxor",
+        "__bnot",
+        "__shl",
+        "__shr",
+        "__eq",
+        "__lt",
+        "__le",
+        "__gt",
+        "__ge",
+        "__concat",
+        "__len",
+        "__tostring",
+        "__index",
+        "__newindex",
+        "__call",
+        "__pairs",
+        "__ipairs",
+        "__gc",
+        "__close",
+        "__mode",
+        "__metatable",
+        "__name",
+    },
+
 }
+
+
+
+
 
 
 return Luva.Utils

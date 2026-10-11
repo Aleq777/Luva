@@ -3,8 +3,11 @@
 
 do
 
+    ---@generic TType
     ---@class Luva.Type
+    ---@field public new fun(self: Luva.Type<TType>, ...?: any): TType
     ---@field private _Meta metatable
+    ---@field private _Prototype fun(...?: any): TType
     local __Type = { }
 end
 
@@ -89,50 +92,81 @@ function operator(op)
     return switch(op, {
         ['+']  = "__add",
         ['-']  = "__sub",
-        ['*']  = "",
-        ['/']  = "",
-        ['^']  = "",
-        ['+-'] = "",
-        ['//'] = "",
-        ['&']  = "",
-        ['|']  = "",
-        ['~']  = "",
-        ['!']  = "",
-        ['<<'] = "",
-        ['>>'] = "",
-        ['=='] = "",
-        ['<']  = "",
-        ['<='] = "",
-        ['>']  = "",
-        ['>='] = "",
-        ['..'] = "",
-        ['#']  = "",
-        ['.']  = "",
-        ['=']  = "",
-        ['()'] = ""
+        ['*']  = "__mul",
+        ['/']  = "__div",
+        ['%']  = "__mod",
+        ['^']  = "__pow",
+        ['+-'] = "__unm",
+        ['//'] = "__idiv",
+        ['&']  = "__band",
+        ['|']  = "__bor",
+        ['~']  = "__bxor",
+        ['!']  = "__bnot",
+        ['<<'] = "__shl",
+        ['>>'] = "__shr",
+        ['=='] = "__eq",
+        ['<']  = "__lt",
+        ['<='] = "__le",
+        ['>']  = "__gt",
+        ['>='] = "__ge",
+        ['..'] = "__concat",
+        ['#']  = "__len",
+        ['.']  = "__index",
+        ['=']  = "__newindex",
+        ['()'] = "__call",
+        [default] = op
     })
 end
 
-setmetatable({}, {
-    __
-})
+
+--- Create a constructor in class
+--- Example:
+--- ```lua
+--- Number = class({
+---     [constructor] = function (a, b) return constructor { Value = a + b } end
+--- }, function (value) return { Value = value } end)
+--- ```
+---@generic T : table
+---@param propertySet T
+---@
+function constructor(propertySet)
+
+end
 
 
 --- Creates a `class` (like metatable or class/struct in C/C++/C#/Java/...)
 ---@param members any
+---@param prototype fun(...): table
 ---@return Luva.Type
 ---@nodiscard
-function class(members)
+function class(members, prototype)
 
     ---@type metatable
     local meta = { }
 
     for k, v in pairs(members) do
+        
         meta[k] = v
     end
 
+    ---@generic T
+    ---@type Luva.Type<T>
     local resultClass = {
-        _Meta = meta
+        _Meta = meta,
+        _Prototype = function (...)
+            return { }
+        end,
+        new = function (self, ...)
+            local instance
+            if self[constructor] then
+                instance = self[constructor](...)
+            else
+                instance = self._Prototype(...)
+            end
+
+            setmetatable (instance, self._Meta)
+            return instance
+        end
     }
 
     ---@type Luva.Type
@@ -141,11 +175,16 @@ end
 
 ---@type Luva.Type
 Array = class({
-    [operator('+')] = function ()
+    [operator('+')] = function (a, b)
 
     end,
+    [constructor] = function (a, b)
+        a = a * 2
+        b = b * 2
+        return { A = a, B = b }
+    end
 })
-x = Array._Meta
+x = Array:new()
 
 
 return class
