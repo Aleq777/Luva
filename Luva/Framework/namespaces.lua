@@ -14,9 +14,9 @@ end
 
 
 --- Creates a namespace that can be exported/imported.
----@param self Luva.LuaObject|Luva.Namespace|nil Required, example: `Utils = namespace(Utils)` or `namespace(Utils)`
----@param content Luva.LuaObject|Luva.Namespace|nil? Not required. If namespace exists, `content` will be attached (by reference) to existing namespace
----@return Luva.Namespace
+---@param self Luva.LuaObject|table|nil Required, example: `Utils = namespace(Utils)` or `namespace(Utils)`
+---@param content Luva.LuaObject|table|nil? Not required. If namespace exists, `content` will be attached (by reference) to existing namespace
+---@return table
 function namespace(self, content)
     content = content or { }
 
