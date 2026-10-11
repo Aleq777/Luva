@@ -17,19 +17,30 @@ default = { }
 --- }) -- returns "big"
 --- ```
 ---@generic T
+---@generic U
 ---@param value T
----@param cases table<T|Luva.DefaultExpression, fun(): any|nil?>
+---@param cases table<T, (fun(): any|nil?)|U>
 ---@return any|nil? # Returns only if `case` or `default` function returns a value
 function switch(value, cases)
 
     for case, exec in pairs(cases) do
         if case == value then
-            return exec()
+            if type (exec) == "function" then
+                return exec()
+            else
+                return exec
+            end
         end
     end
 
-    if cases[default] then
-        return cases[default]()
+    local def = cases[default]
+
+    if def then
+        if type (def) == "function" then
+            return def()
+        else
+            return def
+        end
     end
 
     error("No case found to match the value " .. value)
