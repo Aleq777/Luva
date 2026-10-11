@@ -4,7 +4,6 @@
 ---@alias Luva.LuaArray any[]
 ---@alias Luva.Namespace table<string, any>
 
-
 ---@type Luva.Namespace
 Luva = Luva or { }
 
