@@ -1,15 +1,6 @@
-
-
-
-do
-
-    ---@generic TType
-    ---@class Luva.Type
-    ---@field public new fun(self: Luva.Type<TType>, ...?: any): TType
-    ---@field private _Meta metatable
-    ---@field private _Prototype fun(...?: any): TType
-    local __Type = { }
-end
+Luva = {
+    Utils = dofile("Luva/Framework/utils.lua")
+}
 
 ---@alias Luva.Operator
 ---| '+' Add
@@ -72,8 +63,7 @@ end
 
 
 
----@type Luva.Keyword
-static = { }
+
 
 
 
@@ -119,72 +109,131 @@ function operator(op)
 end
 
 
---- Create a constructor in class
---- Example:
---- ```lua
---- Number = class({
----     [constructor] = function (a, b) return constructor { Value = a + b } end
---- }, function (value) return { Value = value } end)
---- ```
----@generic T : table
----@param propertySet T
----@
-function constructor(propertySet)
 
+
+
+do
+    ---@class Luva.ClassBody
+    ---@field public ["prototype"] function
+    local __ClassBody = { }
+
+
+    ---@generic TInheriting
+    ---@class Luva.Type
+    ---@field private __Meta metatable
+    ---@field private __Prototype? fun(...?): TInheriting
+    ---@field private __PrototypeMeta? metatable
+    ---@field private __Default? TInheriting
+    ---@field private __GetDefault? fun(): TInheriting
+    local __Type = { }
 end
 
 
---- Creates a `class` (like metatable or class/struct in C/C++/C#/Java/...)
----@param members any
----@param prototype fun(...): table
----@return Luva.Type
+
+__CURRENT_PROTOTYPE = nil
+
+---@generic TBody
+---@param ...? any|nil?
+---@return TBody
 ---@nodiscard
-function class(members, prototype)
-
-    ---@type metatable
-    local meta = { }
-
-    for k, v in pairs(members) do
-        
-        meta[k] = v
+function prototype(...)
+    if __CURRENT_PROTOTYPE == nil then
+        error("Cannot use prototype outside of class definition")
     end
 
-    ---@generic T
-    ---@type Luva.Type<T>
-    local resultClass = {
-        _Meta = meta,
-        _Prototype = function (...)
-            return { }
-        end,
-        new = function (self, ...)
-            local instance
-            if self[constructor] then
-                instance = self[constructor](...)
-            else
-                instance = self._Prototype(...)
-            end
+    return __CURRENT_PROTOTYPE(...)
+end
 
-            setmetatable (instance, self._Meta)
-            return instance
-        end
+default = { }
+
+
+--- Create a class
+---@param components Luva.ClassBody
+---@return Luva.Type
+---@nodiscard
+function class(components)
+    ---@type Luva.Type
+    local resultClass = {
+        __Meta = { }
     }
 
-    ---@type Luva.Type
+    -- Does it have a prototype
+    if components[prototype] then
+
+        ---@diagnostic disable-next-line : invisible
+        resultClass.__Prototype = components[prototype]
+        ---@diagnostic disable-next-line : invisible
+        __CURRENT_PROTOTYPE = resultClass.__Prototype
+
+        ---@diagnostic disable-next-line : invisible
+        resultClass.__PrototypeMeta = { }
+
+        if components[default] then
+            ---@diagnostic disable-next-line : invisible
+            resultClass.__GetDefault = components[default]
+            ---@diagnostic disable-next-line : invisible
+            resultClass.__Default = components[default]()
+            --- Default constructor
+            ---@generic TType
+            ---@param self metatable
+            ---@return TType
+            ---@diagnostic disable-next-line : invisible
+            function resultClass.__Meta.__call(self)
+                ---@diagnostic disable-next-line : invisible
+                local instance = Luva.Utils.Copy(resultClass.__Default)
+                ---@diagnostic disable-next-line : invisible
+                setmetatable(instance, resultClass.__PrototypeMeta) ---@diagnostic disable-line : param-type-mismatch
+                return instance
+            end
+        else
+            --- Manual constructor
+            ---@generic TBody : table
+            ---@generic TType
+            ---@param self metatable
+            ---@param prototypeBody TBody
+            ---@return TType
+            ---@diagnostic disable-next-line : invisible
+            function resultClass.__Meta.__call(self, prototypeBody)
+                -- empty instance for manual constructor
+                ---@diagnostic disable-next-line : invisible
+                local instance = resultClass.__Prototype()
+    
+                for k, v in pairs(prototypeBody) do
+                    instance[k] = v
+                end
+    
+                ---@diagnostic disable-next-line : invisible
+                setmetatable(instance, resultClass.__PrototypeMeta)
+                return instance
+            end
+        end
+
+
+        __CURRENT_PROTOTYPE = nil
+    end
+
+    ---@diagnostic disable-next-line : invisible
+    setmetatable(resultClass, resultClass.__Meta)
     return resultClass
 end
 
----@type Luva.Type
-Array = class({
-    [operator('+')] = function (a, b)
 
+
+-- test
+---@class Dict : Luva.Type<Dict>
+---@field public Count number
+Dict = class {
+    [prototype] = function (count)
+        return {
+            Count = count or 0
+        }
     end,
-    [constructor] = function (a, b)
-        a = a * 2
-        b = b * 2
-        return { A = a, B = b }
-    end
-})
-x = Array:new()
+    [default] = function ()
+        return prototype()
+    end,
+}
 
+---@type Dict
+szefowie = Dict()
 
-return class
+print(szefowie.Count)
