@@ -1,3 +1,6 @@
+
+---@diagnostic disable : lowercase-global
+
 Luva = {
     Utils = dofile("Luva/Framework/utils.lua")
 }
@@ -112,9 +115,31 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
-    ---@class Luva.ClassBody
-    ---@field public ["prototype"] function
+    ---@class Luva.ClassBodyCreator
+    ---@field public ["prototype"]? fun(...?): table
+    ---@field public ["default"]? fun(): table
     local __ClassBody = { }
 
 
@@ -148,7 +173,7 @@ default = { }
 
 
 --- Create a class
----@param components Luva.ClassBody
+---@param components Luva.ClassBodyCreator
 ---@return Luva.Type
 ---@nodiscard
 function class(components)
@@ -220,20 +245,24 @@ end
 
 
 -- test
----@class Dict : Luva.Type<Dict>
----@field public Count number
-Dict = class {
-    [prototype] = function (count)
+---@class Human : Luva.Type<Human>
+---@field public Name string
+---@field public Age integer
+Human = class {
+    [prototype] = function (name, age)
         return {
-            Count = count or 0
+            Name = name,
+            Age = age
         }
     end,
     [default] = function ()
-        return prototype()
+        return prototype("Janusz", 18)
     end,
 }
 
----@type Dict
-szefowie = Dict()
+---@type Human
+MooseMan = Human("Moose man", 29)
 
-print(szefowie.Count)
+print(MooseMan.Name)
+
+

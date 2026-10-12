@@ -1,6 +1,8 @@
 
 ---@diagnostic disable : lowercase-global
 
+Luva = { Utils = dofile("Luva/Framework/utils.lua") }
+
 
 do
 
@@ -96,3 +98,7 @@ function select(...)
         end
     }
 end
+
+
+
+return select

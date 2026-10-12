@@ -1,10 +1,14 @@
 
 ---@diagnostic disable : lowercase-global
 
----@alias Luva.DefaultExpression Luva.Keyword
+-- ---@generic T
+-- ---@alias Luva.DefaultExpression fun(classType: Luva.Type<T>): T
 
----@type Luva.DefaultExpression
-default = { }
+-- ---@generic T
+-- ---@type Luva.DefaultExpression<T>
+-- function default(classType)
+
+-- end
 
 --- Works like switch in other languages
 --- ## Example:
@@ -47,4 +51,5 @@ function switch(value, cases)
 end
 
 
-return switch, default
+
+return switch

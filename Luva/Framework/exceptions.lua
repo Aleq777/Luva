@@ -71,3 +71,6 @@ function try(funcTry)
         end,
     }
 end
+
+
+return try

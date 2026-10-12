@@ -1,6 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 
+Luva = { Utils = dofile("Luva/Framework/utils.lua") }
 
 do
 
@@ -11,25 +12,6 @@ do
     local __ImportExpression = { }
 end
 
-
-
---- Creates a namespace that can be exported/imported.
----@param self Luva.LuaObject|table|nil Required, example: `Utils = namespace(Utils)` or `namespace(Utils)`
----@param content Luva.LuaObject|table|nil? Not required. If namespace exists, `content` will be attached (by reference) to existing namespace
----@return table
-function namespace(self, content)
-    content = content or { }
-
-    if self == nil then
-        self = content
-    else
-        for k, v in pairs(content) do
-            self[k] = v
-        end
-    end
-
-    return self
-end
 
 
 
@@ -80,3 +62,6 @@ function export(toNamespace, name, component)
 
     toNamespace[name] = component
 end
+
+
+return from, export
