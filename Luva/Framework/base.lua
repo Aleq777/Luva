@@ -9,7 +9,7 @@ do
     ---| "error" Throws an error and stops the program. `Action` defaults to `nil`
     ---| "warn" Prints a warning and proceeds with `Action` (cannot be nil)
     ---| "silent" Does nothing
-    
+
     ---@alias Luva.ConfigSingleton.Globalization.Behaviours.Actions
     ---| nil Only when `Debug = "error"`
     ---| "skip" Skips (global will not change)
@@ -32,7 +32,7 @@ do
 end
 
 
-Luva = Luva or { }
+Luva = { }
 
 
 return Luva
