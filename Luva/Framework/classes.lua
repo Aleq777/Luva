@@ -280,6 +280,16 @@ function class(components)
         __CURRENT_PROTOTYPE = nil
     end
 
+    for k, v in pairs(components) do
+        if type (k) ~= "string" then
+            goto continue
+        end
+
+        resultClass[k] = v
+
+        ::continue::
+    end
+
     ---@diagnostic disable-next-line : invisible
     setmetatable(resultClass, resultClass.__Meta)
     return resultClass
@@ -307,6 +317,8 @@ Human = class {
         return prototype("Janusz", 18)
     end,
     [constructor] = function (name, age)
+        Human.Count = Human.Count + 1
+        print(Human.Count)
         return prototype(name, age)
     end,
     [destructor] = function (self)
