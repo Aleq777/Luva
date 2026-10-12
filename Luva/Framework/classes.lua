@@ -132,7 +132,7 @@ end
 
 
 
-
+---@alias Luva.DefaultExpression Luva.Keyword
 
 
 
@@ -143,13 +143,22 @@ do
     local __ClassBody = { }
 
 
+    ---@alias Luva.ClassPrototype table
+    
+    ---@alias Luva.ClassPrototypeInvoker fun(...?: any|nil?): Luva.ClassPrototype
+    
+    ---@alias Luva.ClassDefaultInvoker fun(): Luva.ClassPrototype
+    
+    ---@generic T
+    ---@alias Luva.ClassDestructor fun(self: T)
+
     ---@generic TInheriting
     ---@class Luva.Type
     ---@field private __Meta metatable
     ---@field private __Prototype? fun(...?): TInheriting
     ---@field private __PrototypeMeta? metatable
     ---@field private __Default? TInheriting
-    ---@field private __GetDefault? fun(): TInheriting
+    ---@field private __Constructor? fun(...?): TInheriting
     local __Type = { }
 end
 
@@ -169,8 +178,14 @@ function prototype(...)
     return __CURRENT_PROTOTYPE(...)
 end
 
+
+---@type Luva.DefaultExpression
 default = { }
 
+---@type Luva.Keyword
+constructor = { }
+---@type Luva.Keyword
+destructor = { }
 
 --- Create a class
 ---@param components Luva.ClassBodyCreator
@@ -185,52 +200,80 @@ function class(components)
     -- Does it have a prototype
     if components[prototype] then
 
+        ---@type Luva.ClassPrototypeInvoker
+        local protoInvoker = components[prototype]
+
         ---@diagnostic disable-next-line : invisible
-        resultClass.__Prototype = components[prototype]
-        ---@diagnostic disable-next-line : invisible
-        __CURRENT_PROTOTYPE = resultClass.__Prototype
+        resultClass.__Prototype = protoInvoker
+        __CURRENT_PROTOTYPE = protoInvoker
 
         ---@diagnostic disable-next-line : invisible
         resultClass.__PrototypeMeta = { }
 
-        if components[default] then
+
+        -- Does it have a default
+        ---@type Luva.ClassDefaultInvoker
+        local defInvoker = components[default]
+        if defInvoker then
             ---@diagnostic disable-next-line : invisible
-            resultClass.__GetDefault = components[default]
+            resultClass.__Default = defInvoker()
+        else -- must have a default
             ---@diagnostic disable-next-line : invisible
-            resultClass.__Default = components[default]()
-            --- Default constructor
-            ---@generic TType
-            ---@param self metatable
-            ---@return TType
+            resultClass.__Default = Luva.Utils.Copy(resultClass.__Prototype())
+        end
+
+
+
+
+        -- Does it have a constructor
+        ---@type Luva.ClassPrototypeInvoker
+        local constrInvoker = components[constructor]
+        if constrInvoker then
             ---@diagnostic disable-next-line : invisible
-            function resultClass.__Meta.__call(self)
-                ---@diagnostic disable-next-line : invisible
-                local instance = Luva.Utils.Copy(resultClass.__Default)
-                ---@diagnostic disable-next-line : invisible
-                setmetatable(instance, resultClass.__PrototypeMeta) ---@diagnostic disable-line : param-type-mismatch
-                return instance
-            end
-        else
-            --- Manual constructor
-            ---@generic TBody : table
-            ---@generic TType
-            ---@param self metatable
-            ---@param prototypeBody TBody
-            ---@return TType
+            resultClass.__Constructor = constrInvoker
+        else -- Manual constructor
             ---@diagnostic disable-next-line : invisible
-            function resultClass.__Meta.__call(self, prototypeBody)
-                -- empty instance for manual constructor
-                ---@diagnostic disable-next-line : invisible
-                local instance = resultClass.__Prototype()
-    
+            resultClass.__Constructor = function (prototypeBody)
+                local instance = prototype()
+
                 for k, v in pairs(prototypeBody) do
                     instance[k] = v
                 end
-    
-                ---@diagnostic disable-next-line : invisible
-                setmetatable(instance, resultClass.__PrototypeMeta)
+
                 return instance
             end
+        end
+
+        -- the real constructor
+        ---@diagnostic disable-next-line : invisible
+        resultClass.__Meta.__call = function (self, ...)
+
+            ---@diagnostic disable-next-line : invisible
+            __CURRENT_PROTOTYPE = resultClass.__Prototype
+
+            local args = { ... }
+            local instance
+            if #args > 0 then -- automatic or default constructor
+                ---@diagnostic disable-next-line : invisible
+                instance = resultClass.__Constructor(...)
+            else -- manual or real constructor
+                ---@diagnostic disable-next-line : invisible
+                instance = Luva.Utils.Copy(resultClass.__Default) --[[@as Luva.ClassPrototype]]
+            end
+
+            ---@diagnostic disable-next-line : invisible
+            setmetatable(instance, resultClass.__PrototypeMeta)
+
+            __CURRENT_PROTOTYPE = nil
+            return instance
+        end
+
+        -- does it have destructor
+        ---@type Luva.ClassDestructor
+        local destrInvoker = components[destructor]
+        if destrInvoker then
+            ---@diagnostic disable-next-line : invisible
+            resultClass.__PrototypeMeta.__gc = destrInvoker
         end
 
 
@@ -245,24 +288,35 @@ end
 
 
 -- test
----@class Human : Luva.Type<Human>
+---@class Human : Luva.Type<Human>, { Count: integer }
 ---@field public Name string
 ---@field public Age integer
+---@field public Greet fun(self: Human)
 Human = class {
     [prototype] = function (name, age)
         return {
             Name = name,
-            Age = age
+            Age = age,
+
+            Greet = function (self)
+                print("Hello, my name is " .. self.Name)
+            end
         }
     end,
     [default] = function ()
         return prototype("Janusz", 18)
     end,
+    [constructor] = function (name, age)
+        return prototype(name, age)
+    end,
+    [destructor] = function (self)
+        print("bye bye " .. self.Name)
+    end,
+
+    Count = 0,
 }
 
 ---@type Human
 MooseMan = Human("Moose man", 29)
 
-print(MooseMan.Name)
-
-
+MooseMan:Greet()
