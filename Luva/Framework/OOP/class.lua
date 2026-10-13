@@ -1,75 +1,66 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "Framework.OOP.prototype"
----@module "Framework.OOP.constructor"
+_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifierProhibition.lua")
 
-prototype, __AppendPrototypeCreator, _ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/prototype.lua")   ---@diagnostic disable-line : unbalanced-assignments
-constructor = dofile("Luva/Framework/OOP/constructor.lua")
-
+prototype, __AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
 
 
 do
 
-
     ---@class Luva.ClassCreator
-    ---@field public [Luva.PrototypeExpression] Luva.ClassPrototypeCreator|nil
-    ---@field public [Luva.ConstructorExpression] Luva.ClassConstructorCreator|nil
     local __ClassCreator = { }
 
 
     ---@class Luva.Type
     ---@field private __MetaClass metatable
     ---@field private __Prototype Luva.ClassPrototype|nil
-    ---@field private __Constructor Luva.ClassConstructor|nil
+    ---@field private __Type "Luva.Type"
     local __LuvaType = { }
 
 end
 
 
-
-
---- Create a class
+--- Creates a class
+---@generic TResultClass : Luva.Type
 ---@param classCreator Luva.ClassCreator
----@return Luva.Type
-class = function(classCreator)
+---@return TResultClass
+function class(classCreator)
 
     ---@type Luva.Type
     local resultClass = {
         __MetaClass = {
             __index = _ProhibitUndefinedIndex,
             __newindex = _ProhibitNewIndex
-        }
+        },
+        __Type = "Luva.Type"
     }
 
-
-    -- Has prototype?
+    -- Has a prototype? (+ constructors and destructors)
     __AppendPrototypeCreator(resultClass, classCreator)
 
-
-    setmetatable(resultClass, resultClass.__MetaClass)              ---@diagnostic disable-line : invisible
+    setmetatable(resultClass, resultClass.__MetaClass)      ---@diagnostic disable-line : invisible
     return resultClass
 end
 
-
-
+Master = class { }
 
 Human = class {
-    [prototype] = function (name, age)
-        return {
-            Name = name,
-            Age = age
-        }
-    end,
-    [constructor] = function (getPrototypeFields, name, age)
-        return getPrototypeFields {
-            Name = name,
-            Age = age
-        }
-    end
+    [prototype] = {
+        Name = "john",
+        Age = 10,
+        Greet = function (self)
+            print("Hello, " .. self.Name)
+        end
+    }
 }
 
 MooseMan = Human {
     Name = "moose man",
-    Age = 17
+    Age = 17,
 }
+
+print(MooseMan.Name)
+
+
+return class
