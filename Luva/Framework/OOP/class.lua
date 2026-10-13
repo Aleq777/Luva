@@ -3,7 +3,7 @@
 
 _ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifierProhibition.lua")
 
-prototype, __AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
+prototype, _AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
 
 
 do
@@ -12,14 +12,27 @@ do
     local __ClassCreator = { }
 
 
+    ---@generic TNewClass
     ---@class Luva.Type
     ---@field private __MetaClass metatable
     ---@field private __Prototype Luva.ClassPrototype|nil
+    ---@field private __Constructor Luva.ClassConstructor<TNewClass>|nil
     ---@field private __Type "Luva.Type"
     local __LuvaType = { }
 
 end
 
+
+
+---@param resultClass Luva.Type
+---@param classCreator Luva.ClassCreator
+function _AppendStatics(resultClass, classCreator)
+    for k, v in pairs(classCreator) do
+        if type (k) == "string" then
+            resultClass[k] = v
+        end
+    end
+end
 
 --- Creates a class
 ---@generic TResultClass : Luva.Type
@@ -36,8 +49,12 @@ function class(classCreator)
         __Type = "Luva.Type"
     }
 
+    -- refactor as fields !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    -- Appends static fields and functions
+    _AppendStatics(resultClass, classCreator)
+
     -- Has a prototype? (+ constructors and destructors)
-    __AppendPrototypeCreator(resultClass, classCreator)
+    _AppendPrototypeCreator(resultClass, classCreator)
 
     setmetatable(resultClass, resultClass.__MetaClass)      ---@diagnostic disable-line : invisible
     return resultClass
@@ -52,7 +69,8 @@ Human = class {
         Greet = function (self)
             print("Hello, " .. self.Name)
         end
-    }
+    },
+    Count = 0
 }
 
 MooseMan = Human {

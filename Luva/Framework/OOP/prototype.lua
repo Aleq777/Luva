@@ -5,6 +5,9 @@ _ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifi
 
 
 do
+    ---@generic TNewInstancePrototypeFields
+    ---@alias Luva.ClassPrototype.PrototypeGetter fun(obj: TNewInstancePrototypeFields): TNewInstancePrototypeFields
+
 
     ---@class Luva.ClassPrototype.FieldType
     ---@field public __Type Luva.Type|type
@@ -15,10 +18,17 @@ do
     ---@generic TNewClassInstance
     ---@alias Luva.ClassPrototypeCreator table<string, Luva.Type|type|any|fun(self: TNewClassInstance, ...: any[]): any|nil, ...>
 
+    ---@generic TNewInstance
+    ---@alias Luva.ClassPrototypeFields table<string, Luva.ClassPrototype.FieldType>
+    
+    ---@generic TNewClassInstance
+    ---@alias Luva.ClassPrototypeMethods table<string, fun(self: TNewClassInstance, ...: any[]): any|nil, ...>
+
     ---@generic TNewClassInstance
     ---@class Luva.ClassPrototype
-    ---@field public __PrototypeFields table<string, Luva.ClassPrototype.FieldType>
-    ---@field public __PrototypeMethods table<string, fun(self: TNewClassInstance, ...: any[]): any|nil, ...>
+    ---@field public __PrototypeGetter fun(self: TNewClassInstance): Luva.ClassPrototypeFields<TNewClassInstance>
+    ---@field public __PrototypeFields Luva.ClassPrototypeFields<TNewClassInstance>
+    ---@field public __PrototypeMethods Luva.ClassPrototypeMethods<TNewClassInstance>
     ---@field public __MetaPrototype metatable
     local __ClassPrototype = { }
 
@@ -68,16 +78,22 @@ local function _appendFieldsAndMethods(classProto, prototypeCreator)
 end
 
 
-
----@param resultClass Luva.Type
+---@generic TNewClass
+---@param resultClass Luva.Type<TNewClass>
 ---@param classCreator Luva.ClassCreator
-function __AppendPrototypeCreator(resultClass, classCreator)
+function _AppendPrototypeCreator(resultClass, classCreator)
 
     ---@type Luva.ClassPrototypeCreator
     local prototypeCreator = classCreator[prototype]
     if not prototypeCreator then
         return
     end
+
+
+    resultClass.__Constructor = {   ---@diagnostic disable-line : invisible
+        __DefaultConstructor = nil,
+        __BuildConstructor = nil
+    } --[[@as Luva.ClassConstructor<any>]]
 
     resultClass.__Prototype = { ---@diagnostic disable-line : invisible
         __PrototypeFields = { },
@@ -94,7 +110,9 @@ function __AppendPrototypeCreator(resultClass, classCreator)
 
     _appendFieldsAndMethods(classProto, prototypeCreator)
 
+    -- Has a custom constructor?
+    _AppendConstructorCreator(resultClass, classCreator)
 end
 
 
-return prototype, __AppendPrototypeCreator
+return prototype, _AppendPrototypeCreator
