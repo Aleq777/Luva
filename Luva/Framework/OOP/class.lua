@@ -61,8 +61,11 @@ Human = class {
             Age = age
         }
     end,
-    [constructor] = function (...)
-        
+    [constructor] = function (getPrototypeFields, name, age)
+        return getPrototypeFields {
+            Name = name,
+            Age = age
+        }
     end
 }
 

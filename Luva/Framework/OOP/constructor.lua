@@ -1,12 +1,13 @@
 
+---@diagnostic disable : lowercase-global
 
----@alias Luva.ConstructorExpression Luva.Keyword
+---@alias Luva.ConstructorExpression Luva.Keyword<"constructor">
 
 
 do
 
     ---@generic TResult
-    ---@alias Luva.ClassConstructorCreator fun(...: any): TResult
+    ---@alias Luva.ClassConstructorCreator fun(getPrototypeFields: (fun(obj: TResult): TResult), ...: any): TResult
 
     ---@generic TResult
     ---@class Luva.ClassConstructor

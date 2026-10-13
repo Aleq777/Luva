@@ -2,7 +2,9 @@
 ---@alias Luva.Path string As `folderA.folderB.fileName`
 ---@alias Luva.LuaObject table<string, any>
 ---@alias Luva.LuaArray any[]
----@alias Luva.Keyword table<nil, nil>
+
+---@generic T
+---@alias Luva.Keyword table<nil, T>
 
 do
     ---@alias Luva.ConfigSingleton.Globalization.Behaviours.Debugs

@@ -21,7 +21,7 @@ end
 
 
 
----@alias Luva.PrototypeExpression Luva.Keyword
+---@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
 
 ---@type Luva.PrototypeExpression
 prototype = { }
