@@ -4,13 +4,13 @@
 do
 
     ---@class Luva.TryExpression
-    ---@field public catch fun(self: Luva.TryExpression, funcCatch: fun(err: any, handled?: fun(...?: any|nil?): (boolean, any|nil?)): any|nil?): Luva.TryExpression
-    ---@field public finally fun(self: Luva.TryExpression, funcFinally?: fun()|nil?): any|nil?, ...
+    ---@field public catch fun(self: Luva.TryExpression, funcCatch: fun(err: any, handled: fun(...: any[]): boolean, any|nil): any|nil): Luva.TryExpression
+    ---@field public finally fun(self: Luva.TryExpression, funcFinally: fun()|nil): any|nil, ...
     ---@
-    ---@field private _Handle fun(returnValue?: any|nil?): (boolean, any|nil?)
+    ---@field private _Handle fun(returnValue?: any|nil): boolean, any|nil
     ---@field private _IsThrown boolean
     ---@field private _Result any|nil
-    ---@field private _Catchers (fun(err: any, handled?: fun(returnValue: any|nil?): (boolean, any|nil?)): any|nil?)[]
+    ---@field private _Catchers (fun(err: any, handled?: fun(returnValue: any|nil): boolean, any|nil): any|nil)[]
     local __TryExpression = { }
 
 end
@@ -18,7 +18,7 @@ end
 
 --- Tries to execute `funcTry` function
 --- Use built-in `error` function to throw an error inside the function
----@param funcTry fun(): any|nil?
+---@param funcTry fun(): any|nil
 ---@return Luva.TryExpression
 function try(funcTry)
     local isThrown, result = pcall(funcTry)
