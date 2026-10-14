@@ -8,15 +8,14 @@ prototype, _AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
 
 do
 
-    ---@class Luva.ClassCreator
-    local __ClassCreator = { }
+    ---@alias Luva.ClassCreator table<Luva.PrototypeExpression, any>
 
 
-    ---@generic TNewClass
+
     ---@class Luva.Type
     ---@field private __MetaClass metatable
     ---@field private __Prototype Luva.ClassPrototype|nil
-    ---@field private __Constructor Luva.ClassConstructor<TNewClass>|nil
+    ---@field private __Constructor Luva.ClassConstructor|nil
     ---@field private __Type "Luva.Type"
     local __LuvaType = { }
 
@@ -70,15 +69,26 @@ Human = class {
             print("Hello, " .. self.Name)
         end
     },
-    Count = 0
+    [default] = function (setPrototype)
+        Human.Count = Human.Count + 1
+        setPrototype { }
+    end,
+    [constructor] = function (setPrototype, name, age)
+        setPrototype {
+            Name = name,
+            Age = age
+        }
+    end,
+    Count = 0,
+    Greet = function (human)
+        
+    end
 }
 
 MooseMan = Human {
     Name = "moose man",
     Age = 17,
 }
-
-print(MooseMan.Name)
 
 
 return class

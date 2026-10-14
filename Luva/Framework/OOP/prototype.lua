@@ -1,118 +1,120 @@
 
 ---@diagnostic disable : lowercase-global
 
-_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifierProhibition.lua")
 
 
 do
-    ---@generic TNewInstancePrototypeFields
-    ---@alias Luva.ClassPrototype.PrototypeGetter fun(obj: TNewInstancePrototypeFields): TNewInstancePrototypeFields
 
+    ---@alias Luva.ClassPrototypeCreator table<string, any>
 
-    ---@class Luva.ClassPrototype.FieldType
+    ---@generic T
+    ---@class Luva.ClassPrototype.FieldRecord
     ---@field public __Type Luva.Type|type
-    ---@field public __DefaultValue any|nil
-    local __FieldType = { }
+    ---@field public __DefaultValue T
+    local __FieldRecord = { }
 
 
-    ---@generic TNewClassInstance
-    ---@alias Luva.ClassPrototypeCreator table<string, Luva.Type|type|any|fun(self: TNewClassInstance, ...: any[]): any|nil, ...>
-
-    ---@generic TNewInstance
-    ---@alias Luva.ClassPrototypeFields table<string, Luva.ClassPrototype.FieldType>
-    
-    ---@generic TNewClassInstance
-    ---@alias Luva.ClassPrototypeMethods table<string, fun(self: TNewClassInstance, ...: any[]): any|nil, ...>
-
-    ---@generic TNewClassInstance
+    ---@generic TInstance : Luva.Object
     ---@class Luva.ClassPrototype
-    ---@field public __PrototypeGetter fun(self: TNewClassInstance): Luva.ClassPrototypeFields<TNewClassInstance>
-    ---@field public __PrototypeFields Luva.ClassPrototypeFields<TNewClassInstance>
-    ---@field public __PrototypeMethods Luva.ClassPrototypeMethods<TNewClassInstance>
+    ---@field public __PrototypeMethods table<string, fun(self: TInstance, ...: any[]): any|nil, ...>
+    ---@field public __PrototypeFields table<string, Luva.ClassPrototype.FieldRecord<any>>
+    ---@field public __PrototypeFieldsDefault table<string, any>
     ---@field public __MetaPrototype metatable
-    local __ClassPrototype = { }
+    local __Prototype = { }
 
 end
+
 
 ---@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
 
 ---@type Luva.PrototypeExpression
 prototype = { }
 
+---@generic TInstance : Luva.Object
+---@param classPrototype Luva.ClassPrototype<TInstance>
+---@param fieldName string
+---@param fieldCreatorContent any
+local function _appendPrototypeField(classPrototype, fieldName, fieldCreatorContent)
 
+    local fieldCreatorType = type (fieldCreatorContent)
+    local prototypeFields = classPrototype.__PrototypeFields
 
----@param classProto Luva.ClassPrototype
----@param prototypeCreator Luva.ClassPrototypeCreator
-local function _appendFieldsAndMethods(classProto, prototypeCreator)
-    for fieldName, fieldTypeOrFunc in pairs(prototypeCreator) do
-        if type (fieldTypeOrFunc) == "function" then
-            classProto.__PrototypeMethods[fieldName] = fieldTypeOrFunc
-        elseif type (fieldTypeOrFunc) == "table" then
-            ---@diagnostic disable : invisible
-            if fieldTypeOrFunc.__Type == "Luva.Type" then
-                -- no prototype - static class
-                if fieldTypeOrFunc.__Prototype == nil then
-                    error("Cannot use a static class as a field type! Field: " .. fieldName)
-                end
-
-                classProto.__PrototypeFields[fieldName] = {
-                    __Type = fieldTypeOrFunc, -- Luva class
-                    __DefaultValue = fieldTypeOrFunc() -- Luva class'es default
-                }
-            ---@diagnostic enable : invisible
+    switch (fieldCreatorType, {
+        ["function"] = function ()
+            classPrototype.__PrototypeMethods[fieldName] = fieldCreatorContent
+        end,
+        ["table"] = function ()
+            -- Type
+            if fieldCreatorContent.__Type == "Luva.Type" then
+                prototypeFields[fieldName] = {
+                    __Type = fieldCreatorContent,
+                    __DefaultValue = fieldCreatorContent()
+                } --[[@as Luva.ClassPrototype.FieldRecord<Luva.Object>]]
             else
-                classProto.__PrototypeFields[fieldName] = {
+                -- Value (copy)
+                prototypeFields[fieldName] = {
                     __Type = "table",
-                    __DefaultValue = fieldTypeOrFunc -- reference to the table (will be copied from now on)
-                }
+                    __DefaultValue = Luva.Utils.Copy(fieldCreatorContent)
+                } --[[@as Luva.ClassPrototype.FieldRecord<table>]]
             end
-        elseif type (fieldTypeOrFunc) == "thread" or type (fieldTypeOrFunc) == "userdata" then
-            error("Unsupported type (thread or userdata) for field: " .. fieldName)
-        else
-            classProto.__PrototypeFields[fieldName] = {
-                __Type = type (fieldTypeOrFunc), -- Lua type
-                __DefaultValue = fieldTypeOrFunc -- Lua scalar value
-            }
+        end,
+        ["thread"] = function ()
+            error("Unsupported types: thread")
+        end,
+        ["userdata"] = function ()
+            error("Unsupported types: userdata")
+        end,
+        [default] = function ()
+            prototypeFields[fieldName] = {
+                __Type = fieldCreatorType,
+                __DefaultValue = fieldCreatorContent
+            } --[[@as Luva.ClassPrototype.FieldRecord<nil|boolean|integer|number|string>]]
         end
-    end
+    })
 end
 
 
----@generic TNewClass
----@param resultClass Luva.Type<TNewClass>
+
+---@param classPrototype Luva.ClassPrototype
+local function _createPrototypeFieldsDefault(classPrototype)
+    local result = { }
+
+    for fieldName, fieldRecord in pairs(classPrototype.__PrototypeFields) do
+        result[fieldName] = fieldRecord.__DefaultValue
+    end
+
+    classPrototype.__PrototypeFieldsDefault = result
+end
+
+---@param resultClass Luva.Type
 ---@param classCreator Luva.ClassCreator
 function _AppendPrototypeCreator(resultClass, classCreator)
 
     ---@type Luva.ClassPrototypeCreator
-    local prototypeCreator = classCreator[prototype]
-    if not prototypeCreator then
+    local proto = classCreator[prototype]
+    if not proto then
         return
     end
 
-
-    resultClass.__Constructor = {   ---@diagnostic disable-line : invisible
-        __DefaultConstructor = nil,
-        __BuildConstructor = nil
-    } --[[@as Luva.ClassConstructor<any>]]
-
     resultClass.__Prototype = { ---@diagnostic disable-line : invisible
-        __PrototypeFields = { },
         __PrototypeMethods = { },
+        __PrototypeFields = { },
+        __PrototypeFieldsDefault = nil,
         __MetaPrototype = {
             __index = _ProhibitUndefinedIndex,
             __newindex = _ProhibitNewIndex
         }
     }
 
-    ---@type Luva.ClassPrototype
-    local classProto = resultClass.__Prototype ---@diagnostic disable-line : invisible
+    for fieldName, fieldCreatorContent in pairs(proto) do
+        _appendPrototypeField(resultClass.__Prototype, fieldName, fieldCreatorContent)  ---@diagnostic disable-line : invisible
+    end
 
+    _createPrototypeFieldsDefault(resultClass.__Prototype)  ---@diagnostic disable-line : invisible
 
-    _appendFieldsAndMethods(classProto, prototypeCreator)
-
-    -- Has a custom constructor?
-    _AppendConstructorCreator(resultClass, classCreator)
 end
+
+
 
 
 return prototype, _AppendPrototypeCreator
