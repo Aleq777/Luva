@@ -118,7 +118,16 @@ function _AppendPrototypeCreator(resultClass, classCreator)
     end
 
     resultClass.__Prototype = { ---@diagnostic disable-line : invisible
-        __PrototypeMethods = { },
+        __PrototypeMethods = {
+            ---@type Luva.Type # exception - it is shared between all objects
+            __Type = resultClass,
+
+            ---@param self Luva.Object
+            ---@return Luva.Type
+            GetType = function (self)
+                return self.__Type
+            end,
+        },
         __PrototypeFields = { },
         __PrototypeFieldsDefault = nil,
         __MetaPrototype = {

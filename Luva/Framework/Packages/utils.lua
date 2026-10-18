@@ -1,122 +1,145 @@
 
+Luva = dofile("Luva/Framework/base.lua")
 
-Luva = {
-    Utils = {
+Luva.Utils = {
 
-        --- Returns any multi-dimensional array as an 1D array
-        ---@param array table<integer, any>
-        ---@return any[]
-        ---@nodiscard
-        FlattenArray = function (array)
-            ---@type any[]
-            local result = { }
+    --- Returns any multi-dimensional array as an 1D array
+    ---@param array table<integer, any>
+    ---@return any[]
+    ---@nodiscard
+    FlattenArray = function (array)
+        ---@type any[]
+        local result = { }
 
-            for _, v in ipairs(array) do
-                if type (v) == "table" then
-                    table.insert(result, Luva.Utils.FlattenArray(v))
-                else
-                    table.insert(result, v)
-                end
+        for _, v in ipairs(array) do
+            if type (v) == "table" then
+                table.insert(result, Luva.Utils.FlattenArray(v))
+            else
+                table.insert(result, v)
             end
+        end
 
-            return result
-        end,
+        return result
+    end,
 
 
 
-        --- Copies a `value` by value (deep copy)
+    --- Copies a `value` by value (deep copy)
+    ---@generic T
+    ---@param value T
+    ---@return T value
+    ---@nodiscard
+    Copy = function (value)
+        if type (value) ~= "table" then return value end
+
         ---@generic T
-        ---@param value T
-        ---@return T value
-        ---@nodiscard
-        Copy = function (value)
-            if type (value) ~= "table" then return value end
+        ---@type T
+        local result = { }
 
-            ---@generic T
-            ---@type T
-            local result = { }
+        for k, v in pairs(value) do
+            result[k] = Luva.Utils.Copy(v)
+        end
 
-            for k, v in pairs(value) do
-                result[k] = Luva.Utils.Copy(v)
+        return result
+    end,
+
+
+    --- Checks, if table `array` has `value`
+    ---@generic T
+    ---@generic U
+    ---@param array table<T, U>
+    ---@param value U 
+    ---@return boolean
+    ---@nodiscard
+    Has = function (array, value)
+        for _, v in pairs(array) do
+            if v == value then
+                return true
             end
+        end
 
-            return result
-        end,
+        return false
+    end,
+
+    --- Returns keys of table `array`
+    ---@generic T
+    ---@param array table<T, any>
+    ---@return T[]
+    ---@nodiscard
+    GetKeys = function (array)
+        local result = { }
+
+        for k in pairs(array) do
+            table.insert(result, k)
+        end
+
+        return result
+    end,
 
 
-        --- Checks, if table `array` has `value`
-        ---@generic T
-        ---@generic U
-        ---@param array table<T, U>
-        ---@param value U 
-        ---@return boolean
-        ---@nodiscard
-        Has = function (array, value)
-            for _, v in pairs(array) do
-                if v == value then
-                    return true
-                end
-            end
 
+    --- Checks, if given value is scalar (base Lua) type
+    ---@param any any
+    ---@return boolean type
+    ---@nodiscard
+    IsScalar = function (any)
+        local t = type (any)
+
+        if t ~= "table" then
+            return true
+        end
+
+        if t.__Type ~= nil then
             return false
-        end,
+        end
 
-        --- Returns keys of table `array`
-        ---@generic T
-        ---@param array table<T, any>
-        ---@return T[]
-        ---@nodiscard
-        GetKeys = function (array)
-            local result = { }
+        return true -- any other table
+    end,
 
-            for k in pairs(array) do
-                table.insert(result, k)
-            end
-
-            return result
-        end,
+    --- Checks, if given value is Luva type (class, interface, singleton, Luva.Type)
+    ---@param any any
+    ---@return boolean type
+    ---@nodiscard
+    IsLuvaType = function (any)
+        return not Luva.Utils.IsScalar(any)
+    end,
 
 
-        Metamethods = {
-            "__add",
-            "__sub",
-            "__mul",
-            "__div",
-            "__mod",
-            "__pow",
-            "__unm",
-            "__idiv",
-            "__band",
-            "__bor",
-            "__bxor",
-            "__bnot",
-            "__shl",
-            "__shr",
-            "__eq",
-            "__lt",
-            "__le",
-            "__gt",
-            "__ge",
-            "__concat",
-            "__len",
-            "__tostring",
-            "__index",
-            "__newindex",
-            "__call",
-            "__pairs",
-            "__ipairs",
-            "__gc",
-            "__close",
-            "__mode",
-            "__metatable",
-            "__name",
-        },
-
+    Metamethods = {
+        "__add",
+        "__sub",
+        "__mul",
+        "__div",
+        "__mod",
+        "__pow",
+        "__unm",
+        "__idiv",
+        "__band",
+        "__bor",
+        "__bxor",
+        "__bnot",
+        "__shl",
+        "__shr",
+        "__eq",
+        "__lt",
+        "__le",
+        "__gt",
+        "__ge",
+        "__concat",
+        "__len",
+        "__tostring",
+        "__index",
+        "__newindex",
+        "__call",
+        "__pairs",
+        "__ipairs",
+        "__gc",
+        "__close",
+        "__mode",
+        "__metatable",
+        "__name",
     }
 }
-
-
-
 
 
 
