@@ -105,7 +105,7 @@ end
 function _AppendPrototypeCreator(resultClass, classCreator)
 
     ---@type Luva.ClassPrototypeCreator
-    local proto = classCreator[prototype]
+    local proto = classCreator[prototype]   --[[@as Luva.ClassPrototypeCreator]]
     if not proto then
         return
     end
@@ -126,8 +126,8 @@ function _AppendPrototypeCreator(resultClass, classCreator)
 
     _createPrototypeFieldsDefault(resultClass.__Prototype)  ---@diagnostic disable-line : invisible
 
-    _AppendConstructorCreator()
-    _AppendDestructorCreator()
+    _AppendConstructorCreator(resultClass)
+    _AppendDestructorCreator(resultClass)
 
 end
 

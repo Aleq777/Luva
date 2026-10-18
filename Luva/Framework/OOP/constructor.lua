@@ -44,18 +44,10 @@ end
 
 
 ---@param resultClass Luva.Type
----@param proto Luva.ClassPrototypeCreator|nil
+---@param proto Luva.ClassPrototypeCreator
 local function _construct(resultClass, proto, ...)
     local instance = Luva.Utils.Copy( resultClass.__Prototype.__PrototypeMethods )  ---@diagnostic disable-line : invisible
 
-    -- if proto == nil and constr ~= nil then
-    --     ---@param protoObject Luva.ClassPrototypeCreator
-    --     constr(function (protoObject)
-    --         proto = protoObject
-    --     end, ...)
-    -- end
-
-    ---@diagnostic disable : need-check-nil
     for fieldName, fieldRecord in pairs( resultClass.__Prototype.__PrototypeFields ) do ---@diagnostic disable-line : invisible
         if proto[fieldName] then
             instance[fieldName] = proto[fieldName]
@@ -63,7 +55,6 @@ local function _construct(resultClass, proto, ...)
             instance[fieldName] = Luva.Utils.Copy(fieldRecord.__DefaultValue)
         end
     end
-    ---@diagnostic enable : need-check-nil
 
     setmetatable(instance, resultClass.__Prototype.__MetaPrototype) ---@diagnostic disable-line : invisible
     return instance
