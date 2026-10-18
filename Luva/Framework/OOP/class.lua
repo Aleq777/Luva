@@ -5,15 +5,21 @@ _ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifi
 
 prototype, _AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
 
+---@alias Luva.ClassCreator
+---| { [Luva.PrototypeExpression]: Luva.ClassPrototypeCreator }
+---| { [Luva.DefaultExpression]: Luva.DefaultConstructor }
+---| { [Luva.ConstructorExpression]: Luva.BuildConstructor }
+---| { [Luva.DestructorExpression]: Luva.Destructor }
+---| ...
 
 do
 
-    ---@alias Luva.ClassCreator table<Luva.PrototypeExpression, any>
+    -- ---@alias Luva.ClassCreator table<Luva.PrototypeExpression, any>
+
 
 
 
     ---@class Luva.Type
-    ---@field private __MetaClass metatable
     ---@field private __Prototype Luva.ClassPrototype|nil
     ---@field private __Constructor Luva.ClassConstructor|nil
     ---@field private __Type "Luva.Type"
@@ -23,15 +29,44 @@ end
 
 
 
+---@type table<string, metatable>
+__MetaType = {
+    Static = {
+        __index = _ProhibitUndefinedIndex,
+        __newindex = _ProhibitNewIndex,
+    },
+    WithPrototype = {
+        __index = _ProhibitUndefinedIndex,
+        __newindex = _ProhibitNewIndex,
+        __call = nil,
+    },
+}
+
+---@param resultClass Luva.Type
+local function _appendMetatable(resultClass)
+    local meta
+    if resultClass[prototype] then
+        meta = __MetaType.WithPrototype
+    else
+        meta = __MetaType.Static
+    end
+
+    setmetatable(resultClass, meta)
+end
+
+
 ---@param resultClass Luva.Type
 ---@param classCreator Luva.ClassCreator
-function _AppendStatics(resultClass, classCreator)
+local function _appendStatics(resultClass, classCreator)
     for k, v in pairs(classCreator) do
         if type (k) == "string" then
             resultClass[k] = v
         end
     end
 end
+
+
+
 
 --- Creates a class
 ---@generic TResultClass : Luva.Type
@@ -41,25 +76,29 @@ function class(classCreator)
 
     ---@type Luva.Type
     local resultClass = {
-        __MetaClass = {
-            __index = _ProhibitUndefinedIndex,
-            __newindex = _ProhibitNewIndex
-        },
         __Type = "Luva.Type"
     }
 
     -- refactor as fields !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     -- Appends static fields and functions
-    _AppendStatics(resultClass, classCreator)
+    _appendStatics(resultClass, classCreator)
 
     -- Has a prototype? (+ constructors and destructors)
     _AppendPrototypeCreator(resultClass, classCreator)
 
-    setmetatable(resultClass, resultClass.__MetaClass)      ---@diagnostic disable-line : invisible
+    _appendMetatable(resultClass)
+
     return resultClass
 end
 
-Master = class { }
+
+
+Master = class {
+
+}
+
+
+
 
 Human = class {
     [prototype] = {
@@ -69,9 +108,8 @@ Human = class {
             print("Hello, " .. self.Name)
         end
     },
-    [default] = function (setPrototype)
+    [default] = function ()
         Human.Count = Human.Count + 1
-        setPrototype { }
     end,
     [constructor] = function (setPrototype, name, age)
         setPrototype {

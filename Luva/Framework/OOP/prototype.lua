@@ -40,38 +40,49 @@ local function _appendPrototypeField(classPrototype, fieldName, fieldCreatorCont
     local prototypeFields = classPrototype.__PrototypeFields
 
     switch (fieldCreatorType, {
+
         ["function"] = function ()
             classPrototype.__PrototypeMethods[fieldName] = fieldCreatorContent
         end,
+
         ["table"] = function ()
             -- Type
             if fieldCreatorContent.__Type == "Luva.Type" then
+
                 prototypeFields[fieldName] = {
                     __Type = fieldCreatorContent,
                     __DefaultValue = fieldCreatorContent()
                 } --[[@as Luva.ClassPrototype.FieldRecord<Luva.Object>]]
-            else
-                -- Value (copy)
+
+            else -- Value (copy)
+            
                 prototypeFields[fieldName] = {
                     __Type = "table",
                     __DefaultValue = Luva.Utils.Copy(fieldCreatorContent)
                 } --[[@as Luva.ClassPrototype.FieldRecord<table>]]
+
             end
         end,
+
         ["thread"] = function ()
             error("Unsupported types: thread")
         end,
+
         ["userdata"] = function ()
             error("Unsupported types: userdata")
         end,
+
         [default] = function ()
             prototypeFields[fieldName] = {
                 __Type = fieldCreatorType,
                 __DefaultValue = fieldCreatorContent
             } --[[@as Luva.ClassPrototype.FieldRecord<nil|boolean|integer|number|string>]]
         end
+
     })
 end
+
+
 
 
 
@@ -85,6 +96,9 @@ local function _createPrototypeFieldsDefault(classPrototype)
 
     classPrototype.__PrototypeFieldsDefault = result
 end
+
+
+
 
 ---@param resultClass Luva.Type
 ---@param classCreator Luva.ClassCreator
@@ -111,6 +125,9 @@ function _AppendPrototypeCreator(resultClass, classCreator)
     end
 
     _createPrototypeFieldsDefault(resultClass.__Prototype)  ---@diagnostic disable-line : invisible
+
+    _AppendConstructorCreator()
+    _AppendDestructorCreator()
 
 end
 
