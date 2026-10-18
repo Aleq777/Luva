@@ -1,7 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 
-
+---@alias Luva.Destructor fun()
 
 ---@alias Luva.DestructorExpression Luva.Keyword<"destructor">
 
