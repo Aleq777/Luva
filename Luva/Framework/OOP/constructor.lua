@@ -1,7 +1,8 @@
 
 ---@diagnostic disable : lowercase-global
 
-
+---@module "OOP.default"
+default = dofile("Luva/Framework/OOP/default.lua")
 
 do
 
@@ -99,3 +100,6 @@ function _AppendConstructorCreator(resultClass)
     _appendDefault(resultClass)
     _appendBuild(resultClass)
 end
+
+
+return constructor, _AppendConstructorCreator

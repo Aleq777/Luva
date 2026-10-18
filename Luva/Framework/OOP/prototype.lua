@@ -1,6 +1,13 @@
 
 ---@diagnostic disable : lowercase-global
 
+---@module "OOP.default"
+default = dofile("Luva/Framework/OOP/default.lua")
+---@module "OOP.constructor"
+constructor, _AppendConstructorCreator = dofile("Luva/Framework/OOP/constructor.lua")
+---@module "OOP.destructor"
+destructor, _AppendDestructorCreator = dofile("Luva/Framework/OOP/destructor.lua")
+
 
 
 do
@@ -55,7 +62,7 @@ local function _appendPrototypeField(classPrototype, fieldName, fieldCreatorCont
                 } --[[@as Luva.ClassPrototype.FieldRecord<Luva.Object>]]
 
             else -- Value (copy)
-            
+
                 prototypeFields[fieldName] = {
                     __Type = "table",
                     __DefaultValue = Luva.Utils.Copy(fieldCreatorContent)

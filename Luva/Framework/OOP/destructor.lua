@@ -20,3 +20,5 @@ function _AppendDestructorCreator(resultClass)
     resultClass.__Prototype.__MetaPrototype.__gc = destr    ---@diagnostic disable-line : invisible
 end
 
+
+return destructor, _AppendDestructorCreator
