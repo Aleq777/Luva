@@ -66,12 +66,14 @@ local function _appendStatics(resultClass, classCreator)
 end
 
 
-
+---@generic TResultClass : Luva.Type
+---@alias Luva.ClassExpression fun(classCreator: Luva.ClassCreator): TResultClass Creates a class
 
 --- Creates a class
 ---@generic TResultClass : Luva.Type
 ---@param classCreator Luva.ClassCreator
 ---@return TResultClass
+---@type Luva.ClassExpression
 function class(classCreator)
 
     ---@type Luva.Type
