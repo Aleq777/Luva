@@ -21,11 +21,11 @@ do
 end
 
 
----@alias Luva.ConstructorExpression Luva.Keyword<"constructor">
 
 
+---@alias Luva.ConstructorExpression "__Constructor"
 ---@type Luva.ConstructorExpression
-constructor = { }
+constructor = "__Constructor"
 
 
 

@@ -1,7 +1,9 @@
 
 ---@diagnostic disable : lowercase-global
 
-Luva = { Utils = dofile("Luva/Framework/utils.lua") }
+Luva = {
+    Utils = dofile("Luva/Framework/utils.lua")
+}
 
 
 do

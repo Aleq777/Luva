@@ -3,10 +3,11 @@
 
 ---@alias Luva.Destructor fun()
 
----@alias Luva.DestructorExpression Luva.Keyword<"destructor">
 
+
+---@alias Luva.DestructorExpression "__Destructor"
 ---@type Luva.DestructorExpression
-destructor = { }
+destructor = "__Destructor"
 
 
 

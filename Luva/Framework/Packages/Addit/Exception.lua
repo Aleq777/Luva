@@ -1,9 +1,12 @@
 
+---@diagnostic disable : lowercase-global
 
 ---@module "base"
 Luva = dofile("Luva/Framework/base.lua")
 ---@module "OOP.class"
 class = dofile("Luva/Framework/OOP/class.lua")
+
+---@diagnostic enable : lowercase-global
 
 
 ---@class Luva.Exception : Luva.Object

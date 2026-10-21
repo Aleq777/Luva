@@ -32,10 +32,19 @@ do
 end
 
 
----@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
+
+
+
+-- -@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
+---@alias Luva.PrototypeExpression "__Prototype"
 
 ---@type Luva.PrototypeExpression
-prototype = { }
+prototype = "__Prototype"
+
+
+
+
+
 
 ---@generic TInstance : Luva.Object
 ---@param classPrototype Luva.ClassPrototype<TInstance>
@@ -125,7 +134,7 @@ function _AppendPrototypeCreator(resultClass, classCreator)
             ---@param self Luva.Object
             ---@return Luva.Type
             GetType = function (self)
-                return self.__Type
+                return self.__Type      ---@diagnostic disable-line : invisible
             end,
         },
         __PrototypeFields = { },

@@ -28,7 +28,6 @@ do
 end
 
 
-
 ---@type table<string, metatable>
 __MetaType = {
     Static = {

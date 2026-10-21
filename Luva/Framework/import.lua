@@ -1,7 +1,10 @@
 
 ---@diagnostic disable : lowercase-global
 
-Luva = { Utils = dofile("Luva/Framework/utils.lua") }
+Luva = {
+    Utils = dofile("Luva/Framework/utils.lua")
+}
+
 
 do
 
@@ -24,6 +27,9 @@ function from(path)
     ---@type Luva.ImportExpression
     return {
         _Path = path,
+
+        ---@overload fun(self: Luva.ImportExpression): table
+        ---@overload fun(self: Luva.ImportExpression, element: string): table
         import = function (self, ...)
             ---@type string[]
             local args = Luva.Utils.FlattenArray { ... }
