@@ -2,7 +2,7 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "OOP.default"
-default = dofile("Luva/Framework/OOP/default.lua")
+default = dofile ("Luva/Framework/OOP/default.lua")
 
 do
 
@@ -26,7 +26,6 @@ end
 ---@alias Luva.ConstructorExpression "__Constructor"
 ---@type Luva.ConstructorExpression
 constructor = "__Constructor"
-
 
 
 ---@param resultClass Luva.Type

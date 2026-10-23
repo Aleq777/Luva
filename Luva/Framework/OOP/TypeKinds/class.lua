@@ -1,23 +1,20 @@
 
 ---@diagnostic disable : lowercase-global
 
-_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile("Luva/Framework/OOP/identifierProhibition.lua")
+---@module "Helper.identifierProhibition"
+_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile ("Luva/Framework/OOP/identifierProhibition.lua")
 
-prototype, _AppendPrototypeCreator = dofile("Luva/Framework/OOP/prototype.lua")
+---@module "Ingredients.prototype"
+prototype, _AppendPrototypeCreator = dofile ("Luva/Framework/OOP/prototype.lua")
 
----@alias Luva.ClassCreator
----| { [Luva.PrototypeExpression]: Luva.ClassPrototypeCreator }
----| { [Luva.DefaultExpression]: Luva.DefaultConstructor }
----| { [Luva.ConstructorExpression]: Luva.BuildConstructor }
----| { [Luva.DestructorExpression]: Luva.Destructor }
----| ...
 
 do
 
-    -- ---@alias Luva.ClassCreator table<Luva.PrototypeExpression, any>
-
-
-
+    ---@class Luva.ClassCreator
+    ---@field public __Prototype Luva.ClassPrototypeCreator|nil
+    ---@field public __Default Luva.DefaultConstructor|nil
+    ---@field public __Constructor Luva.BuildConstructor|nil
+    ---@field public __Destructor Luva.Destructor|nil
     local __ClassCreator = { }
 
 
@@ -82,7 +79,6 @@ function class(classCreator)
         __Type = "Luva.Type"
     }
 
-    -- refactor as fields !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     -- Appends static fields and functions
     _appendStatics(resultClass, classCreator)
 
@@ -96,40 +92,7 @@ end
 
 
 
-Master = class {
 
-}
-
-
-
-
-Human = class {
-    [prototype] = {
-        Name = "john",
-        Age = 10,
-        Greet = function (self)
-            print("Hello, " .. self.Name)
-        end
-    },
-    [default] = function ()
-        Human.Count = Human.Count + 1
-    end,
-    [constructor] = function (setPrototype, name, age)
-        setPrototype {
-            Name = name,
-            Age = age
-        }
-    end,
-    Count = 0,
-    Greet = function (human)
-        
-    end
-}
-
-MooseMan = Human {
-    Name = "moose man",
-    Age = 17,
-}
 
 
 return class
