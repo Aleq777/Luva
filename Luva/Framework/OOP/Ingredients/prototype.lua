@@ -1,12 +1,12 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "OOP.default"
-default = dofile ("Luva/Framework/OOP/default.lua")
----@module "OOP.constructor"
-constructor, _AppendConstructorCreator = dofile ("Luva/Framework/OOP/constructor.lua")
----@module "OOP.destructor"
-destructor, _AppendDestructorCreator = dofile ("Luva/Framework/OOP/destructor.lua")
+---@module "Luva.Framework.OOP.GarbageCollection.default"
+default = dofile ("Luva/Framework/OOP/GarbageCollection/default.lua")
+---@module "Luva.Framework.OOP.GarbageCollection.constructor"
+constructor, _AppendConstructorCreator = dofile ("Luva/Framework/OOP/GarbageCollection/constructor.lua")
+---@module "Luva.Framework.OOP.GarbageCollection.destructor"
+destructor, _AppendDestructorCreator = dofile ("Luva/Framework/OOP/GarbageCollection/destructor.lua")
 
 
 

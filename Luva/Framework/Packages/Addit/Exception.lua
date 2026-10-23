@@ -23,9 +23,9 @@ Luva.Exception = class {
         }
     end,
 
-    [operator('==')] = function (self, right)
+    -- [operator('==')] = function (self, right)
         
-    end,
+    -- end,
 
 
 }

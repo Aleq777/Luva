@@ -1,8 +1,8 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "OOP.default"
-default = dofile ("Luva/Framework/OOP/default.lua")
+---@module "Luva.Framework.OOP.GarbageCollection.default"
+default = dofile ("Luva/Framework/OOP/GarbageCollection/default.lua")
 
 do
 
