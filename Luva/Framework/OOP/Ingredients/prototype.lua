@@ -37,7 +37,6 @@ end
 
 -- -@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
 ---@alias Luva.PrototypeExpression "__Prototype"
-
 ---@type Luva.PrototypeExpression
 prototype = "__Prototype"
 

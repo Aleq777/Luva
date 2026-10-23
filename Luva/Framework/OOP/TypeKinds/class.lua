@@ -18,6 +18,8 @@ do
 
 
 
+    local __ClassCreator = { }
+
 
     ---@class Luva.Type
     ---@field private __Prototype Luva.ClassPrototype|nil
