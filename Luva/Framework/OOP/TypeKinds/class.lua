@@ -12,8 +12,8 @@ do
 
     ---@class Luva.ClassCreator
     ---@field public __Prototype Luva.ClassPrototypeCreator|nil
-    ---@field public __Default Luva.DefaultConstructor|nil
-    ---@field public __Constructor Luva.BuildConstructor|nil
+    ---@field public __Default Luva.DefaultConstructorCreator|nil
+    ---@field public __Constructor Luva.BuildConstructorCreator|nil
     ---@field public __Destructor Luva.Destructor|nil
     local __ClassCreator = { }
 
@@ -21,6 +21,7 @@ do
     ---@class Luva.Type
     ---@field private __Prototype Luva.ClassPrototype|nil
     ---@field private __Constructor Luva.ClassConstructor|nil
+    ---@field private __Meta metatable|nil Only for instance-classes - individual metatable. Static classes have mutual extern metatable
     ---@field private __Type "Luva.Type"
     local __LuvaType = { }
 
@@ -43,9 +44,12 @@ __MetaType = {
 ---@param resultClass Luva.Type
 local function _appendMetatable(resultClass)
     local meta
+    -- Instance classes have an individual metatable
     if resultClass[prototype] then
         meta = __MetaType.WithPrototype
+        resultClass.__Meta = Luva.Utils.Copy(meta)   ---@diagnostic disable-line : invisible
     else
+        -- Static classes have a mutual metatable
         meta = __MetaType.Static
     end
 
@@ -92,7 +96,19 @@ end
 
 
 
+Human = class {
+    [prototype] = {
+        Name = "john",
+        Age = 10
+    }
+}
 
+local x = Human {
+    Name = "aa",
+    Age = 100
+}
+
+print(x.Name)
 
 
 return class

@@ -7,8 +7,8 @@ default = dofile ("Luva/Framework/OOP/GarbageCollection/default.lua")
 constructor, _AppendConstructorCreator = dofile ("Luva/Framework/OOP/GarbageCollection/constructor.lua")
 ---@module "Luva.Framework.OOP.GarbageCollection.destructor"
 destructor, _AppendDestructorCreator = dofile ("Luva/Framework/OOP/GarbageCollection/destructor.lua")
-
-
+---@module "Luva.Framework.PatternMatching.switch"
+switch = dofile ("Luva/Framework/PatternMatching/switch.lua")
 
 do
 
@@ -35,7 +35,6 @@ end
 
 
 
--- -@alias Luva.PrototypeExpression Luva.Keyword<"prototype">
 ---@alias Luva.PrototypeExpression "__Prototype"
 ---@type Luva.PrototypeExpression
 prototype = "__Prototype"
@@ -127,7 +126,7 @@ function _AppendPrototypeCreator(resultClass, classCreator)
 
     resultClass.__Prototype = { ---@diagnostic disable-line : invisible
         __PrototypeMethods = {
-            ---@type Luva.Type # exception - it is shared between all objects
+            ---@type Luva.Type exception - it is shared between all objects
             __Type = resultClass,
 
             ---@param self Luva.Object
