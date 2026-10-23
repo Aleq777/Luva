@@ -2,7 +2,8 @@
 ---@diagnostic disable : lowercase-global
 
 
-default = dofile("Luva/Framework/SuperIf/default.lua")
+---@module "Luva.Framework.PatternMatching.default"
+default = dofile ("Luva/Framework/PatternMatching/default.lua")
 
 
 

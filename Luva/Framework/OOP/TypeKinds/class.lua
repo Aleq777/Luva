@@ -1,11 +1,11 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "Helper.identifierProhibition"
-_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile ("Luva/Framework/OOP/identifierProhibition.lua")
+---@module "Luva.Framework.OOP.Helper.identifierProhibition"
+_ProhibitUndefinedIndex, _ProhibitNewIndex = dofile ("Luva/Framework/OOP/Helper/identifierProhibition.lua")
 
----@module "Ingredients.prototype"
-prototype, _AppendPrototypeCreator = dofile ("Luva/Framework/OOP/prototype.lua")
+---@module "Luva.Framework.OOP.Ingredients.prototype"
+prototype, _AppendPrototypeCreator = dofile ("Luva/Framework/OOP/Ingredients/prototype.lua")
 
 
 do

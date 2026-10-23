@@ -2,7 +2,8 @@
 ---@diagnostic disable : lowercase-global
 
 Luva = {
-    Utils = dofile("Luva/Framework/utils.lua")
+    ---@module "Luva.Framework.Packages.Utils"
+    Utils = dofile ("Luva/Framework/Packages/Utils.lua")
 }
 
 
