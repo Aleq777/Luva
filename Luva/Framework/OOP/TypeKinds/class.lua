@@ -78,8 +78,6 @@ function class(classCreator)
     -- Has a prototype? (+ constructors and destructors)
     _AppendPrototypeCreator(resultClass, classCreator)
 
-    -- _appendMetatable(resultClass)
-
     return resultClass
 end
 

@@ -75,31 +75,21 @@ local function _getDefault(resultClass, classCreator)
 
     ---@type Luva.DefaultConstructorCreator
     local def = classCreator[default]
-    -- ---@type boolean
-    -- local success = try(function ()
-    --     def = resultClass[default]
-    --     return true
-    -- end):catch(function (err, handled)
-    --     return handled(false)
-    -- end):finally()
 
     ---@type Luva.DefaultConstructor
     local resultDefault
 
     -- if success then
     if def then
-        -- print(69)
         resultDefault = function ()
             local protoResult
             def(function (proto) -- setPrototype()
-                -- print(proto or 'k')
                 protoResult = proto
             end)
 
             return _construct(resultClass, protoResult)
         end
     else
-        -- print(67)
         resultDefault = function ()
             return _construct(resultClass, { })
         end
@@ -147,7 +137,6 @@ local function _getReal(resultClass, hasReal, classCreator)
     return function (...)
         local protoResult
         real(function (proto) -- setPrototype()
-            -- print(proto == nil)
             protoResult = proto
         end, ...)
 
@@ -162,15 +151,6 @@ function _AppendConstructorCreator(resultClass, classCreator)
 
     ---@type boolean
     local hasReal = classCreator[constructor] and true or false
-    -- ---@type boolean
-    -- local hasReal = try(function ()
-    --     _ = classCreator[constructor]
-    --     return true
-    -- end):catch(function (err, handled)
-    --     return handled(false)
-    -- end):finally()
-    -- local hasReal = resultClass[constructor] and true or false
-    -- print(hasReal)
 
     resultClass.__Constructor = {   ---@diagnostic disable-line : invisible
         __DefaultConstructor = _getDefault(resultClass, classCreator),
