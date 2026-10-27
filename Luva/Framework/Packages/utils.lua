@@ -94,7 +94,7 @@ Luva.Utils = {
             return true
         end
 
-        if t.__Type ~= nil then
+        if any.__Type ~= nil then
             return false
         end
 
