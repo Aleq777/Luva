@@ -9,6 +9,8 @@ constructor, _AppendConstructorCreator = dofile ("Luva/Framework/OOP/GarbageColl
 destructor, _AppendDestructorCreator = dofile ("Luva/Framework/OOP/GarbageCollection/destructor.lua")
 ---@module "Luva.Framework.PatternMatching.switch"
 switch = dofile ("Luva/Framework/PatternMatching/switch.lua")
+---@module "Luva.Framework.OOP.Ingredients.meta"
+_AppendMetatable, _FinalizeMetatable = dofile ("Luva/Framework/OOP/Ingredients/meta.lua")
 
 do
 
@@ -113,16 +115,8 @@ end
 
 
 
-
 ---@param resultClass Luva.Type
----@param classCreator Luva.ClassCreator
-function _AppendPrototypeCreator(resultClass, classCreator)
-
-    ---@type Luva.ClassPrototypeCreator
-    local proto = classCreator[prototype]   --[[@as Luva.ClassPrototypeCreator]]
-    if not proto then
-        return
-    end
+local function _appendRequiredClassComponents(resultClass)
 
     resultClass.__Prototype = { ---@diagnostic disable-line : invisible
         __PrototypeMethods = {
@@ -143,15 +137,36 @@ function _AppendPrototypeCreator(resultClass, classCreator)
         }
     }
 
+    -- resultClass.__Constructor = { } --[[@diagnostic disable-line : missing-fields]]     ---@diagnostic disable-line : invisible
+    -- resultClass.__Destructor = function () end ---@diagnostic disable-line : invisible
+    -- resultClass.__Meta = { }    ---@diagnostic disable-line : invisible
+end
+
+
+
+---@param resultClass Luva.Type
+---@param classCreator Luva.ClassCreator
+function _AppendPrototypeCreator(resultClass, classCreator)
+
+    ---@type Luva.ClassPrototypeCreator
+    local proto = classCreator[prototype]   --[[@as Luva.ClassPrototypeCreator]]
+    if not proto then
+        return
+    end
+
+    _appendRequiredClassComponents(resultClass)
+
     for fieldName, fieldCreatorContent in pairs(proto) do
         _appendPrototypeField(resultClass.__Prototype, fieldName, fieldCreatorContent)  ---@diagnostic disable-line : invisible
     end
 
     _createPrototypeFieldsDefault(resultClass.__Prototype)  ---@diagnostic disable-line : invisible
 
-    _AppendConstructorCreator(resultClass)
+    
+    _AppendMetatable(resultClass)
+    _AppendConstructorCreator(resultClass, classCreator)
     _AppendDestructorCreator(resultClass)
-
+    _FinalizeMetatable(resultClass)
 end
 
 

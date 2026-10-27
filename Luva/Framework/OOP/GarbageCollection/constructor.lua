@@ -4,11 +4,10 @@
 
 ---@module "Luva.Framework.OOP.GarbageCollection.default"
 default = dofile ("Luva/Framework/OOP/GarbageCollection/default.lua")
-
+---@module "Luva.Framework.ExceptionHandling.exceptions"
+try = dofile ("Luva/Framework/ExceptionHandling/exceptions.lua")
 
 do
-    
-
     ---@generic TResultInstance : Luva.Object
     ---@alias Luva.ManualConstructor fun(proto: TResultInstance): TResultInstance
 
@@ -49,6 +48,9 @@ constructor = "__Constructor"
 ---@return TResultInstance
 ---@nodiscard
 local function _construct(resultClass, proto)
+
+    -- print(proto == nil)
+
     ---@generic TResultInstance : Luva.Object
     ---@type TResultInstance
     local instance = Luva.Utils.Copy( resultClass.__Prototype.__PrototypeMethods )  ---@diagnostic disable-line : invisible
@@ -69,21 +71,35 @@ end
 ---@param resultClass Luva.Type
 ---@return Luva.DefaultConstructor
 ---@nodiscard
-local function _getDefault(resultClass)
+local function _getDefault(resultClass, classCreator)
+
     ---@type Luva.DefaultConstructorCreator
-    local def = resultClass[default]
+    local def = classCreator[default]
+    -- ---@type boolean
+    -- local success = try(function ()
+    --     def = resultClass[default]
+    --     return true
+    -- end):catch(function (err, handled)
+    --     return handled(false)
+    -- end):finally()
+
     ---@type Luva.DefaultConstructor
     local resultDefault
+
+    -- if success then
     if def then
+        -- print(69)
         resultDefault = function ()
             local protoResult
             def(function (proto) -- setPrototype()
+                -- print(proto or 'k')
                 protoResult = proto
             end)
 
             return _construct(resultClass, protoResult)
         end
     else
+        -- print(67)
         resultDefault = function ()
             return _construct(resultClass, { })
         end
@@ -106,6 +122,7 @@ local function _getManual(resultClass, hasReal)
     ---@generic TResultInstance : Luva.Object
     ---@type Luva.ManualConstructor<TResultInstance>
     return function (proto)
+        print(proto == nil)
         return _construct(resultClass, proto)
     end
 end
@@ -115,20 +132,22 @@ end
 ---@generic TResultInstance : Luva.Object
 ---@param resultClass Luva.Type
 ---@param hasReal boolean
+---@param classCreator Luva.ClassCreator
 ---@return Luva.RealConstructor<TResultInstance>|nil
-local function _getReal(resultClass, hasReal)
+local function _getReal(resultClass, hasReal, classCreator)
     if not hasReal then
         return nil
     end
 
     ---@type Luva.BuildConstructorCreator
-    local real = resultClass[constructor]
+    local real = classCreator[constructor]
 
     ---@generic TResultInstance : Luva.Object
     ---@type Luva.RealConstructor<TResultInstance>
     return function (...)
         local protoResult
         real(function (proto) -- setPrototype()
+            -- print(proto == nil)
             protoResult = proto
         end, ...)
 
@@ -138,13 +157,25 @@ end
 
 
 ---@param resultClass Luva.Type
-function _AppendConstructorCreator(resultClass)
-    local hasReal = resultClass[constructor] and true or false
+---@param classCreator Luva.ClassCreator
+function _AppendConstructorCreator(resultClass, classCreator)
+
+    ---@type boolean
+    local hasReal = classCreator[constructor] and true or false
+    -- ---@type boolean
+    -- local hasReal = try(function ()
+    --     _ = classCreator[constructor]
+    --     return true
+    -- end):catch(function (err, handled)
+    --     return handled(false)
+    -- end):finally()
+    -- local hasReal = resultClass[constructor] and true or false
+    -- print(hasReal)
 
     resultClass.__Constructor = {   ---@diagnostic disable-line : invisible
-        __DefaultConstructor = _getDefault(resultClass),
+        __DefaultConstructor = _getDefault(resultClass, classCreator),
         __ManualConstructor = _getManual(resultClass, hasReal),
-        __RealConstructor = _getReal(resultClass, hasReal)
+        __RealConstructor = _getReal(resultClass, hasReal, classCreator)
     }
 
     local constr = resultClass.__Constructor --[[@as Luva.ClassConstructor]]    ---@diagnostic disable-line : invisible
@@ -159,7 +190,7 @@ function _AppendConstructorCreator(resultClass)
         if constr.__RealConstructor then
             return constr.__RealConstructor(...)
         else
-            return constr.__ManualConstructor(args[0])
+            return constr.__ManualConstructor(args[1])
         end
     end
 end

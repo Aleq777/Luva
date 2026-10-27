@@ -4,7 +4,7 @@
 do
 
     ---@class Luva.TryExpression
-    ---@field public catch fun(self: Luva.TryExpression, funcCatch: fun(err: any, handled: fun(...: any[]): boolean, any|nil): any|nil): Luva.TryExpression
+    ---@field public catch fun(self: Luva.TryExpression, funcCatch: fun(err: any, handled: fun(...: any): boolean, any|nil): any|nil): Luva.TryExpression
     ---@field public finally fun(self: Luva.TryExpression, funcFinally: fun()|nil): any|nil, ...
     ---@
     ---@field private _Handle fun(returnValue?: any|nil): boolean, any|nil
@@ -21,11 +21,11 @@ end
 ---@param funcTry fun(): any|nil
 ---@return Luva.TryExpression
 function try(funcTry)
-    local isThrown, result = pcall(funcTry)
+    local isSuccess, result = pcall(funcTry)
 
     ---@type Luva.TryExpression
     return {
-        _IsThrown = isThrown,
+        _IsThrown = not isSuccess,
         _Result = result,
         _Catchers = { },
 
@@ -42,13 +42,19 @@ function try(funcTry)
 
         finally = function (self, funcFinally)
 
-            (funcFinally or function () end)();
+            funcFinally = funcFinally or function () end
+            funcFinally()
 
+            -- (funcFinally or function () end)();
+
+            -- print(self._IsThrown)
+            -- print(self._Result)
             ---@diagnostic disable-next-line : invisible
             if not self._IsThrown then
                 ---@diagnostic disable-next-line : invisible
                 return self._Result
             end
+
 
             ---@diagnostic disable-next-line : invisible
             for _, catcher in ipairs(self._Catchers) do

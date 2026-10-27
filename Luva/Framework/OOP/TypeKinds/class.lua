@@ -7,6 +7,8 @@ _ProhibitUndefinedIndex, _ProhibitNewIndex = dofile ("Luva/Framework/OOP/Helper/
 ---@module "Luva.Framework.OOP.Ingredients.prototype"
 prototype, _AppendPrototypeCreator = dofile ("Luva/Framework/OOP/Ingredients/prototype.lua")
 
+---@module "Luva.Framework.OOP.Ingredients.meta"
+_AppendMetatable = dofile ("Luva/Framework/OOP/Ingredients/meta.lua")
 
 do
 
@@ -14,13 +16,14 @@ do
     ---@field public __Prototype Luva.ClassPrototypeCreator|nil
     ---@field public __Default Luva.DefaultConstructorCreator|nil
     ---@field public __Constructor Luva.BuildConstructorCreator|nil
-    ---@field public __Destructor Luva.Destructor|nil
+    ---@field public __Destructor Luva.ClassDestructor|nil
     local __ClassCreator = { }
 
 
     ---@class Luva.Type
     ---@field private __Prototype Luva.ClassPrototype|nil
     ---@field private __Constructor Luva.ClassConstructor|nil
+    ---@field private __Destructor Luva.ClassDestructor|nil
     ---@field private __Meta metatable|nil Only for instance-classes - individual metatable. Static classes have mutual extern metatable
     ---@field private __Type "Luva.Type"
     local __LuvaType = { }
@@ -41,20 +44,6 @@ __MetaType = {
     },
 }
 
----@param resultClass Luva.Type
-local function _appendMetatable(resultClass)
-    local meta
-    -- Instance classes have an individual metatable
-    if resultClass[prototype] then
-        meta = __MetaType.WithPrototype
-        resultClass.__Meta = Luva.Utils.Copy(meta)   ---@diagnostic disable-line : invisible
-    else
-        -- Static classes have a mutual metatable
-        meta = __MetaType.Static
-    end
-
-    setmetatable(resultClass, meta)
-end
 
 
 ---@param resultClass Luva.Type
@@ -89,7 +78,7 @@ function class(classCreator)
     -- Has a prototype? (+ constructors and destructors)
     _AppendPrototypeCreator(resultClass, classCreator)
 
-    _appendMetatable(resultClass)
+    -- _appendMetatable(resultClass)
 
     return resultClass
 end
@@ -111,4 +100,4 @@ local x = Human {
 print(x.Name)
 
 
-return class
+return class, _AppendMetatable

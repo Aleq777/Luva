@@ -37,7 +37,12 @@ Luva.Utils = {
         local result = { }
 
         for k, v in pairs(value) do
-            result[k] = Luva.Utils.Copy(v)
+            -- Luva's special index for type references (no copy!!!)
+            if k == "__Type" then
+                result[k] = v
+            else
+                result[k] = Luva.Utils.Copy(v)
+            end
         end
 
         return result
