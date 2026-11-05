@@ -145,6 +145,4 @@ _LUVA.SecuredObject = {
 
 
 
-
-
 return _LUVA
