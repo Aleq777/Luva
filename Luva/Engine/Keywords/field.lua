@@ -1,8 +1,11 @@
 
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.Engine.SecuredObject"
+_, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
 
 
+_LUVA.Errors.PROHIBITED_ACCESSOR_FUNCTION = "Any other functions than get/set are prohibited inside the accessor"
+_LUVA.Errors.EMPTY_ACCESSOR = "Accessor requires at least one function (get and/or set). Provided none"
 
 --- Creates an accessor field <br />
 --- Custom getters and setters
@@ -11,8 +14,25 @@
 ---@return Luva.Lang.Accessor<T>
 ---@nodiscard
 field = function (accessorBuilder)
-    return accessorBuilder
+    local atLeastOne = false
+
+    for k, _ in pairs(accessorBuilder) do
+        if k == "get" or k == "set" then
+            atLeastOne = true
+        else
+            error(_LUVA.Errors.PROHIBITED_ACCESSOR_FUNCTION)
+        end
+    end
+
+    if atLeastOne then
+        return accessorBuilder
+    else
+        error(_LUVA.Errors.EMPTY_ACCESSOR)
+    end
 end
+
+
+
 
 
 
