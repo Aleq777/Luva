@@ -24,7 +24,7 @@ end
 
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
-
+_LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use empty instead"
 
 
 
@@ -86,6 +86,10 @@ _LUVA.SecuredObject = {
         ---@param index any
         ---@param value any
         __newindex = function (self, index, value)
+            if value == nil then
+                error(_LUVA.Errors.ASSIGNED_NIL)
+            end
+
             _securedAction(
                 self,
                 index,
@@ -136,11 +140,6 @@ _LUVA.SecuredObject = {
         return result
     end,
 }
-
-
-
-
-
 
 
 
