@@ -4,8 +4,14 @@
 _, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
 
 
+
+
+
 _LUVA.Errors.PROHIBITED_ACCESSOR_FUNCTION = "Any other functions than get/set are prohibited inside the accessor"
 _LUVA.Errors.EMPTY_ACCESSOR = "Accessor requires at least one function (get and/or set). Provided none"
+
+
+
 
 --- Creates an accessor field <br />
 --- Custom getters and setters
