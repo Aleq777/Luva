@@ -1,6 +1,10 @@
 
 ---@diagnostic disable : lowercase-global
 
+---@module "Luva.Engine.MatchingExpressions.switch"
+switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+
+
 
 ---@alias Luva.ModulePath string
 
@@ -32,7 +36,19 @@ from = function (path)
             ---@type integer
             local argCount = select("#", ...)
 
+            switch(argCount, {
+                [0] = function ()
+                    
+                end,
 
+                [1] = function ()
+                    
+                end,
+
+                default = function ()
+                    
+                end
+            })
         end
     }
 end
