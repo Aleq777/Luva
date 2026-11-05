@@ -5,12 +5,13 @@ _, _LUVA = dofile ("Luva/base.lua")
 
 
 do
-    ---@generic T
+    ---@generic TChild : Luva.Lang.Accessor<any, any>
+    ---@generic TField
     ---@class Luva.Lang.Accessor
-    ---@field public get fun(self: Luva.Lang.Accessor<T>): T
-    ---@field public set fun(self: Luva.Lang.Accessor<T>, value: T)
+    ---@field public get fun(self: TChild): TField
+    ---@field public set fun(self: TChild, value: TField)
     local __accessor
-    
+
     ---@class Luva.Lang.SecuredObject
     ---@field private __Type string
     ---@field private __Accessors table<string, Luva.Lang.Accessor<any>>
