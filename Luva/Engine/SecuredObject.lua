@@ -23,10 +23,11 @@ end
 
 
 
-
-_LUVA.SecuredObject = { }
-
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
+
+
+
+
 
 
 ---@generic T
@@ -52,76 +53,89 @@ local function _securedAction(obj, index, action, actionAccessor, value)
     end)
 end
 
----@type metatable
-_LUVA.SecuredObject.SecureMetatable = {
-    ---@param self Luva.Lang.SecuredObject
-    ---@param index any
-    ---@return any
-    ---@nodiscard
-    __index = function (self, index)
-        _securedAction(
-            self,
-            index,
-            function (field, val)
-                return field
-            end,
-            function (accessor, val)
-                return accessor:get()
-            end
-        )
+
+
+
+
+
+
+
+
+_LUVA.SecuredObject = {
+
+    ---@type metatable
+    SecureMetatable = {
+        ---@param self Luva.Lang.SecuredObject
+        ---@param index any
+        ---@return any
+        ---@nodiscard
+        __index = function (self, index)
+            _securedAction(
+                self,
+                index,
+                function (field, val)
+                    return field
+                end,
+                function (accessor, val)
+                    return accessor:get()
+                end
+            )
+        end,
+
+        ---@param self Luva.Lang.SecuredObject
+        ---@param index any
+        ---@param value any
+        __newindex = function (self, index, value)
+            _securedAction(
+                self,
+                index,
+                function (field, val)
+                    self[index] = val
+                end,
+                function (accessor, val)
+                    accessor:set(val)
+                end,
+                value
+            )
+        end
+    },
+
+
+    --- Overrides `obj` to become a SecuredObject <br />
+    --- This means that you cannot use not-defined fields <br />
+    ---@param obj table
+    ---@param accessors table<string, Luva.Lang.Accessor>|nil
+    ---@return Luva.Lang.SecuredObject obj
+    Secure = function (obj, accessors)
+        ---@cast obj Luva.Lang.SecuredObject
+        obj.__Type = "Luva.Lang.SecuredObject"  ---@diagnostic disable-line : invisible
+        obj.__Accessors = accessors or { }      ---@diagnostic disable-line : invisible
+        obj.__Enabled = true                    ---@diagnostic disable-line : invisible
+        obj.IsSecured = function (self)
+            return self.__Enabled   ---@diagnostic disable-line : invisible
+        end
+
+        setmetatable(obj, _LUVA.SecuredObject.SecureMetatable)
+
+        return obj
     end,
 
-    ---@param self Luva.Lang.SecuredObject
-    ---@param index any
-    ---@param value any
-    __newindex = function (self, index, value)
-        _securedAction(
-            self,
-            index,
-            function (field, val)
-                self[index] = val
-            end,
-            function (accessor, val)
-                accessor:set(val)
-            end,
-            value
-        )
-    end
+
+    --- Lets `func` use self object without Security <br />
+    --- <b>USING THIS FUNCTION IS NOT RECOMMENDED - LUVA ALREADY HANDLES EVERYTHING</b>
+    ---@param obj Luva.Lang.SecuredObject
+    ---@param func fun()
+    ---@return any|nil
+    Unsafe = function (obj, func)
+        obj.__Enabled = false   ---@diagnostic disable-line : invisible
+        setmetatable(obj, nil)
+            local result = func()
+        obj.__Enabled = true    ---@diagnostic disable-line : invisible
+        setmetatable(obj, _LUVA.SecuredObject.SecureMetatable)
+
+        return result
+    end,
 }
-
---- Overrides `obj` to become a SecuredObject <br />
---- This means that you cannot use not-defined fields <br />
----@param obj table
----@param accessors table<string, Luva.Lang.Accessor>|nil
----@return Luva.Lang.SecuredObject obj
-function _LUVA.SecuredObject.Secure(obj, accessors)
-    ---@cast obj Luva.Lang.SecuredObject
-    obj.__Type = "Luva.Lang.SecuredObject"  ---@diagnostic disable-line : invisible
-    obj.__Accessors = accessors or { }      ---@diagnostic disable-line : invisible
-    obj.__Enabled = true                    ---@diagnostic disable-line : invisible
-    obj.IsSecured = function (self)
-        return self.__Enabled   ---@diagnostic disable-line : invisible
-    end
-
-    setmetatable(obj, _LUVA.SecuredObject.SecureMetatable)
-
-    return obj
-end
-
-
---- Lets `func` use self object without Security
----@param obj Luva.Lang.SecuredObject
----@param func fun()
----@return any|nil
-function _LUVA.SecuredObject.Unsafe(obj, func)
-    obj.__Enabled = false   ---@diagnostic disable-line : invisible
-    setmetatable(obj, nil)
-        local result = func()
-    obj.__Enabled = true    ---@diagnostic disable-line : invisible
-    setmetatable(obj, _LUVA.SecuredObject.SecureMetatable)
-
-    return result
-end
 
 
 
