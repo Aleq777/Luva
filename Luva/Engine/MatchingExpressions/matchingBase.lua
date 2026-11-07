@@ -15,7 +15,7 @@ _LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH = "The value is 'default' in matching exp
 ---@nodiscard
 function _switch_match(value, builder, action)
     if value == "default" then
-        error()
+        error(_LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH)
     end
 
     local result = builder[value]
