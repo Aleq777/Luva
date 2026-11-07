@@ -9,3 +9,17 @@ do
     ---@field public CustomConstructor
     local __constructors
 end
+
+
+---@generic TInstance : Luva.Object
+---@param resultClass Luva.Type<TInstance>
+function _SetupConstructorBase(resultClass)
+    rawset(resultClass, "__Constructors", {
+        DefaultConstructor = nil,
+        DefaultCaller = nil,
+        BuildConstructor = nil,
+        CustomConstructor = nil
+    })
+end
+
+return _SetupConstructorBase

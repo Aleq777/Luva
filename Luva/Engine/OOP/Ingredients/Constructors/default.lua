@@ -7,15 +7,25 @@ do
     ---@alias Luva.Lang.PostDefaultConstructorCaller fun(self: TInstance)
     
     ---@generic TInstance : Luva.Object
-    ---@alias Luva.Lang.DefaultConstructor fun(self: Luva.Type): TInstance
+    ---@alias Luva.Lang.DefaultConstructor fun(class: Luva.Type): TInstance
 end
 
 
 ---@generic TInstance : Luva.Object
----@param resultClass Luva.Type<TInstance>
+---@param constructors Luva.Lang.ClassConstructors<TInstance>
 ---@param defaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
-function _SetupDefaultConstructorAndMaybeCaller(resultClass, defaultCaller)
+function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
 
+    constructors.DefaultConstructor = function (class)
+        ---@type Luva.Object
+        local instance = { }
+
+        
+    end
+
+    if defaultCaller then
+        constructors.DefaultCaller = defaultCaller
+    end
 end
 
 

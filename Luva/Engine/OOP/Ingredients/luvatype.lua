@@ -4,6 +4,7 @@
 do
     ---@generic TInstance : Luva.Object
     ---@class Luva.Type : Luva.Lang.SecuredObject
+    ---@field private __TypeMetatable metatable Joined with SecuredMetatable
     ---@field private __Prototype Luva.Lang.ClassPrototype
     ---@field private __Constructors Luva.Lang.ClassConstructors<TInstance>
     local __luvatype

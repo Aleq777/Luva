@@ -4,6 +4,8 @@
 _, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.prototype"
 _SetupPrototype = dofile ("Luva/Engine/OOP/Ingredients/prototype.lua")
+---@module "Luva.Engine.OOP.Ingredients.Constructors.base"
+_SetupConstructorBase = dofile ("Luva/Engine/OOP/Ingredients/Constructors/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.Constructors.default"
 _SetupDefaultConstructorAndMaybeCaller = dofile ("Luva/Engine/OOP/Ingredients/Constructors/default.lua")
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
@@ -34,16 +36,21 @@ class = function (classBuilder)
     local resultClass = { }     ---@diagnostic disable-line : missing-fields
 
     _LUVA.SecuredObject.Secure(resultClass)
+
     resultClass.__Kind = "Luva.Type"    ---@diagnostic disable-line : invisible
 
     if classBuilder.prototype then
         _SetupPrototype(resultClass, classBuilder.prototype)
 
-        _SetupDefaultConstructorAndMaybeCaller(resultClass, classBuilder.default)
-        _SetupBuildConstructor(resultClass, classBuilder.prototype)
+        _SetupConstructorBase(resultClass)
+
+        local constructors = resultClass.__Constructors ---@diagnostic disable-line : invisible
+
+        _SetupDefaultConstructorAndMaybeCaller(constructors, classBuilder.default)
+        _SetupBuildConstructor(constructors, classBuilder.prototype)
         
         if classBuilder.constructor then
-            _SetupConstructor(resultClass, classBuilder.constructor)
+            _SetupConstructor(constructors, classBuilder.constructor)
         end
     end
 
