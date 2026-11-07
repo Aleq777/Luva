@@ -2,6 +2,7 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.base"
+_, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.readonly"
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.MatchingExpressions.switch"
@@ -13,13 +14,39 @@ kindof = dofile ("Luva/Engine/kind.lua")
 do
     ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
     
-    ---@generic TInstance
+    ---@generic TInstance : Luva.Object
     ---@class Luva.Lang.ClassPrototype
     ---@field public Fields     table<Luva.Lang.Identifier, any>
     ---@field public Methods    table<Luva.Lang.Identifier, fun(self: TInstance, ...: nil|any[]): any|nil>
-    ---@field public Accessors  table<Luva.Lang.Identifier, Luva.Lang.Accessor>
+    ---@field public Accessors  table<Luva.Lang.Identifier, Luva.Lang.Accessor<TInstance, any>>
     ---@field public Readonlys  table<Luva.Lang.Identifier, Luva.Lang.Readonly<any>>
+    ---@field public GetByIdentifier fun(self: Luva.Lang.ClassPrototype<TInstance>, identifier: Luva.Lang.Identifier): any # if none, throws an error
+    ---@field public GetTable        fun(self: Luva.Lang.ClassPrototype<TInstance>, identifier: Luva.Lang.Identifier): table<Luva.Lang.Identifier, any> -- one of ClassPrototype.* fields
     local __prototype
+end
+
+_LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
+
+
+
+---@generic TInstance
+---@param classPrototype Luva.Lang.ClassPrototype<TInstance>
+---@param identifier Luva.Lang.Identifier
+---@param action fun(searchedTable: table<Luva.Lang.Identifier, any>, content: any): any
+---@return any
+---@nodiscard
+local function _searchThroughPrototypeObject(classPrototype, identifier, action)
+    for _, searchedTable in pairs(classPrototype) do
+
+        for id, content in pairs(searchedTable) do
+            if identifier == id then
+                return action(searchedTable, content)
+            end
+        end
+
+    end
+
+    error(_LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE)
 end
 
 
@@ -29,10 +56,24 @@ function _SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         Fields = { },
+        Readonlys = { },
         Methods = { },
         Accessors = { },
-        Readonlys = { },
-    })
+
+        GetByIdentifier = function (self, identifier)
+            return _searchThroughPrototypeObject(self, identifier, function (searchedTable, content)
+                return content
+            end)
+        end,
+
+        GetTable = function (self, identifier)
+            return _searchThroughPrototypeObject(self, identifier, function (searchTable, content)
+                return searchTable
+            end)
+        end
+
+    } --[[@as Luva.Lang.ClassPrototype<Luva.Object>]])
+
 
     local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
 
@@ -69,7 +110,7 @@ function _SetupPrototype(resultClass, prototypeBuilder)
                 prototype.Fields[identifier] = content
             end
 
-        } --[[@as table<type, function>]])
+        } --[[@as Luva.Lang.MatchingBaseBuilder<type, fun()>]])
     end
 
 end
