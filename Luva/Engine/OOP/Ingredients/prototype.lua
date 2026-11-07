@@ -51,7 +51,8 @@ local function _searchThroughPrototypeObject(classPrototype, identifier, action)
 end
 
 
----@param resultClass Luva.Type
+---@generic TInstance : Luva.Object
+---@param resultClass Luva.Type<TInstance>
 ---@param prototypeBuilder Luva.Lang.PrototypeBuilder
 function _SetupPrototype(resultClass, prototypeBuilder)
 

@@ -9,9 +9,10 @@ _SetupDefaultConstructorAndMaybeCaller = dofile ("Luva/Engine/OOP/Ingredients/Co
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
 
 do
+    ---@generic TInstance : Luva.Object
     ---@class Luva.Lang.ClassBuilder
     ---@field public prototype Luva.Lang.PrototypeBuilder|nil
-    ---@field public default Luva.Lang.PostDefaultConstructorCaller|nil
+    ---@field public default Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
     ---@field public constructor Luva.Lang.ConstructorBuilder|nil
     ---@field public destructor Luva.Lang.DestructorBuilder|nil
     local __classBuilder
@@ -22,12 +23,14 @@ end
 
 
 --- Creates a class
+---@generic TInstance : Luva.Object
 ---@param classBuilder Luva.Lang.ClassBuilder
----@return Luva.Type
+---@return Luva.Type<TInstance>
 ---@nodiscard
 class = function (classBuilder)
 
-    ---@type Luva.Type
+    ---@generic TInstance : Luva.Object
+    ---@type Luva.Type<TInstance>
     local resultClass = { }     ---@diagnostic disable-line : missing-fields
 
     _LUVA.SecuredObject.Secure(resultClass)
