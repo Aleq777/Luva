@@ -4,14 +4,16 @@
 _, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.prototype"
 _SetupPrototype = dofile ("Luva/Engine/OOP/Ingredients/prototype.lua")
+---@module "Luva.Engine.OOP.Ingredients.Constructors.default"
+_SetupDefaultConstructorAndMaybeCaller = dofile ("Luva/Engine/OOP/Ingredients/Constructors/default.lua")
+---@module "Luva.Engine.OOP.Ingredients.luvatype"
 
 do
-    ---@class Luva.Type : Luva.Lang.SecuredObject
-    ---@field private __Prototype Luva.Lang.ClassPrototype
-    local __type
-
     ---@class Luva.Lang.ClassBuilder
     ---@field public prototype Luva.Lang.PrototypeBuilder|nil
+    ---@field public default Luva.Lang.PostDefaultConstructorCaller|nil
+    ---@field public constructor Luva.Lang.ConstructorBuilder|nil
+    ---@field public destructor Luva.Lang.DestructorBuilder|nil
     local __classBuilder
 end
 
@@ -33,6 +35,13 @@ class = function (classBuilder)
 
     if classBuilder.prototype then
         _SetupPrototype(resultClass, classBuilder.prototype)
+
+        _SetupDefaultConstructorAndMaybeCaller(resultClass, classBuilder.default)
+        _SetupBuildConstructor(resultClass, classBuilder.prototype)
+        
+        if classBuilder.constructor then
+            _SetupConstructor(resultClass, classBuilder.constructor)
+        end
     end
 
     return resultClass
