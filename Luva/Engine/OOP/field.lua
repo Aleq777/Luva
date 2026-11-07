@@ -2,6 +2,7 @@
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.Engine.SecuredObject"
 _, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
+---@module "Luva.Engine.OOP.Ingredients.accessor"
 
 
 

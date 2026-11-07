@@ -1,5 +1,7 @@
 
 ---@module "Luva.base"
+---@module "Luva.Engine.OOP.Ingredients.readonly"
+---@module "Luva.Engine.OOP.Ingredients.accessor"
 
 do
     ---@class Luva.Lang.PrototypeBuilder

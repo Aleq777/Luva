@@ -1,17 +1,11 @@
 
 ---@module "Luva.base"
 _, _LUVA = dofile ("Luva/base.lua")
-
+---@module "Luva.Engine.OOP.Ingredients.accessor"
+---@module "Luva.Engine.kind"
 
 
 do
-    ---@generic TChild : Luva.Lang.Accessor<any, any>
-    ---@generic TField
-    ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind
-    ---@field public get nil|fun(self: TChild): TField
-    ---@field public set nil|fun(self: TChild, value: TField)
-    local __accessor
-
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
     ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<any>>
     ---@field private __Enabled boolean
