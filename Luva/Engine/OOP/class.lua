@@ -9,6 +9,7 @@ do
     local __type
 
     ---@class Luva.Lang.ClassBuilder
+    ---@field public prototype Luva.Lang.PrototypeBuilder|nil
     local __classBuilder
 end
 
@@ -28,11 +29,21 @@ class = function (classBuilder)
     _LUVA.SecuredObject.Secure(resultClass)
     resultClass.__Type = "Luva.Type"    ---@diagnostic disable-line : invisible
 
+    if classBuilder.prototype then
+        _SetupPrototype(resultClass, classBuilder.prototype)
+    end
+
     return resultClass
 end
 
 
+Human = class {
 
+    prototype = {
+
+    }
+
+}
 
 
 return class
