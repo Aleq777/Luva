@@ -37,13 +37,5 @@ class = function (classBuilder)
 end
 
 
-Human = class {
-
-    prototype = {
-
-    }
-
-}
-
 
 return class

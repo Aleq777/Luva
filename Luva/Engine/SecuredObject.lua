@@ -8,8 +8,8 @@ do
     ---@generic TChild : Luva.Lang.Accessor<any, any>
     ---@generic TField
     ---@class Luva.Lang.Accessor
-    ---@field public get fun(self: TChild): TField
-    ---@field public set fun(self: TChild, value: TField)
+    ---@field public get nil|fun(self: TChild): TField
+    ---@field public set nil|fun(self: TChild, value: TField)
     local __accessor
 
     ---@class Luva.Lang.SecuredObject
