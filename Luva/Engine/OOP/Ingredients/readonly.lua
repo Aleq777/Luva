@@ -6,6 +6,7 @@
 do
     ---@generic T
     ---@class Luva.Lang.Readonly<T> : Luva.Lang.StrictKind
+    ---@field private __Value T
     local __readonly
 end
 

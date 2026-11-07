@@ -1,7 +1,7 @@
 
 
 do
-    ---@generic TChild : Luva.Lang.Accessor<any, any>
+    ---@generic TChild : Luva.Object
     ---@generic TField
     ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind
     ---@field public get nil|fun(self: TChild): TField

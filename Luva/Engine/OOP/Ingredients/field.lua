@@ -16,9 +16,10 @@ _LUVA.Errors.EMPTY_ACCESSOR = "Accessor requires at least one function (get and/
 
 --- Creates an accessor field <br />
 --- Custom getters and setters
----@generic T
+---@generic TChild : Luva.Object
+---@generic TField
 ---@param accessorBuilder Luva.Lang.Accessor At least one function required (get and/or set)
----@return Luva.Lang.Accessor<T>
+---@return Luva.Lang.Accessor<TChild, TField>
 ---@nodiscard
 field = function (accessorBuilder)
     local atLeastOne = false
