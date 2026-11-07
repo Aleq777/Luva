@@ -31,6 +31,7 @@ field = function (accessorBuilder)
     end
 
     if atLeastOne then
+        accessorBuilder.__Kind = "field"    ---@diagnostic disable-line : invisible
         return accessorBuilder
     else
         error(_LUVA.Errors.EMPTY_ACCESSOR)

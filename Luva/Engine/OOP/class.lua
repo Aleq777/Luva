@@ -29,7 +29,7 @@ class = function (classBuilder)
     local resultClass = { }     ---@diagnostic disable-line : missing-fields
 
     _LUVA.SecuredObject.Secure(resultClass)
-    resultClass.__Type = "Luva.Type"    ---@diagnostic disable-line : invisible
+    resultClass.__Kind = "Luva.Type"    ---@diagnostic disable-line : invisible
 
     if classBuilder.prototype then
         _SetupPrototype(resultClass, classBuilder.prototype)

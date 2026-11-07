@@ -7,13 +7,12 @@ _, _LUVA = dofile ("Luva/base.lua")
 do
     ---@generic TChild : Luva.Lang.Accessor<any, any>
     ---@generic TField
-    ---@class Luva.Lang.Accessor
+    ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind
     ---@field public get nil|fun(self: TChild): TField
     ---@field public set nil|fun(self: TChild, value: TField)
     local __accessor
 
-    ---@class Luva.Lang.SecuredObject
-    ---@field private __Type string
+    ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
     ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<any>>
     ---@field private __Enabled boolean
     ---@field public IsSecured fun(self: Luva.Lang.SecuredObject): boolean
@@ -109,11 +108,11 @@ _LUVA.SecuredObject = {
     --- Overrides `obj` to become a SecuredObject <br />
     --- This means that you cannot use not-defined fields <br />
     ---@param obj table
-    ---@param accessors table<string, Luva.Lang.Accessor>|nil
+    ---@param accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor>|nil
     ---@return Luva.Lang.SecuredObject obj
     Secure = function (obj, accessors)
         ---@cast obj Luva.Lang.SecuredObject
-        obj.__Type = "Luva.Lang.SecuredObject"  ---@diagnostic disable-line : invisible
+        obj.__Kind = "Luva.Lang.SecuredObject"  ---@diagnostic disable-line : invisible
         obj.__Accessors = accessors or { }      ---@diagnostic disable-line : invisible
         obj.__Enabled = true                    ---@diagnostic disable-line : invisible
         obj.IsSecured = function (self)
