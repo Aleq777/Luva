@@ -2,10 +2,12 @@
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.Engine.SecuredObject"
 _, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
-
+---@module "Luva.Engine.OOP.Ingredients.prototype"
+_SetupPrototype = dofile ("Luva/Engine/OOP/Ingredients/prototype.lua")
 
 do
     ---@class Luva.Type : Luva.Lang.SecuredObject
+    ---@field private __Prototype Luva.Lang.ClassPrototype
     local __type
 
     ---@class Luva.Lang.ClassBuilder

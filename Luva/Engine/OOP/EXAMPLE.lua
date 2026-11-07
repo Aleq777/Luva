@@ -1,5 +1,5 @@
 
-
+---@diagnostic disable # only examples here
 
 
 Human = class {

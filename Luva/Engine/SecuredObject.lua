@@ -14,7 +14,7 @@ do
 
     ---@class Luva.Lang.SecuredObject
     ---@field private __Type string
-    ---@field private __Accessors table<string, Luva.Lang.Accessor<any>>
+    ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<any>>
     ---@field private __Enabled boolean
     ---@field public IsSecured fun(self: Luva.Lang.SecuredObject): boolean
     local __securedObject
