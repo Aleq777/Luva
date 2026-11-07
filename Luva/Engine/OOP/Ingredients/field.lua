@@ -32,7 +32,7 @@ field = function (accessorBuilder)
     end
 
     if atLeastOne then
-        accessorBuilder.__Kind = "field"    ---@diagnostic disable-line : invisible
+        accessorBuilder.__Kind = "accessor"    ---@diagnostic disable-line : invisible
         return accessorBuilder
     else
         error(_LUVA.Errors.EMPTY_ACCESSOR)
