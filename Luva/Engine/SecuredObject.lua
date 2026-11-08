@@ -120,11 +120,11 @@ end
 _LUVA.SecuredObject = {
 
     --- Creates an secure metatable
-    ---@param operators metatable
-    ---@return metatable
+    ---@param operators Luva.Lang.PseudoMetatable
+    ---@return Luva.Lang.PseudoMetatable
     ---@nodiscard
     GetSecureMetatable = function (operators)
-        ---@type metatable
+        ---@type Luva.Lang.PseudoMetatable
         local result = {
             ---@generic TChild : Luva.Object
             ---@param self Luva.Lang.SecuredObject<TChild, any>
@@ -150,7 +150,7 @@ _LUVA.SecuredObject = {
 
     --- Secures an object
     ---@param obj table
-    ---@param operators metatable
+    ---@param operators Luva.Lang.PseudoMetatable
     Secure = function (obj, operators)
         local meta = _LUVA.SecuredObject.GetSecureMetatable(operators)
 
