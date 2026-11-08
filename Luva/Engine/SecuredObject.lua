@@ -7,16 +7,19 @@ _, _LUVA = dofile ("Luva/base.lua")
 _LUVA.Utils = dofile ("Luva/Engine/utils.lua")
 
 do
+    ---@generic TChild
     ---@class Luva.Lang.Security
-    ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<any>>
+    ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<TChild, any>>
     ---@field public IsEnabled boolean
+    ---@field public AddAccessor fun(self: Luva.Lang.Security, identifier: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<TChild, any>)
     local __security
-    
+
+    ---@generic TChild
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
     ---@field protected IsSecured fun(self: Luva.Lang.SecuredObject): boolean
     ---@field protected AddMetamethod fun(self: Luva.Lang.SecuredObject, metaname: Luva.Lang.Identifier, metamethod: function)
     ---@field protected UpdateMetatable fun(self: Luva.Lang.SecuredObject)
-    ---@field private __Security Luva.Lang.Security
+    ---@field private __Security Luva.Lang.Security<TChild, any>
     ---@field private __Metatable metatable
     local __securedObject
 end
@@ -32,7 +35,7 @@ _LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use empty in
 
 ---@generic TChild : Luva.Object
 ---@generic TField
----@param obj Luva.Lang.SecuredObject
+---@param obj Luva.Lang.SecuredObject<TChild>
 ---@param index any
 ---@param value TField
 ---@param notNil boolean
@@ -62,8 +65,8 @@ local function _fieldBase(obj, index, value, notNil, action, actionAccessor)
     error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
 end
 
-
----@param obj Luva.Lang.SecuredObject
+---@generic TChild
+---@param obj Luva.Lang.SecuredObject<TChild>
 ---@param index any
 ---@param hasAccessor boolean|nil
 ---@return any
@@ -82,7 +85,8 @@ local function _fieldGet(obj, index, hasAccessor)
     end, acc)
 end
 
----@param obj Luva.Lang.SecuredObject
+---@generic TChild
+---@param obj Luva.Lang.SecuredObject<TChild>
 ---@param index any
 ---@param value any
 ---@param hasAccessor boolean|nil
@@ -177,19 +181,20 @@ _LUVA.SecuredObject = {
         },
 
         -- can have instances
+        -- methods (static) are getters
         ClassNonStatic = {
             ---@param self Luva.Lang.SecuredObject
             ---@param index any
             ---@return any
             __index = function (self, index)
-                return _fieldGet(self, index)
+                return _fieldGet(self, index, true)
             end,
 
             ---@param self Luva.Lang.SecuredObject
             ---@param index any
             ---@param value any
             __newindex = function (self, index, value)
-                _fieldSet(self, index, value)
+                _fieldSet(self, index, value, true)
             end,
 
             ---@generic TChild : Luva.Object
@@ -221,9 +226,6 @@ _LUVA.SecuredObject = {
 
         _LUVA.Utils.SafeInjectRef(meta, operators)
 
-        -- Zmień:
-        -- Ma szukać akcesorów w typie za pomocą typeof(obj).__Prototype.Accessors!!!
-        -- Koniec z akcesorami w SecuredObject
         obj.__Security.Accessors = accessors    ---@diagnostic disable-line : invisible
 
         _secure(obj, meta)
@@ -243,11 +245,12 @@ _LUVA.SecuredObject = {
     ---@param func fun()
     ---@return any|nil
     Unsafe = function (obj, func)
-        obj.__Enabled = false   ---@diagnostic disable-line : invisible
+        local security = obj.__Security ---@diagnostic disable-line : invisible
         setmetatable(obj, nil)
+        security.IsEnabled = false
             local result = func()
-        obj.__Enabled = true    ---@diagnostic disable-line : invisible
-        setmetatable(obj, _LUVA.SecuredObject.SecureMetatable)
+        setmetatable(obj, obj.__Metatable)  ---@diagnostic disable-line : invisible
+        security.IsEnabled = true
 
         return result
     end,
