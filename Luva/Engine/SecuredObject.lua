@@ -82,12 +82,7 @@ local function _secureBase(obj, index, action, actionAcc, pseudoName, actionPseu
     error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
 end
 
--- ---@param index any
--- ---@return string
--- ---@nodiscard
--- local function _undefField(index)
---     return _LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index)
--- end
+
 
 ---@generic TChild : Luva.Object
 ---@param obj Luva.Lang.SecuredObject<TChild>
