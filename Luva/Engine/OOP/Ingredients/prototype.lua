@@ -21,6 +21,7 @@ do
     ---@field public Fields table<string, any> All instances copy this
     ---@field public Metatable Luva.Lang.PseudoMetatable All instances refer to this
     ---@field public Accessors table<string, Luva.Lang.Accessor<TChild, any>> All instances refer to this
+    ---@field public Readonlys table<string, Luva.Lang.Readonly<any>> All instances copy this and convert to local accessor
     local __prototype
 end
 
@@ -36,7 +37,8 @@ function _SetupPrototype(resultClass, prototypeBuilder)
     rawset(resultClass, "__Prototype", {
         Fields = { },
         Metatable = { },
-        Accessors = { }
+        Accessors = { },
+        Readonlys = { }
     } --[[@as Luva.Lang.ClassPrototype]])
 
     local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
@@ -50,12 +52,12 @@ function _SetupPrototype(resultClass, prototypeBuilder)
                 switch (kind, {
                     ["accessor"] = function ()
                         ---@cast content Luva.Lang.Accessor<Luva.Object, any>
-                        prototype.Accessors[identifier] = content
+                        resultClass.__Prototype.Accessors[identifier] = content ---@diagnostic disable-line : invisible
                     end,
 
                     ["readonly"] = function ()
                         ---@cast content Luva.Lang.Readonly<any>
-                        prototype.Readonlys[identifier] = content
+                        resultClass.__Prototype.Readonlys[identifier] = content ---@diagnostic disable-line : invisible
                     end,
 
                     default = function ()
@@ -67,7 +69,7 @@ function _SetupPrototype(resultClass, prototypeBuilder)
 
             ["function"] = function ()
                 ---@cast content function
-                prototype.Methods[identifier] = content
+                resultClass.__Prototype.Accessors[identifier] = _MethodToAccessor(content)  ---@diagnostic disable-line : invisible
             end,
 
             default = function ()
