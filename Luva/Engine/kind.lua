@@ -1,6 +1,11 @@
 
 ---@diagnostic disable : lowercase-global
 
+---@module "Luva.Engine.utils"
+_LUVA = dofile ("Luva/Engine/utils.lua")
+---@module "Luva.Engine.MatchingExpressions.switch"
+switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+
 do
     ---@alias Luva.Lang.TypeTypes
     ---| "class"
