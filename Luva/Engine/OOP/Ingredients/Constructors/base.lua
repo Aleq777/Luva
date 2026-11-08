@@ -5,8 +5,8 @@ do
     ---@class Luva.Lang.ClassConstructors
     ---@field public DefaultConstructor Luva.Lang.DefaultConstructor<TInstance>
     ---@field public DefaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>
-    ---@field public BuildConstructor
-    ---@field public CustomConstructor
+    ---@field public BuildConstructor Luva.Lang.BuildConstructor<TInstance>
+    ---@field public CustomConstructor Luva.Lang.CustomConstructor<TInstance>
     local __constructors
 end
 
