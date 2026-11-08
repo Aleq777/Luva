@@ -72,6 +72,21 @@ _LUVA.Utils = {
             obj[k] = v
         end)
     end,
+
+    --- Does table `tab` have `value` (value)?
+    ---@param tab table
+    ---@param value any
+    ---@return boolean
+    ---@nodiscard
+    Has = function (tab, value)
+        for k, v in pairs(tab) do
+            if v == value then
+                return true
+            end
+        end
+
+        return false
+    end
 }
 
 

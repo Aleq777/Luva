@@ -8,6 +8,7 @@ _LUVA, _switch_match = dofile ("Luva/Engine/MatchingExpressions/matchingBase.lua
 ---@generic T
 ---@param value T
 ---@param switchBuilder Luva.Lang.MatchingBaseBuilder<T, fun(): any|nil>
+---@return any|nil
 switch = function (value, switchBuilder)
     return _switch_match(value, switchBuilder, function (result)
         return result()
