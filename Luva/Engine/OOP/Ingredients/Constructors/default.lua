@@ -47,5 +47,11 @@ function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
     end
 end
 
+Zrobić
+Przede wszystkim, niestety instancje domyslnie nie szukają wszędzie (np. w klasie)
+możliwych referencji. Zmienić to poprzez pseudometametodę _index, w którą będzie wciśnięty
+zdefiniowany (ewentualnie) przez użytkownika _index (aby używać [] jak w arrayach)
+Trochę overengineering więc pomyśleć nad możliwym uproszczeniem mechanizmu
+
 
 return _SetupDefaultConstructorAndMaybeCaller
