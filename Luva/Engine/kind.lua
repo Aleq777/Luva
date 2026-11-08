@@ -17,7 +17,7 @@ do
     --- It tells what kind of expression is that.
     --- Types are data-interpretation
     ---@class Luva.Lang.StrictKind
-    ---@field private __Kind string
+    ---@field private __Kind string|nil
     local __strictType
 
     ---@alias Luva.Lang.Keyword Luva.Lang.StrictKind

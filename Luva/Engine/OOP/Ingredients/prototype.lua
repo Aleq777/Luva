@@ -15,40 +15,17 @@ kindof = dofile ("Luva/Engine/kind.lua")
 do
     ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
     
-    ---@generic TInstance : Luva.Object
+
+    ---@generic TChild : Luva.Object
     ---@class Luva.Lang.ClassPrototype
-    ---@field public Fields     table<Luva.Lang.Identifier, any>
-    ---@field public Methods    table<Luva.Lang.Identifier, fun(self: TInstance, ...: nil|any[]): any|nil>
-    ---@field public Accessors  table<Luva.Lang.Identifier, Luva.Lang.Accessor<TInstance, any>>
-    ---@field public Readonlys  table<Luva.Lang.Identifier, Luva.Lang.Readonly<any>>
-    ---@field public GetByIdentifier fun(self: Luva.Lang.ClassPrototype<TInstance>, identifier: Luva.Lang.Identifier): any # if none, throws an error
-    ---@field public GetTable        fun(self: Luva.Lang.ClassPrototype<TInstance>, identifier: Luva.Lang.Identifier): table<Luva.Lang.Identifier, any> -- one of ClassPrototype.* fields
+    ---@field public Fields table<string, any> All instances copy this
+    ---@field public Metatable Luva.Lang.PseudoMetatable All instances refer to this
+    ---@field public Accessors table<string, Luva.Lang.Accessor<TChild, any>> All instances refer to this
     local __prototype
 end
 
 _LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
 
-
-
----@generic TInstance
----@param classPrototype Luva.Lang.ClassPrototype<TInstance>
----@param identifier Luva.Lang.Identifier
----@param action fun(searchedTable: table<Luva.Lang.Identifier, any>, content: any): any
----@return any
----@nodiscard
-local function _searchThroughPrototypeObject(classPrototype, identifier, action)
-    for _, searchedTable in pairs(classPrototype) do
-
-        for id, content in pairs(searchedTable) do
-            if identifier == id then
-                return action(searchedTable, content)
-            end
-        end
-
-    end
-
-    error(_LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE)
-end
 
 
 ---@generic TInstance : Luva.Object
@@ -58,24 +35,9 @@ function _SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         Fields = { },
-        Readonlys = { },
-        Methods = { },
-        Accessors = { },
-
-        GetByIdentifier = function (self, identifier)
-            return _searchThroughPrototypeObject(self, identifier, function (searchedTable, content)
-                return content
-            end)
-        end,
-
-        GetTable = function (self, identifier)
-            return _searchThroughPrototypeObject(self, identifier, function (searchTable, content)
-                return searchTable
-            end)
-        end
-
-    } --[[@as Luva.Lang.ClassPrototype<Luva.Object>]])
-
+        Metatable = { },
+        Accessors = { }
+    } --[[@as Luva.Lang.ClassPrototype]])
 
     local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
 
