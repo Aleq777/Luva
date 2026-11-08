@@ -208,4 +208,4 @@ _LUVA.SecuredObject = {
 }
 
 
-return _LUVA
+return _LUVA.SecuredObject
