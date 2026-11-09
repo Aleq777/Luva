@@ -2,6 +2,9 @@
 
 ---@alias Luva.Lang.Identifier string name for fields etc
 
+---@alias Luva.Lang.Dynamic boolean|string|number|integer|table|function|metatable
+
+
 
 --- Luva things to use publicly
 Luva = { }

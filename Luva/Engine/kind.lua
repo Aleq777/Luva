@@ -7,7 +7,7 @@ _LUVA = dofile ("Luva/Engine/utils.lua")
 switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
 
 do
-    ---@alias Luva.Lang.TypeTypes
+    ---@alias Luva.Lang.KindTypes
     ---| "class"
     ---| "struct"
     ---| "record"

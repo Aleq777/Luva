@@ -9,13 +9,7 @@ _, _LUVA = dofile ("Luva/base.lua")
 _LUVA.Utils = dofile ("Luva/Engine/utils.lua")
 
 do
-    ---@generic TChild
-    ---@class Luva.Lang.Security
-    ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<TChild, any>>
-    ---@field public IsEnabled boolean
-    local __security
-    
-    ---@alias Luva.Lang.SafeMetaNames # for Luva.Lang.PseudoMetatable
+    ---@alias Luva.Lang.SafePseudoMetaNames # for Luva.Lang.PseudoMetatable
     ---| "__add"
     ---| "__sub"
     ---| "__mul"
@@ -28,8 +22,8 @@ do
     ---| "__le"
     ---| "__concat"
     ---| "__len"
-    ---| "_index" is a part of __index secured
-    ---| "_newindex" is a part of __newindex secured
+    ---| "_index" user defined []
+    ---| "_newindex" user defined []=
     ---| "__call"
 
     ---@class Luva.Lang.PseudoMetatable : metatable
@@ -37,24 +31,112 @@ do
     ---@field public _newindex nil|fun(self: table, index: any, value: any)
     local __pseudo
 
-    ---@generic TChild
+    -- -- -@field private __Security Luva.Lang.Security
+    -- ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
+    -- ---@field protected IsSecured fun(self: Luva.Lang.SecuredObject): boolean
+    -- ---@field protected AddMetamethod fun(self: Luva.Lang.SecuredObject, metaname: Luva.Lang.SafePseudoMetaNames, metamethod: function)
+    -- ---@field protected AddAccessor fun(self: Luva.Lang.SecuredObject, identifier: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object, any>)
+    -- ---@field protected UpdateMetatable fun(self: Luva.Lang.SecuredObject)
+    -- ---@field private __Metatable Luva.Lang.PseudoMetatable
+    -- ---@field private __IsEnabled boolean
+    -- ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object, any>>
+    -- ---@field private __ExternAccessorsRef (table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object, any>>)[]
+    -- ---@field private __Readonlys table<Luva.Lang.Identifier, any>
+    -- local __securedObject
+
+
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
-    ---@field protected IsSecured fun(self: Luva.Lang.SecuredObject<TChild>): boolean
-    ---@field protected AddMetamethod fun(self: Luva.Lang.SecuredObject<TChild>, metaname: Luva.Lang.SafeMetaNames, metamethod: function)
-    ---@field protected AddAccessor fun(self: Luva.Lang.SecuredObject<TChild>, identifier: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<TChild, any>)
-    ---@field protected UpdateMetatable fun(self: Luva.Lang.SecuredObject)
-    ---@field private __Security Luva.Lang.Security<TChild, any>
     ---@field private __Metatable Luva.Lang.PseudoMetatable
+    ---@field private __Constants table<Luva.Lang.Identifier, Luva.Lang.Dynamic>
+    ---@field private __Fields table<Luva.Lang.Identifier, Luva.Lang.Dynamic>
+    ---@field private __Methods table<Luva.Lang.Identifier, function>
+    ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor>
+    ---@field private __Generics nil|table<Luva.Lang.Identifier, Luva.Type|nil>
+    ---@field private __Externs nil|table<Luva.Lang.Identifier, Luva.Lang.Dynamic>[]
     local __securedObject
 end
 
-
+-- Searching for fields
+-- 1. Constants
+-- 2. Fields
+-- 3. Methods
+-- 4. Accessors
+-- 5. Generics
+-- 6. Externs
+-- 7. User-defined (__Metatable._index / __Metatable._newindex)
 
 
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
 _LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use empty instead"
 
+
+
+_LUVA.SecuredObject = {
+
+    ---@type table<string, metatable>
+    Metatables = {
+        StaticClass = {
+            ---@param self Luva.Lang.SecuredObject
+            ---@param index Luva.Lang.Dynamic
+            __index = function (self, index)
+                local constant = self.__Constants[index]    ---@diagnostic disable-line : invisible
+                if constant then
+                    return constant
+                end
+
+                local field = self.__Fields[index]  ---@diagnostic disable-line : invisible
+                if field then
+                    return field
+                end
+
+                local method = self.__Methods[index]    ---@diagnostic disable-line : invisible
+                ---@cast method function
+                if method then
+                    return method
+                end
+
+
+            end,
+
+            __newindex = function (self, index, value)
+                
+            end
+        },
+
+        TemplateClass = {
+
+        },
+
+        InstanceClass = {
+
+        },
+
+        Instance = {
+
+        }
+    },
+
+    --- Secures an object
+    ---@param obj table
+    Secure = function (obj)
+
+        _LUVA.Utils.SafeInjectRef(obj, {
+            __Metatable = { },
+            __Constants = { },
+            __Fields = { },
+            __Methods = { },
+            __Accessors = { },
+            __Externs = { },
+            __Generics = { }
+        } --[[@as Luva.Lang.SecuredObject]])
+
+    end
+
+}
+
+
+--[[
 
 ---@generic TChild : Luva.Object
 ---@param obj Luva.Lang.SecuredObject<TChild>
@@ -181,12 +263,12 @@ _LUVA.SecuredObject = {
                 Accessors = { },
 
                 IsEnabled = true
-            } --[[@as Luva.Lang.Security]],
+            } --[[@as Luva.Lang.Security]]--[[,
 
             __Metatable = meta,
 
             __Kind = "Luva.Lang.SecuredObject"
-        } --[[@as Luva.Lang.SecuredObject]])
+        } --[[@as Luva.Lang.SecuredObject]]--[[)
         obj:UpdateMetatable()  ---@diagnostic disable-line : invisible
     end,
 
@@ -209,3 +291,4 @@ _LUVA.SecuredObject = {
 
 
 return _LUVA.SecuredObject
+]]

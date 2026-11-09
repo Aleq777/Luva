@@ -14,7 +14,7 @@ kindof = dofile ("Luva/Engine/kind.lua")
 
 do
     ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
-    
+
 
     ---@generic TChild : Luva.Object
     ---@class Luva.Lang.ClassPrototype

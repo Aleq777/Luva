@@ -5,7 +5,7 @@
 do
     ---@generic TInstance : Luva.Object
     ---@alias Luva.Lang.PostDefaultConstructorCaller fun(self: TInstance)
-    
+
     ---@generic TInstance : Luva.Object
     ---@alias Luva.Lang.DefaultConstructor fun(class: Luva.Type): TInstance
 end
