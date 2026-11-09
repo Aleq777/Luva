@@ -50,7 +50,7 @@ do
     ---@field private __Constants table<Luva.Lang.Identifier, Luva.Lang.Dynamic>
     ---@field private __Fields table<Luva.Lang.Identifier, Luva.Lang.Dynamic>
     ---@field private __Methods table<Luva.Lang.Identifier, function>
-    ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor>
+    ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
     ---@field private __Generics nil|table<Luva.Lang.Identifier, Luva.Type|nil>
     ---@field private __Externs nil|table<Luva.Lang.Identifier, Luva.Lang.Dynamic>[]
     local __securedObject
@@ -66,9 +66,12 @@ end
 -- 7. User-defined (__Metatable._index / __Metatable._newindex)
 
 
-
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
 _LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use empty instead"
+_LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or readonly value"
+_LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is readonly)"
+_LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's readonly or write only)"
+_LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
 
 
 
@@ -85,9 +88,9 @@ _LUVA.SecuredObject = {
                     return constant
                 end
 
-                local field = self.__Fields[index]  ---@diagnostic disable-line : invisible
-                if field then
-                    return field
+                local _field = self.__Fields[index]  ---@diagnostic disable-line : invisible
+                if _field then
+                    return _field
                 end
 
                 local method = self.__Methods[index]    ---@diagnostic disable-line : invisible
@@ -96,16 +99,135 @@ _LUVA.SecuredObject = {
                     return method
                 end
 
+                local accessor = self.__Accessors[index]    ---@diagnostic disable-line : invisible
+                ---@cast accessor Luva.Lang.Accessor<Luva.Object>
+                if accessor then
+                    if accessor.get then
+                        return accessor:get()
+                    else
+                        error(_LUVA.Errors.NO_GET_OR_SET)
+                    end
+                end
 
+                local generics = self.__Generics    ---@diagnostic disable-line : invisible
+                if generics then
+                    local generic = generics[index]
+
+                    if generic then
+                        return generic
+                    end
+                end
+
+                local externs = self.__Externs  ---@diagnostic disable-line : invisible
+                if externs then
+                    for _, v in ipairs(externs) do
+                        for identifier, value in pairs(v) do
+                            if index == identifier then
+                                return value
+                            end
+                        end
+                    end
+                end
+
+                local userDef = self.__Metatable._index ---@diagnostic disable-line : invisible
+                if userDef then
+                    return userDef(self, index)
+                end
+
+                error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
             end,
 
+            ---@param self Luva.Lang.SecuredObject
+            ---@param index Luva.Lang.Dynamic
+            ---@param value Luva.Lang.Dynamic
             __newindex = function (self, index, value)
-                
+                if self.__Constants[index] then ---@diagnostic disable-line : invisible
+                    error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
+                elseif self.__Methods[index] then   ---@diagnostic disable-line : invisible
+                    error(_LUVA.Errors.TRIED_MODIFY_METHOD)
+                elseif self.__Generics and self.__Generics[index] then  ---@diagnostic disable-line : invisible
+                    error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
+                end
+
+                local fields = self.__Fields  ---@diagnostic disable-line : invisible
+                if fields[index] ~= nil then
+                    fields[index] = value
+                    return
+                end
+
+                ---@type Luva.Lang.Accessor<Luva.Object>
+                local accessor = self.__Accessors[index]    ---@diagnostic disable-line : invisible
+                if accessor then
+                    if accessor.set then
+                        accessor:set(value)
+                        return
+                    else
+                        error(_LUVA.Errors.NO_GET_OR_SET)
+                    end
+                end
+
+                local externs = self.__Externs  ---@diagnostic disable-line : invisible
+                if externs then
+                    for _, v in ipairs(externs) do
+                        for identifier, _ in pairs(v) do
+                            if index == identifier then
+                                v[identifier] = value
+                                return
+                            end
+                        end
+                    end
+                end
+
+                local userDef = self.__Metatable._newindex  ---@diagnostic disable-line : invisible
+                if userDef then
+                    userDef(self, index, value)
+                    return
+                end
+
+                error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
             end
         },
 
         TemplateClass = {
+            ---@param self Luva.TemplateType
+            ---@param index Luva.Type|Luva.Type[]
+            ---@return Luva.Type
+            ---@nodiscard
+            __index = function (self, index)
+                local templ = self.__Template   ---@diagnostic disable-line : invisible
+                ---@type Luva.Type[]
+                local filledTemplate = { }
+                
+                if #templ == 1 then -- only 1 generic type, accept template[T] and template[{T}]
+                    -- if array
+                    if kindof (index) == "lua" then
+                        index = index[1]
+                    end
 
+                    ---@cast index -Luva.Type[]
+                    table.insert(filledTemplate, index)
+                else -- many generic types, accept only template[{...}]
+                    -- array
+                    if kindof (index) == "lua" then
+                        for _, v in ipairs(index) do
+                            table.insert(filledTemplate, v)
+                        end
+                    else -- single type - error
+                        error(_LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES)
+                    end
+                end
+
+                -- search for existing
+                local generatedClasses = self.__GeneratedClasses    ---@diagnostic disable-line : invisible
+                for existingTemplate, existingType in pairs(generatedClasses) do
+                    if _LUVA.Utils.IsSameByValue(existingTemplate, filledTemplate) then
+                        return existingType
+                    end
+                end
+
+                -- generate a new type
+                generatedClasses[filledTemplate] = 
+            end
         },
 
         InstanceClass = {

@@ -30,7 +30,7 @@ end
 ---@nodiscard
 kindof = function (expr)
     local basicType = "Lua"
-    return switch(type (expr), {
+    return switch (type (expr), {
         ["string"] = function ()
             if _LUVA.Utils.Has({ "class", "struct", "record", "interface" }, expr) then
                 return "Luva.Type"

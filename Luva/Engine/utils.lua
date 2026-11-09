@@ -86,6 +86,42 @@ _LUVA.Utils = {
         end
 
         return false
+    end,
+
+    ---Compares `objA` and `objB` by values
+    ---@param objA any
+    ---@param objB any
+    ---@return boolean
+    ---@nodiscard
+    IsSameByValue = function (objA, objB)
+        local t = type (objA)
+        if t ~= type (objB) then
+            return false
+        end
+
+        if t ~= "table" then
+            return objA == objB
+        end
+
+        local checkedIndexes = { }
+
+        for k, v in pairs(objA) do
+            local same = _LUVA.Utils.IsSameByValue(v, objB[k])
+
+            if not same then
+                return false
+            end
+
+            table.insert(checkedIndexes, k)
+        end
+
+        for k, _ in pairs(objB) do
+            if not _LUVA.Utils.Has(checkedIndexes, k) then
+                return false
+            end
+        end
+
+        return true
     end
 }
 
