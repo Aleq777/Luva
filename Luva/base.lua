@@ -2,7 +2,7 @@
 
 ---@alias Luva.Lang.Identifier string name for fields etc
 
----@alias Luva.Lang.Dynamic boolean|string|number|integer|table|function|metatable
+---@alias Luva.Dynamic boolean|string|number|integer|table|function|metatable
 
 
 
