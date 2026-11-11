@@ -218,7 +218,7 @@ _LUVA.SecuredObject = {
                 end
 
                 -- generate a new type
-                local generatedClass = _GenerateFromTemplate(filledTemplate)
+                local generatedClass = _GenerateFromTemplate(self, filledTemplate)
                 generatedClasses[filledTemplate] = generatedClass
 
                 return generatedClass
@@ -290,16 +290,31 @@ _LUVA.SecuredObject = {
 
         -- MUST be copied by class, referenced by instance
         InstanceBase = {
+            __index = function (self, index)
+                
+            end,
 
+            __newindex = function (self, index, value)
+                
+            end,
         }
     },
 
     --- Secures an object
     ---@param obj table
-    Secure = function (obj)
+    ---@param metatableName "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
+    ---@param modifyMetatable metatable|nil
+    Secure = function (obj, metatableName, modifyMetatable)
+
+        local metatable
+        if metatableName == "InstanceBase" then
+            metatable = _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName])
+        else
+            metatable = _LUVA.SecuredObject.Metatables[metatableName]
+        end
 
         _LUVA.Utils.SafeInjectRef(obj, {
-            __Metatable = { },
+            __Metatable = metatable,
             __Constants = { },
             __Fields = { },
             __Methods = { },

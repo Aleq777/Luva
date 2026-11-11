@@ -68,4 +68,4 @@ Luva framework's projects shall be usable between them (if [`Config.lua`]() has 
 - [GitHub discussion]()
 
 # Support
-- [**Buy me a Coffe**]() (Pls I need it to stay awake)
+- [**Buy me a Coffee**]() (Pls I need it to stay awake)
