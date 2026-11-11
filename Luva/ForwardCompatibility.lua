@@ -1,5 +1,9 @@
 
 
+if setmetatable == nil or getmetatable == nil or dofile == nil then
+    error ("Luva framework environmental requirements haven't met: metatables, dofile")
+end
+
 --- In Luva framework, it is unsupported due to lack of forward-compilability.
 --- Please, create tables and return them to create a module. Use `dofile` to import
 --- or `import()` or `from():import()` functions from Luva framework.
@@ -58,6 +62,12 @@ string.gfind = string.gmatch
 setfenv = function (f, t)
     error ("Luva framework doesn't support setfenv nor getfenv due to lack of forward compilability")
 end
+
+--- In Luva framework, `getfenv` is unsupported.
+--- From Lua 5.2 use _ENV
+--- In Lua 5.1 (this Luva framework branch), you cannot manipulate nor create environments :(
+---@param f function
+---@deprecated
 getfenv = function (f)
     error ("Luva framework doesn't support setfenv nor getfenv due to lack of forward compilability")
 end
