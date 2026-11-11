@@ -1,7 +1,9 @@
 
 ---@diagnostic disable : lowercase-global
+---@module "Luva.base"
+local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.SecuredObject"
-_, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
+_LUVA.SecuredObject = dofile ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 
 
@@ -45,4 +47,3 @@ end
 
 
 
-return field

@@ -2,14 +2,14 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.base"
-_, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.readonly"
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
 ---@module "Luva.Engine.MatchingExpressions.switch"
-switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+dofile ("Luva/Engine/MatchingExpressions/switch.lua")
 ---@module "Luva.Engine.kind"
-kindof = dofile ("Luva/Engine/kind.lua")
+dofile ("Luva/Engine/kind.lua")
 
 
 do
@@ -32,7 +32,7 @@ _LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to 
 ---@generic TInstance : Luva.Object
 ---@param resultClass Luva.Type<TInstance>
 ---@param prototypeBuilder Luva.Lang.PrototypeBuilder
-function _SetupPrototype(resultClass, prototypeBuilder)
+local function _SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         Fields = { },

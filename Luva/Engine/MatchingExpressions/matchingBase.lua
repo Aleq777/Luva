@@ -1,7 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.base"
-_, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile ("Luva/base.lua")
 
 _LUVA.Errors.NO_CASE_MATCHED = "Haven't found a case or default to match value"
 _LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH = "The value is 'default' in matching expression. Use if statement or don't assign to string value of 'default'"
@@ -19,7 +19,7 @@ _LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH = "The value is 'default' in matching exp
 ---@param action fun(result: any): any|nil
 ---@return any|nil
 ---@nodiscard
-function _switch_match(value, builder, action)
+local function _switch_match(value, builder, action)
     if value == "default" then
         error(_LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH)
     end
@@ -37,4 +37,5 @@ function _switch_match(value, builder, action)
     error(_LUVA.Errors.NO_CASE_MATCHED)
 end
 
-return _LUVA, _switch_match
+
+return _switch_match

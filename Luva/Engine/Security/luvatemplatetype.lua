@@ -21,7 +21,7 @@ end
 ---@param templateClass Luva.TemplateClass
 ---@return Luva.Type
 ---@nodiscard
-function _GenerateFromTemplate(templateClass)
+local function _GenerateFromTemplate(templateClass)
     -- ta sama funkcja co w SecuredObject będzie tworzyć
     -- na podstawie decyzji, czy zrobić
     -- static class czy instance class

@@ -2,7 +2,7 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.Engine.OOP.Ingredients.field"
-field = dofile ("Luva/Engine/OOP/Ingredients/field.lua")
+dofile ("Luva/Engine/OOP/Ingredients/field.lua")
 
 
 
@@ -24,7 +24,7 @@ end
 ---@param value TValue
 ---@return Luva.Lang.Accessor<TChild, TValue>
 ---@nodiscard
-function _ConstToAccessor(value)
+local function _ConstToAccessor(value)
     return field {
         get = function (self)
             return value
@@ -37,7 +37,7 @@ end
 ---@generic TChild : Luva.Object
 ---@param method function
 ---@return Luva.Lang.Accessor<TChild, function>
-function _MethodToAccessor(method)
+local function _MethodToAccessor(method)
     return field {
         get = function (self)
             return method
@@ -51,7 +51,7 @@ end
 ---@param name Luva.Lang.Identifier
 ---@return Luva.Lang.Accessor<Luva.Object, any>
 ---@nodiscard
-function _ReadonlyToAccessor(instance, name)
+local function _ReadonlyToAccessor(instance, name)
     return field {
         set = function (self, value)
             -- After first set it rewrites itself to become a constant

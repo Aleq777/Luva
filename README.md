@@ -5,11 +5,11 @@ comonly used among many apps, games and environments.
 It is very good for simple projects and small mods.\
 But some of us want to create a big, complex and safe scripts,
 that significantly modify the addon: big mods, advanced scripts etc.\
-That is why I have created ***Luva***.
+That is why I have created **__Luva__**.
 
 # Luva
 
-***Luva*** is a powerful Lua framework that introduces:
+**__Luva__** is a powerful Lua framework that introduces:
 - many new behaviours
 - strict typing
 - advanced object-oriented programming

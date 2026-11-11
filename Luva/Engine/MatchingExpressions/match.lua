@@ -1,7 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.Engine.MatchingExpressions.matchingBase"
-_LUVA, _switch_match = dofile ("Luva/Engine/MatchingExpressions/matchingBase.lua")
+local _switch_match = dofile ("Luva/Engine/MatchingExpressions/matchingBase.lua")
 
 
 --- Returns another value based on `value`
@@ -15,4 +15,3 @@ match = function (value, matchBuilder)
 end
 
 
-return match

@@ -1,10 +1,12 @@
 
 ---@diagnostic disable : lowercase-global
 
+---@module "Luva.base"
+local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.utils"
-_LUVA = dofile ("Luva/Engine/utils.lua")
+_LUVA.Utils = dofile ("Luva/Engine/utils.lua")
 ---@module "Luva.Engine.MatchingExpressions.switch"
-switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+dofile ("Luva/Engine/MatchingExpressions/switch.lua")
 
 do
     ---@alias Luva.Lang.KindTypes
@@ -52,5 +54,3 @@ kindof = function (expr)
     })
 end
 
-
-return kindof

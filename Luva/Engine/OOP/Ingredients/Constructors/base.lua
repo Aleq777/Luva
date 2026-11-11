@@ -13,7 +13,7 @@ end
 
 ---@generic TInstance : Luva.Object
 ---@param resultClass Luva.Type<TInstance>
-function _SetupConstructorBase(resultClass)
+local function _SetupConstructorBase(resultClass)
     rawset(resultClass, "__Constructors", {
         DefaultConstructor = nil,
         DefaultCaller = nil,

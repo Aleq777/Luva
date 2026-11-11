@@ -7,10 +7,10 @@
 
 
 --- Luva things to use publicly
-Luva = { }
+local Luva = { }
 
 --- Luva engine ingredients
-_LUVA = {
+local _LUVA = {
 
     ---@type table<Luva.Lang.Identifier, string>
     Errors = { }

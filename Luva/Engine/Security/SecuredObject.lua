@@ -2,15 +2,15 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.base"
-_, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.kind"
 ---@module "Luva.Engine.utils"
 _LUVA.Utils = dofile ("Luva/Engine/utils.lua")
 ---@module "Luva.Engine.Security.luvatemplatetype"
-_GenerateFromTemplate = dofile ("Luva/Engine/Security/luvatemplatetype.lua")
+local _GenerateFromTemplate = dofile ("Luva/Engine/Security/luvatemplatetype.lua")
 ---@module "Luva.Engine.varargs"
-varargs = dofile ("Luva/Engine/varargs.lua")
+dofile ("Luva/Engine/varargs.lua")
 
 do
     ---@alias Luva.Lang.SafePseudoMetaNames # for Luva.Lang.PseudoMetatable
@@ -34,20 +34,6 @@ do
     ---@field public _index nil|fun(self: table, index: any): any
     ---@field public _newindex nil|fun(self: table, index: any, value: any)
     local __pseudo
-
-    -- -- -@field private __Security Luva.Lang.Security
-    -- ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
-    -- ---@field protected IsSecured fun(self: Luva.Lang.SecuredObject): boolean
-    -- ---@field protected AddMetamethod fun(self: Luva.Lang.SecuredObject, metaname: Luva.Lang.SafePseudoMetaNames, metamethod: function)
-    -- ---@field protected AddAccessor fun(self: Luva.Lang.SecuredObject, identifier: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object, any>)
-    -- ---@field protected UpdateMetatable fun(self: Luva.Lang.SecuredObject)
-    -- ---@field private __Metatable Luva.Lang.PseudoMetatable
-    -- ---@field private __IsEnabled boolean
-    -- ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object, any>>
-    -- ---@field private __ExternAccessorsRef (table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object, any>>)[]
-    -- ---@field private __Readonlys table<Luva.Lang.Identifier, any>
-    -- local __securedObject
-
 
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
     ---@field private __Metatable Luva.Lang.PseudoMetatable
@@ -326,3 +312,4 @@ _LUVA.SecuredObject = {
 
 }
 
+return _LUVA.SecuredObject
