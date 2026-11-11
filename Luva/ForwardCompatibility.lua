@@ -51,7 +51,10 @@ if loadstring == nil then
     loadstring = load
 end
 
-string.gfind = string.gmatch
+if string.gfind == nil then
+    string.gfind = string.gmatch
+end
+-- string.gfind = string.gmatch
 
 --- In Luva framework, `setfenv` is unsupported.
 --- From Lua 5.2 use _ENV

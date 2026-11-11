@@ -4,9 +4,9 @@
 ---@module "Luva.base"
 local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.utils"
-_LUVA.Utils = dofile ("Luva/Engine/utils.lua")
+_LUVA.Utils = import ("Luva/Engine/utils.lua")
 ---@module "Luva.Engine.MatchingExpressions.switch"
-dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+import ("Luva/Engine/MatchingExpressions/switch.lua")
 
 do
     ---@alias Luva.Lang.KindTypes

@@ -3,13 +3,13 @@
 ---@module "LUVA.base"
 local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.SecuredObject"
-_LUVA.SecuredObject = dofile ("Luva/Engine/SecuredObject.lua")
+_LUVA.SecuredObject = import ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.prototype"
-local _SetupPrototype = dofile ("Luva/Engine/OOP/Ingredients/prototype.lua")
+local _SetupPrototype = import ("Luva/Engine/OOP/Ingredients/prototype.lua")
 ---@module "Luva.Engine.OOP.Ingredients.Constructors.base"
-local _SetupConstructorBase = dofile ("Luva/Engine/OOP/Ingredients/Constructors/base.lua")
+local _SetupConstructorBase = import ("Luva/Engine/OOP/Ingredients/Constructors/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.Constructors.default"
-local _SetupDefaultConstructorAndMaybeCaller = dofile ("Luva/Engine/OOP/Ingredients/Constructors/default.lua")
+local _SetupDefaultConstructorAndMaybeCaller = import ("Luva/Engine/OOP/Ingredients/Constructors/default.lua")
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
 
 do

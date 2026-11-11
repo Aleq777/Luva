@@ -7,9 +7,9 @@ local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
 ---@module "Luva.Engine.MatchingExpressions.switch"
-dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+import ("Luva/Engine/MatchingExpressions/switch.lua")
 ---@module "Luva.Engine.kind"
-dofile ("Luva/Engine/kind.lua")
+import ("Luva/Engine/kind.lua")
 
 
 do

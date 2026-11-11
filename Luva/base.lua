@@ -1,4 +1,8 @@
 
+-- import
+dofile ("Luva/Engine/Modules/import.lua")
+import ("Luva/ForwardCompatibility.lua")
+
 
 ---@alias Luva.Lang.Identifier string name for fields etc
 
@@ -13,7 +17,9 @@ local Luva = { }
 local _LUVA = {
 
     ---@type table<Luva.Lang.Identifier, string>
-    Errors = { }
+    Errors = { },
+
+    Config = import ("Luva/Config.lua")
 }
 
 

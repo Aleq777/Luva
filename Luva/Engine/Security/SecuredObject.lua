@@ -6,11 +6,11 @@ local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.kind"
 ---@module "Luva.Engine.utils"
-_LUVA.Utils = dofile ("Luva/Engine/utils.lua")
+_LUVA.Utils = import ("Luva/Engine/utils.lua")
 ---@module "Luva.Engine.Security.luvatemplatetype"
-local _GenerateFromTemplate = dofile ("Luva/Engine/Security/luvatemplatetype.lua")
+local _GenerateFromTemplate = import ("Luva/Engine/Security/luvatemplatetype.lua")
 ---@module "Luva.Engine.varargs"
-dofile ("Luva/Engine/varargs.lua")
+import ("Luva/Engine/varargs.lua")
 
 do
     ---@alias Luva.Lang.SafePseudoMetaNames # for Luva.Lang.PseudoMetatable
