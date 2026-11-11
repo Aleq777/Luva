@@ -36,13 +36,25 @@ do
     local __pseudo
 
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
-    ---@field private __Metatable Luva.Lang.PseudoMetatable
-    ---@field private __Constants table<Luva.Lang.Identifier, Luva.Dynamic>
-    ---@field private __Fields table<Luva.Lang.Identifier, Luva.Dynamic>
-    ---@field private __Methods table<Luva.Lang.Identifier, function>
-    ---@field private __Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
-    ---@field private __Generics nil|table<Luva.Lang.Identifier, Luva.Type|nil>
-    ---@field private __Externs nil|table<Luva.Lang.Identifier, Luva.Dynamic>[]
+    ---@field protected AddConstant     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, constant: Luva.Dynamic)
+    ---@field protected AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
+    ---@field protected AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
+    ---@field protected AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
+    ---@field protected AddExtern       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, extern: table)
+    ---@field protected SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
+    ---@field protected SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
+    ---@field protected SetExterns      fun(self: Luva.Lang.SecuredObject, externs: table<Luva.Lang.Identifier, Luva.Dynamic>[])
+    ---@
+    ---@field private SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
+    ---@field private __Metatable   Luva.Lang.PseudoMetatable
+    ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field private __Methods     table<Luva.Lang.Identifier, function>
+    ---@field private __Accessors   table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
+    ---@field private __Generics    table<Luva.Lang.Identifier, Luva.Type|nil>
+    ---@field private __Externs     table<Luva.Lang.Identifier, Luva.Dynamic>[]
     local __securedObject
 end
 
@@ -62,7 +74,7 @@ _LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or readonly valu
 _LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is readonly)"
 _LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's readonly or write only)"
 _LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
-
+_LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
 
 ---@param obj Luva.Lang.SecuredObject
@@ -176,6 +188,38 @@ local function _secureSet(obj, index, value)
 end
 
 
+
+---@param obj Luva.Lang.SecuredObject
+---@param identifier Luva.Lang.Identifier
+---@return boolean
+---@nodiscard
+local function _doesIdentifierExist(obj, identifier)
+    for tableName, tableContent in pairs(obj) do
+        if tableName == "__Externs" then
+            ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
+            for k, v in ipairs(tableContent) do
+                if k == identifier then
+                    return true
+                end
+            end
+        elseif tableContent[identifier] ~= nil then
+            return true
+        end
+    end
+
+    return false
+end
+
+---@param obj Luva.Lang.SecuredObject
+---@param identifier Luva.Lang.Identifier
+local function _checkIfNew(obj, identifier)
+    if _doesIdentifierExist(obj, identifier) then
+        error ("Identifier \"" .. identifier .. "\" already exists in this SecuredObject")
+    end
+end
+
+
+
 _LUVA.SecuredObject = {
 
     ---@type table<string, metatable>
@@ -228,6 +272,7 @@ _LUVA.SecuredObject = {
         StaticClass = {
             ---@param self Luva.Lang.SecuredObject
             ---@param index Luva.Dynamic
+            ---@return any
             __index = function (self, index)
                 return _secureGet(self, index)
             end,
@@ -290,12 +335,18 @@ _LUVA.SecuredObject = {
 
         -- MUST be copied by class, referenced by instance
         InstanceBase = {
+            ---@param self Luva.Object
+            ---@param index Luva.Dynamic
+            ---@return any
             __index = function (self, index)
-                
+                return _secureGet(self, index)
             end,
 
+            ---@param self Luva.Object
+            ---@param index Luva.Dynamic
+            ---@param value Luva.Dynamic
             __newindex = function (self, index, value)
-                
+                _secureSet(self, index, value)
             end,
         }
     },
@@ -308,7 +359,14 @@ _LUVA.SecuredObject = {
 
         local metatable
         if metatableName == "InstanceBase" then
-            metatable = _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName])
+            if modifyMetatable == nil then
+                error (_LUVA.Errors.MISSING_INSTANCE_S_CLASS)
+            end
+
+            metatable = _LUVA.Utils.SafeInjectRef(
+                _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName]),
+                modifyMetatable
+            )
         else
             metatable = _LUVA.SecuredObject.Metatables[metatableName]
         end
@@ -320,7 +378,67 @@ _LUVA.SecuredObject = {
             __Methods = { },
             __Accessors = { },
             __Externs = { },
-            __Generics = { }
+            __Generics = { },
+            SetGenerics = function (self, generics)
+                self.__Generics = generics  ---@diagnostic disable-line : invisible
+            end,
+
+            SetAccessors = function (self, accessors)
+                self.__Accessors = accessors    ---@diagnostic disable-line : invisible
+            end,
+
+            SetConstants = function (self, constants)
+                self.__Constants = constants    ---@diagnostic disable-line : invisible
+            end,
+
+            SetExterns = function (self, externs)
+                self.__Externs = externs    ---@diagnostic disable-line : invisible
+            end,
+
+            SetFields = function (self, fields)
+                self.__Fields = fields  ---@diagnostic disable-line : invisible
+            end,
+
+            SetMethods = function (self, methods)
+                self.__Methods = methods    ---@diagnostic disable-line : invisible
+            end,
+
+            AddAccessor = function (self, name, accessor)
+                _checkIfNew(self, name)
+                self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
+            end,
+
+            AddConstant = function (self, name, constant)
+                _checkIfNew(self, name)
+                self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
+            end,
+
+            AddExtern = function (self, extern)
+                local externs = self.__Externs  ---@diagnostic disable-line : invisible
+
+                if externs == nil then
+                    externs = { }
+                    self.__Externs = { }    ---@diagnostic disable-line : invisible
+                end
+
+                for index, externRef in ipairs(externs) do
+                    if extern == externRef then
+                        error ("This extern has been already connected to the SecuredObject at index " .. tostring(index))
+                    end
+                end
+                table.insert(externs, extern)
+            end,
+
+            AddField = function (self, name, _field)
+                _checkIfNew(self, name)
+                self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
+            end,
+
+            AddMethod = function (self, name, method)
+                _checkIfNew(self, name)
+                self.__Methods[name] = method   ---@diagnostic disable-line : invisible
+            end,
+
         } --[[@as Luva.Lang.SecuredObject]])
 
     end
