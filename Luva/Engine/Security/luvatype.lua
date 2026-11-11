@@ -5,6 +5,7 @@ do
     ---@class Luva.Type : Luva.Lang.SecuredObject
     ---@field private __TemplateClass Luva.TemplateClass|nil # Refer to the template (List<int> refers to generic List)
     ---@field private __GenericTypes table<Luva.Lang.Identifier, Luva.Type> # "T" -> Luva.Type
+    ---@field private __Prototype Luva.Lang.ClassPrototype|nil
     local __luvatype
 end
 

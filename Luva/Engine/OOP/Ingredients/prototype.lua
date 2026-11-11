@@ -16,12 +16,14 @@ do
     ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
 
 
-    ---@generic TChild : Luva.Object
     ---@class Luva.Lang.ClassPrototype
-    ---@field public Fields table<string, any> All instances copy this
-    ---@field public Metatable Luva.Lang.PseudoMetatable All instances refer to this
-    ---@field public Accessors table<string, Luva.Lang.Accessor<TChild, any>> All instances refer to this
-    ---@field public Readonlys table<string, Luva.Lang.Readonly<any>> All instances copy this and convert to local accessor
+    ---@field public PrototypeMetatable Luva.Lang.PseudoMetatable
+    ---@field public Constants table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field public Fields table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field public Methods table<Luva.Lang.Identifier, function>
+    ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
+    ---@field public Generics table<Luva.Lang.Identifier, Luva.Type> -- idk if needed
+    ---@field public Externs table<Luva.Lang.Identifier, Luva.Dynamic>[] -- idk if needed
     local __prototype
 end
 
@@ -35,13 +37,16 @@ _LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to 
 local function _SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
+        PrototypeMetatable = { },
+        Constants = { },
         Fields = { },
-        Metatable = { },
+        Methods = { },
         Accessors = { },
-        Readonlys = { }
+        Generics = { },
+        Externs = { },
     } --[[@as Luva.Lang.ClassPrototype]])
 
-    local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
+    local prototype = resultClass.__Prototype --[[@as Luva.Lang.ClassPrototype]]   ---@diagnostic disable-line : invisible
 
     for identifier, content in pairs(prototypeBuilder) do
         switch (type (content), {
