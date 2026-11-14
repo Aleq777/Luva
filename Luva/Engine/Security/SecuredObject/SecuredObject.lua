@@ -2,15 +2,15 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.base"
-local _, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile "Luva/base.lua"
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 ---@module "Luva.Engine.kind"
 ---@module "Luva.Engine.utils"
-_LUVA.Utils = import ("Luva/Engine/utils.lua")
+_LUVA.Utils = import "Luva.Engine.utils"
 ---@module "Luva.Engine.Security.luvatemplatetype"
-local _GenerateFromTemplate = import ("Luva/Engine/Security/luvatemplatetype.lua")
+local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
 ---@module "Luva.Engine.varargs"
-import ("Luva/Engine/varargs.lua")
+import "Luva.Engine.varargs"
 
 do
     ---@alias Luva.Lang.SafePseudoMetaNames # for Luva.Lang.PseudoMetatable
@@ -40,12 +40,10 @@ do
     ---@field protected AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
     ---@field protected AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
     ---@field protected AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
-    ---@field protected AddExtern       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, extern: table)
     ---@field protected SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
     ---@field protected SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
     ---@field protected SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
     ---@field protected SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
-    ---@field protected SetExterns      fun(self: Luva.Lang.SecuredObject, externs: table<Luva.Lang.Identifier, Luva.Dynamic>[])
     ---@
     ---@field private SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@field private __Metatable   Luva.Lang.PseudoMetatable
@@ -54,7 +52,6 @@ do
     ---@field private __Methods     table<Luva.Lang.Identifier, function>
     ---@field private __Accessors   table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
     ---@field private __Generics    table<Luva.Lang.Identifier, Luva.Type|nil>
-    ---@field private __Externs     table<Luva.Lang.Identifier, Luva.Dynamic>[]
     local __securedObject
 end
 
@@ -64,8 +61,7 @@ end
 -- 3. Methods
 -- 4. Accessors
 -- 5. Generics
--- 6. Externs
--- 7. User-defined (__Metatable._index / __Metatable._newindex)
+-- 6. User-defined (__Metatable._index / __Metatable._newindex)
 
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
@@ -77,115 +73,6 @@ _LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the 
 _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
 
----@param obj Luva.Lang.SecuredObject
----@param index Luva.Dynamic
----@return any
----@nodiscard
-local function _secureGet(obj, index)
-    local constant = obj.__Constants[index] ---@diagnostic disable-line : invisible
-    if constant then
-        return constant
-    end
-
-    local _field = obj.__Fields[index]  ---@diagnostic disable-line : invisible
-    if _field then
-        return _field
-    end
-
-    local method = obj.__Methods[index]    ---@diagnostic disable-line : invisible
-    ---@cast method function
-    if method then
-        return method
-    end
-
-    local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
-    ---@cast accessor Luva.Lang.Accessor<Luva.Object>
-    if accessor then
-        if accessor.get then
-            return accessor:get()
-        else
-            error(_LUVA.Errors.NO_GET_OR_SET)
-        end
-    end
-
-    local generics = obj.__Generics    ---@diagnostic disable-line : invisible
-    if generics then
-        local generic = generics[index]
-
-        if generic then
-            return generic
-        end
-    end
-
-    local externs = obj.__Externs  ---@diagnostic disable-line : invisible
-    if externs then
-        for _, v in ipairs(externs) do
-            for identifier, value in pairs(v) do
-                if index == identifier then
-                    return value
-                end
-            end
-        end
-    end
-
-    local userDef = obj.__Metatable._index ---@diagnostic disable-line : invisible
-    if userDef then
-        return userDef(obj, index)
-    end
-
-    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
-end
-
-
----@param obj Luva.Lang.SecuredObject
----@param index Luva.Dynamic
----@param value Luva.Dynamic
-local function _secureSet(obj, index, value)
-    if obj.__Constants[index] then ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
-    elseif obj.__Methods[index] then   ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_METHOD)
-    elseif obj.__Generics and obj.__Generics[index] then  ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
-    end
-
-    local fields = obj.__Fields  ---@diagnostic disable-line : invisible
-    if fields[index] ~= nil then
-        fields[index] = value
-        return
-    end
-
-    ---@type Luva.Lang.Accessor<Luva.Object>
-    local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
-    if accessor then
-        if accessor.set then
-            accessor:set(value)
-            return
-        else
-            error(_LUVA.Errors.NO_GET_OR_SET)
-        end
-    end
-
-    local externs = obj.__Externs  ---@diagnostic disable-line : invisible
-    if externs then
-        for _, v in ipairs(externs) do
-            for identifier, _ in pairs(v) do
-                if index == identifier then
-                    v[identifier] = value
-                    return
-                end
-            end
-        end
-    end
-
-    local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
-    if userDef then
-        userDef(obj, index, value)
-        return
-    end
-
-    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
-end
 
 
 
@@ -197,7 +84,7 @@ local function _doesIdentifierExist(obj, identifier)
     for tableName, tableContent in pairs(obj) do
         if tableName == "__Externs" then
             ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
-            for k, v in ipairs(tableContent) do
+            for k, _ in ipairs(tableContent) do
                 if k == identifier then
                     return true
                 end
@@ -224,66 +111,9 @@ _LUVA.SecuredObject = {
 
     ---@type table<string, metatable>
     Metatables = {
-        TemplateClass = {
-            ---@param self Luva.TemplateClass
-            ---@param index Luva.Type|Luva.Type[]
-            ---@return Luva.Type
-            ---@nodiscard
-            __index = function (self, index)
-                local templ = self.__Template   ---@diagnostic disable-line : invisible
-                ---@type Luva.Type[]
-                local filledTemplate = { }
-                
-                if #templ == 1 then -- only 1 generic type, accept template[T] and template[{T}]
-                    -- if array
-                    if kindof (index) == "lua" then
-                        index = index[1]
-                    end
-
-                    ---@cast index -Luva.Type[]
-                    table.insert(filledTemplate, index)
-                else -- many generic types, accept only template[{...}]
-                    -- array
-                    if kindof (index) == "lua" then
-                        for _, v in ipairs(index) do
-                            table.insert(filledTemplate, v)
-                        end
-                    else -- single type - error
-                        error(_LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES)
-                    end
-                end
-
-                -- search for existing
-                local generatedClasses = self.__GeneratedClasses    ---@diagnostic disable-line : invisible
-                for existingTemplate, existingType in pairs(generatedClasses) do
-                    if _LUVA.Utils.IsSameByValue(existingTemplate, filledTemplate) then
-                        return existingType
-                    end
-                end
-
-                -- generate a new type
-                local generatedClass = _GenerateFromTemplate(self, filledTemplate)
-                generatedClasses[filledTemplate] = generatedClass
-
-                return generatedClass
-            end
-        },
+        TemplateClass = import "Luva/Engine/Security/SecuredObject/MetatableTemplateClass.lua",
         
-        StaticClass = {
-            ---@param self Luva.Lang.SecuredObject
-            ---@param index Luva.Dynamic
-            ---@return any
-            __index = function (self, index)
-                return _secureGet(self, index)
-            end,
-
-            ---@param self Luva.Lang.SecuredObject
-            ---@param index Luva.Dynamic
-            ---@param value Luva.Dynamic
-            __newindex = function (self, index, value)
-                _secureSet(self, index, value)
-            end
-        },
+        StaticClass = import "Luva/Engine/Security/SecuredObject/MetatableStaticClass.lua",
 
         InstanceClass = {
             ---@param self Luva.Type
@@ -320,7 +150,7 @@ _LUVA.SecuredObject = {
                         local arg = args[1]
                         -- build constructor
                         if type (arg) == "table" then
-                            instance = self.__Constructors.BuildConstructor(self, arg)
+                            -- instance = self.__Constructors.BuildConstructor(self, arg)
                         else -- same as default
                             customConstr()
                         end
@@ -377,7 +207,7 @@ _LUVA.SecuredObject = {
             __Fields = { },
             __Methods = { },
             __Accessors = { },
-            __Externs = { },
+            -- __Externs = { },
             __Generics = { },
             SetGenerics = function (self, generics)
                 self.__Generics = generics  ---@diagnostic disable-line : invisible
@@ -391,9 +221,9 @@ _LUVA.SecuredObject = {
                 self.__Constants = constants    ---@diagnostic disable-line : invisible
             end,
 
-            SetExterns = function (self, externs)
-                self.__Externs = externs    ---@diagnostic disable-line : invisible
-            end,
+            -- SetExterns = function (self, externs)
+            --     self.__Externs = externs    ---@diagnostic disable-line : invisible
+            -- end,
 
             SetFields = function (self, fields)
                 self.__Fields = fields  ---@diagnostic disable-line : invisible
@@ -413,21 +243,21 @@ _LUVA.SecuredObject = {
                 self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
             end,
 
-            AddExtern = function (self, extern)
-                local externs = self.__Externs  ---@diagnostic disable-line : invisible
+            -- AddExtern = function (self, extern)
+            --     local externs = self.__Externs  ---@diagnostic disable-line : invisible
 
-                if externs == nil then
-                    externs = { }
-                    self.__Externs = { }    ---@diagnostic disable-line : invisible
-                end
+            --     if externs == nil then
+            --         externs = { }
+            --         self.__Externs = { }    ---@diagnostic disable-line : invisible
+            --     end
 
-                for index, externRef in ipairs(externs) do
-                    if extern == externRef then
-                        error ("This extern has been already connected to the SecuredObject at index " .. tostring(index))
-                    end
-                end
-                table.insert(externs, extern)
-            end,
+            --     for index, externRef in ipairs(externs) do
+            --         if extern == externRef then
+            --             error ("This extern has been already connected to the SecuredObject at index " .. tostring(index))
+            --         end
+            --     end
+            --     table.insert(externs, extern)
+            -- end,
 
             AddField = function (self, name, _field)
                 _checkIfNew(self, name)

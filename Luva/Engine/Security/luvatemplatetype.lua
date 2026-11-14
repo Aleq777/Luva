@@ -2,11 +2,11 @@
 ---@diagnostic disable : lowercase-global
 
 ---@module "Luva.base"
-local _, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile "Luva/base.lua"
 ---@module "Luva.Engine.Security.SecuredObject"
-_LUVA.SecuredObject = import ("Luva/Engine/Security/SecuredObject.lua")
+_LUVA.SecuredObject = import "Luva.Engine.Security.SecuredObject.SecuredObject"
 ---@module "Luva.Engine.utils"
-_LUVA.Utils = import ("Luva/Engine/utils.lua")
+_LUVA.Utils = import "Luva.Engine.utils"
 
 do
     ---@alias Luva.Lang.Template Luva.Lang.Generic[]

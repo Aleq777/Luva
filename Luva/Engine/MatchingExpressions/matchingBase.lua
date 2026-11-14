@@ -1,7 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.base"
-local _, _LUVA = dofile ("Luva/base.lua")
+local _, _LUVA = dofile "Luva/base.lua"
 
 _LUVA.Errors.NO_CASE_MATCHED = "Haven't found a case or default to match value"
 _LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH = "The value is 'default' in matching expression. Use if statement or don't assign to string value of 'default'"
