@@ -42,22 +42,31 @@ export = export or function (self, obj)
 end
 
 
+---@param _module any
+---@return any ...
+---@nodiscard
+local function _get(_module)
+    return type (_module) == "table" and table.unpack(_module) or _module
+end
+
 --- Imports the file with module saving.
 --- It means that in case of multiple imports,
 --- the file content won't execute more than once.
 --- No recalls, resets, redeclarations etc.
 ---@param path Luva.Path
----@return any module
+---@return any ...
 import = import or function (path)
+    ---@cast path string
+    path = path:lower()
 
     local _module = _LUVA.Modules[path]
     if _module ~= nil then
-        return _module
+        return _get(_module)
     end
 
-    _module = dofile (path)
+    _module = select(1, dofile (path)) or true
     _LUVA.Modules[path] = _module
-    return _module
+    return _get(_module)
 end
 
 
