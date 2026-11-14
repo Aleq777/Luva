@@ -28,12 +28,13 @@ local _LUVA = {
 --- Handles the globals' import and export.
 --- It's required to use when you want globals
 --- to not be reset on every import.
----@param self Luva.Dynamic
+---@param self any
 ---@param obj Luva.Dynamic
----@return Luva.Dynamic self-obj
+---@return any self-obj
 ---@nodiscard
 export = export or function (self, obj)
     if self == nil then
+        ---@cast obj any
         return obj
     end
 
@@ -46,7 +47,7 @@ end
 --- the file content won't execute more than once.
 --- No recalls, resets, redeclarations etc.
 ---@param path Luva.Path
----@return Luva.Dynamic module
+---@return any module
 import = import or function (path)
 
     local _module = _LUVA.Modules[path]
