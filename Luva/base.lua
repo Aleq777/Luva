@@ -25,21 +25,21 @@ local _LUVA = {
 }
 
 
---- Handles the globals' import and export.
---- It's required to use when you want globals
---- to not be reset on every import.
----@param self any
----@param obj Luva.Dynamic
----@return any self-obj
----@nodiscard
-export = export or function (self, obj)
-    if self == nil then
-        ---@cast obj any
-        return obj
-    end
+-- --- Handles the globals' import and export.
+-- --- It's required to use when you want globals
+-- --- to not be reset on every import.
+-- ---@param self any
+-- ---@param obj Luva.Dynamic
+-- ---@return any self-obj
+-- ---@nodiscard
+-- export = export or function (self, obj)
+--     if self == nil then
+--         ---@cast obj any
+--         return obj
+--     end
 
-    return self
-end
+--     return self
+-- end
 
 
 ---@param _module any

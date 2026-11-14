@@ -31,10 +31,10 @@ local function _switch_match(value, builder, action)
 
     local default = builder.default     ---@diagnostic disable-line : undefined-field
     if default ~= nil then
-        return action(result)
+        return action(default)
     end
 
-    error(_LUVA.Errors.NO_CASE_MATCHED)
+    error(_LUVA.Errors.NO_CASE_MATCHED, 3)
 end
 
 
