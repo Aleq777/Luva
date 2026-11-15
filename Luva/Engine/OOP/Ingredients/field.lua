@@ -1,12 +1,13 @@
 
 ---@diagnostic disable : lowercase-global
 ---@module "Luva.base"
-local _, _LUVA = dofile ("Luva/base.lua")
+-- local _, _LUVA = dofile ("Luva/base.lua")
 ---@module "Luva.Engine.SecuredObject"
 -- _LUVA.SecuredObject = import ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 
-
+dofile "Luva/import.lua"
+import "Luva.Engine.Security.SecuredObject.SecuredObject"
 
 
 
@@ -23,7 +24,7 @@ _LUVA.Errors.EMPTY_ACCESSOR = "Accessor requires at least one function (get and/
 ---@param accessorBuilder Luva.Lang.Accessor At least one function required (get and/or set)
 ---@return Luva.Lang.Accessor<TChild, TField>
 ---@nodiscard
-field = function (accessorBuilder)
+field = export (field, function (accessorBuilder)
     local atLeastOne = false
 
     for k, _ in pairs(accessorBuilder) do
@@ -40,10 +41,4 @@ field = function (accessorBuilder)
     else
         error(_LUVA.Errors.EMPTY_ACCESSOR)
     end
-end
-
-
-
-
-
-
+end)

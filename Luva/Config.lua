@@ -2,11 +2,17 @@
 
 
 return {
+    --- Modifies the language so it is usable in later versions (5.1->5.4 etc.)
+    ---@module "Luva.ForwardCompatibility"
+    ---@type boolean
+    ForwardCompatibility = true,
+
     --- Requires Luva to check each time for type-to-type compitability
     --- It slowers the execution, but ensures that you will code faster
     --- (no miss-assigned types etc.) <br />
     --- Default: `true`
     ---@type boolean
+    ---@deprecated Luva will be hard typed
     FullTypeChecking = true,
 
     --- If you use Lua 5.1, for environemtns you have `getfenv` and `setfenv`. <br />
@@ -15,5 +21,7 @@ return {
     --- - If you have to use Lua 5.1 and need to use environmental functions, change this setting to `false`
     --- Default: `true`
     ---@type boolean
+    ---@deprecated
+    ---@see ForwardCompatibility
     DisableEarlyEnvironments = true,
 }

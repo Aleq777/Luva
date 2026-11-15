@@ -1,10 +1,14 @@
 
 ---@diagnostic disable : lowercase-global
 
-local _, _LUVA = dofile "Luva/base.lua"
+-- local _, _LUVA = dofile "Luva/base.lua"
+dofile "Luva/import.lua"
+import "Luva.luva"
+import "Luva.Engine.utils"
+import "Luva.Engine.Security.SecuredObject.SecuredObject"
 
-_LUVA.SecuredObject = import "Luva.Engine.Security.SecuredObject.SecuredObject"
-_LUVA.Utils         = import "Luva.Engine.utils"
+-- _LUVA.SecuredObject = import "Luva.Engine.Security.SecuredObject.SecuredObject"
+-- _LUVA.Utils         = import "Luva.Engine.utils"
 
 do
     ---@alias Luva.Lang.Template Luva.Lang.Generic[]
@@ -22,13 +26,14 @@ do
     local __templatetype
 end
 
+
 --- Generates a standard class from a generic class
 ---@param templateClass Luva.TemplateClass
 ---@param filledTemplate Luva.Type[]
 ---@return Luva.Type
 ---@nodiscard
 local function _GenerateFromTemplate(templateClass, filledTemplate)
-    
+
     ---@type table<Luva.Lang.Identifier, Luva.Type>
     local genericTypes = { }
     for index, generic in ipairs(templateClass.__Template) do  ---@diagnostic disable-line : invisible

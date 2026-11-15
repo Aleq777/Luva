@@ -2,11 +2,18 @@
 ---@diagnostic disable : lowercase-global
 
 
-local _, _LUVA = dofile "Luva/base.lua"
+-- local _, _LUVA = dofile "Luva/base.lua"
 
+-- import "Luva.Engine.varargs"
+-- _LUVA.Utils                 = import "Luva.Engine.utils"
+-- local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
+
+dofile "Luva/import.lua"
+import "Luva.luva"
 import "Luva.Engine.varargs"
-_LUVA.Utils                 = import "Luva.Engine.utils"
+import "Luva.Engine.utils"
 local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
+
 
 do
     ---@alias Luva.Lang.SafePseudoMetaNames # for Luva.Lang.PseudoMetatable
@@ -210,5 +217,3 @@ _LUVA.SecuredObject = {
     end
 
 }
-
-return _LUVA.SecuredObject

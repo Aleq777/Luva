@@ -3,10 +3,10 @@
 
 ---@module "Luva.Engine.kind"
 
-
+dofile "Luva/import.lua"
 
 ---@type Luva.Lang.Keyword
-readonly = {
+readonly = export (readonly, {
     __Kind = "readonly"
-}
+})
 

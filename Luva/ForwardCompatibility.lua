@@ -1,4 +1,10 @@
 
+local Config = dofile "Luva/Config.lua"
+
+
+if not Config.ForwardCompatibility then
+    return
+end
 
 if setmetatable == nil or getmetatable == nil or dofile == nil then
     error ("Luva framework environmental requirements haven't met: metatables, dofile")
@@ -53,24 +59,4 @@ end
 
 if string.gfind == nil then
     string.gfind = string.gmatch
-end
--- string.gfind = string.gmatch
-
---- In Luva framework, `setfenv` is unsupported.
---- From Lua 5.2 use _ENV
---- In Lua 5.1 (this Luva framework branch), you cannot manipulate nor create environments :(
----@param f function
----@param t table
----@deprecated
-setfenv = function (f, t)
-    error ("Luva framework doesn't support setfenv nor getfenv due to lack of forward compilability")
-end
-
---- In Luva framework, `getfenv` is unsupported.
---- From Lua 5.2 use _ENV
---- In Lua 5.1 (this Luva framework branch), you cannot manipulate nor create environments :(
----@param f function
----@deprecated
-getfenv = function (f)
-    error ("Luva framework doesn't support setfenv nor getfenv due to lack of forward compilability")
 end

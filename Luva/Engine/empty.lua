@@ -3,6 +3,8 @@
 
 ---@module "Luva.Engine.kind"
 
+dofile "Luva/import.lua"
+
 do
     ---@class Luva.Empty : Luva.Lang.StrictKind
     local __empty
@@ -14,5 +16,6 @@ end
 --- when you want to use it like `null` in other languages.
 --- In Luva, you should use `empty` most of the times.
 ---@type Luva.Empty
-empty = { __Kind = "empty" }
-
+empty = export ( empty, {
+    __Kind = "empty"
+})

@@ -1,7 +1,8 @@
 
 ---@module "Luva.base"
 local _, _LUVA = dofile ("Luva/base.lua")
-
+dofile "Luva/import.lua"
+import "Luva.luva"
 
 _LUVA.Errors.INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
 
@@ -21,7 +22,7 @@ local function _injectRef(obj, components, action)
 end
 
 
-_LUVA.Utils = {
+_LUVA.Utils = export (_LUVA.Utils, {
 
     --- Deep copy of the object
     ---@param obj any
@@ -123,7 +124,4 @@ _LUVA.Utils = {
 
         return true
     end
-}
-
-
-return _LUVA.Utils
+})
