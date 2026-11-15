@@ -7,9 +7,9 @@
 import "Luva.Engine.Security.SecuredObject.SecuredObject"
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
 
-local _SetupPrototype                           = import "Luva.Engine.OOP.Ingredients.prototype"
-local _SetupConstructorBase                     = import "Luva.Engine.OOP.Ingredients.Constructors.base"
-local _SetupDefaultConstructorAndMaybeCaller    = import "Luva.Engine.OOP.Ingredients.Constructors.default"
+import "Luva.Engine.OOP.Ingredients.prototype"
+import "Luva.Engine.OOP.Ingredients.Constructors.base"
+import "Luva.Engine.OOP.Ingredients.Constructors.default"
 
 do
     ---@generic TInstance : Luva.Object

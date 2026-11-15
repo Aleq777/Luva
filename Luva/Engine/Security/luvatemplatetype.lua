@@ -5,7 +5,7 @@
 -- dofile "Luva/import.lua"
 -- import "Luva.luva"
 import "Luva.Engine.utils"
-import "Luva.Engine.Security.SecuredObject.SecuredObject"
+import "Luva.Engine.Security.SecuredObject.SecuredObjectMetatables"
 
 -- _LUVA.SecuredObject = import "Luva.Engine.Security.SecuredObject.SecuredObject"
 -- _LUVA.Utils         = import "Luva.Engine.utils"
