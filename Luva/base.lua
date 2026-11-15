@@ -24,7 +24,7 @@ _LUVA = {
 --- If you want to re-import or import locals, use `dofile`.
 ---@param path Luva.Path Full path in `FolderA.folderB.luaFile` format, without `.lua` extension
 import = function (path)
-    path = (path--[[@as string]]):lower():gsub("%.", "/") .. ".lua"
+    path = (path--[[@as string]]):gsub("%.", "/") .. ".lua"
 
     if _LUVA.Modules[path] then
         return

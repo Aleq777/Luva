@@ -66,7 +66,7 @@ end
 
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
-_LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use empty instead"
+_LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"empty\" instead. If the error persists, ensure that you have imported \"empty\" correctly."
 _LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or readonly value"
 _LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is readonly)"
 _LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's readonly or write only)"
@@ -83,15 +83,17 @@ _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class 
 ---@nodiscard
 local function _doesIdentifierExist(obj, identifier)
     for tableName, tableContent in pairs(obj) do
-        if tableName == "__Externs" then
-            ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
-            for k, _ in ipairs(tableContent) do
-                if k == identifier then
-                    return true
+        if type(tableContent) ~= "function" then
+            if tableName == "__Externs" then
+                ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
+                for k, _ in ipairs(tableContent) do
+                    if k == identifier then
+                        return true
+                    end
                 end
+            elseif tableContent[identifier] ~= nil then
+                return true
             end
-        elseif tableContent[identifier] ~= nil then
-            return true
         end
     end
 
@@ -106,13 +108,14 @@ local function _checkIfNew(obj, identifier)
     end
 end
 
-
+---@alias Luva.Lang.TypesMetatableNames "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
 
 --- Secures an object
 ---@param obj table
----@param metatableName "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
+---@param metatableName Luva.Lang.TypesMetatableNames
 ---@param modifyMetatable metatable|nil
 function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
+    ---@type metatable
     local metatable
     if metatableName == "InstanceBase" then
         if modifyMetatable == nil then
@@ -122,7 +125,7 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         metatable = _LUVA.Utils.SafeInjectRef(
             _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName]),
             modifyMetatable
-        )
+        ) --[[@as metatable]]
     else
         metatable = _LUVA.SecuredObject.Metatables[metatableName]
     end
@@ -175,4 +178,6 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         end,
 
     } --[[@as Luva.Lang.SecuredObject]])
+
+    setmetatable(obj, metatable)
 end

@@ -45,7 +45,7 @@ function _LUVA._secureGet(obj, index)
         return userDef(obj, index)
     end
 
-    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
+    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index), 3)
 end
 
 
@@ -59,6 +59,10 @@ function _LUVA._secureSet(obj, index, value)
         error(_LUVA.Errors.TRIED_MODIFY_METHOD)
     elseif obj.__Generics and obj.__Generics[index] then  ---@diagnostic disable-line : invisible
         error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
+    end
+
+    if value == nil then
+        error(_LUVA.Errors.ASSIGNED_NIL, 3)
     end
 
     local fields = obj.__Fields  ---@diagnostic disable-line : invisible
