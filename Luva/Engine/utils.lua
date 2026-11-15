@@ -118,5 +118,23 @@ _LUVA.Utils = {
         end
 
         return true
-    end
+    end,
+
+    MetamethodsNames = {
+        "__add",
+        "__sub",
+        "__mul",
+        "__div",
+        "__unm",
+        "__mod",
+        "__pow",
+        "__eq",
+        "__lt",
+        "__le",
+        "__concat",
+        "__len",
+        "__index",
+        "__newindex",
+        "__call",
+    }
 }

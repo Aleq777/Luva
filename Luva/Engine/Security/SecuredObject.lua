@@ -37,16 +37,16 @@ do
     local __pseudo
 
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
-    ---@field protected AddConstant     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, constant: Luva.Dynamic)
-    ---@field protected AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
-    ---@field protected AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
-    ---@field protected AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
-    ---@field protected SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
-    ---@field protected SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
-    ---@field protected SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
-    ---@field protected SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
+    ---@field protected __AddConstant     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, constant: Luva.Dynamic)
+    ---@field protected __AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
+    ---@field protected __AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
+    ---@field protected __AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
+    ---@field protected __SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected __SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected __SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
+    ---@field protected __SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
     ---@
-    ---@field private SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
+    ---@field private __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@field private __Metatable   Luva.Lang.PseudoMetatable
     ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
@@ -137,42 +137,42 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         __Methods = { },
         __Accessors = { },
         __Generics = { },
-        SetGenerics = function (self, generics)
+        __SetGenerics = function (self, generics)
             self.__Generics = generics  ---@diagnostic disable-line : invisible
         end,
 
-        SetAccessors = function (self, accessors)
+        __SetAccessors = function (self, accessors)
             self.__Accessors = accessors    ---@diagnostic disable-line : invisible
         end,
 
-        SetConstants = function (self, constants)
+        __SetConstants = function (self, constants)
             self.__Constants = constants    ---@diagnostic disable-line : invisible
         end,
 
-        SetFields = function (self, fields)
+        __SetFields = function (self, fields)
             self.__Fields = fields  ---@diagnostic disable-line : invisible
         end,
 
-        SetMethods = function (self, methods)
+        __SetMethods = function (self, methods)
             self.__Methods = methods    ---@diagnostic disable-line : invisible
         end,
 
-        AddAccessor = function (self, name, accessor)
+        __AddAccessor = function (self, name, accessor)
             _checkIfNew(self, name)
             self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
         end,
 
-        AddConstant = function (self, name, constant)
+        __AddConstant = function (self, name, constant)
             _checkIfNew(self, name)
             self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
         end,
 
-        AddField = function (self, name, _field)
+        __AddField = function (self, name, _field)
             _checkIfNew(self, name)
             self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
         end,
 
-        AddMethod = function (self, name, method)
+        __AddMethod = function (self, name, method)
             _checkIfNew(self, name)
             self.__Methods[name] = method   ---@diagnostic disable-line : invisible
         end,
