@@ -6,7 +6,6 @@
 -- dofile "Luva/import.lua"
 
 ---@type Luva.Lang.Keyword
-readonly = export (readonly, {
+readonly = {
     __Kind = "readonly"
-})
-
+}

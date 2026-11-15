@@ -30,7 +30,7 @@ end
 ---@param classBuilder Luva.Lang.ClassBuilder
 ---@return Luva.Type<TInstance>
 ---@nodiscard
-class = export (class, function (classBuilder)
+class = function (classBuilder)
 
     ---@generic TInstance : Luva.Object
     ---@type Luva.Type<TInstance>
@@ -56,4 +56,4 @@ class = export (class, function (classBuilder)
     end
 
     return resultClass
-end)
+end

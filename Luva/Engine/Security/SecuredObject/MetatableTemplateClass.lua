@@ -2,10 +2,10 @@
 -- local _, _LUVA = dofile "Luva/base.lua"
 -- dofile "Luva/import.lua"
 -- import "Luva.luva"
-local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
+import "Luva.Engine.Security.luvatemplatetype"
 
 ---@type metatable
-return {
+_LUVA.SecuredObject.Metatables.TemplateClass = {
     ---@param self Luva.TemplateClass
     ---@param index Luva.Type|Luva.Type[]
     ---@return Luva.Type
@@ -43,7 +43,7 @@ return {
         end
 
         -- generate a new type
-        local generatedClass = _GenerateFromTemplate(self, filledTemplate)
+        local generatedClass = _LUVA._GenerateFromTemplate(self, filledTemplate)
         generatedClasses[filledTemplate] = generatedClass
 
         return generatedClass

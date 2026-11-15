@@ -12,7 +12,16 @@
 -- import "Luva.luva"
 import "Luva.Engine.varargs"
 import "Luva.Engine.utils"
-local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
+import "Luva.Engine.Security.luvatemplatetype"
+_LUVA.SecuredObject = {
+    ---@type table<string, metatable>
+    Metatables = { }
+}
+import "Luva.Engine.Security.SecuredObject.MetatableTemplateClass"
+import "Luva.Engine.Security.SecuredObject.MetatableStaticClass"
+import "Luva.Engine.Security.SecuredObject.MetatableInstanceClass"
+import "Luva.Engine.Security.SecuredObject.MetatableInstanceBase"
+
 
 
 do
@@ -112,18 +121,6 @@ end
 
 _LUVA.SecuredObject = {
 
-    ---@type table<string, metatable>
-    Metatables = {
-        TemplateClass = import "Luva.Engine.Security.SecuredObject.MetatableTemplateClass",
-
-        StaticClass = import "Luva.Engine.Security.SecuredObject.MetatableStaticClass",
-
-        InstanceClass = import "Luva.Engine.Security.SecuredObject.MetatableInstanceClass",
-
-        -- MUST be copied by class, referenced by instance
-        InstanceBase = import "Luva.Engine.Security.SecuredObject.MetatableInstanceBase",
-    },
-
     --- Secures an object
     ---@param obj table
     ---@param metatableName "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
@@ -215,5 +212,4 @@ _LUVA.SecuredObject = {
         } --[[@as Luva.Lang.SecuredObject]])
 
     end
-
 }

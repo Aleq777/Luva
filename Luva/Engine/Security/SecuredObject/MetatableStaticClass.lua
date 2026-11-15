@@ -2,23 +2,21 @@
 -- dofile "Luva/base.lua"
 -- dofile "Luva/import.lua"
 
----@module "Luva.Engine.Security.SecuredObject.securedGetSet"
----@type function, function
-local _secureGet, _secureSet = import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
+import "Luva.Engine.Security.SecuredObject.securedGetSet"
 
 ---@type metatable
-return {
+_LUVA.SecuredObject.Metatables.StaticClass = {
     ---@param self Luva.Lang.SecuredObject
     ---@param index Luva.Dynamic
     ---@return any
     __index = function (self, index)
-        return _secureGet(self, index)
+        return _LUVA._secureGet(self, index)
     end,
 
     ---@param self Luva.Lang.SecuredObject
     ---@param index Luva.Dynamic
     ---@param value Luva.Dynamic
     __newindex = function (self, index, value)
-        _secureSet(self, index, value)
+        _LUVA._secureSet(self, index, value)
     end
 }

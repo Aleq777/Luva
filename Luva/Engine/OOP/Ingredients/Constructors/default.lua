@@ -14,7 +14,7 @@ end
 ---@generic TInstance : Luva.Object
 ---@param constructors Luva.Lang.ClassConstructors<TInstance>
 ---@param defaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
-local function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
+function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
     ---@type Luva.Lang.DefaultConstructor
     constructors.DefaultConstructor = function (class)
         ---@type Luva.Object
@@ -46,6 +46,3 @@ local function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCalle
         constructors.DefaultCaller = defaultCaller
     end
 end
-
-
-return _SetupDefaultConstructorAndMaybeCaller

@@ -39,7 +39,7 @@ _LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to 
 ---@generic TInstance : Luva.Object
 ---@param resultClass Luva.Type<TInstance>
 ---@param prototypeBuilder Luva.Lang.PrototypeBuilder
-local function _SetupPrototype(resultClass, prototypeBuilder)
+function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         PrototypeMetatable = { },
@@ -79,7 +79,7 @@ local function _SetupPrototype(resultClass, prototypeBuilder)
 
             ["function"] = function ()
                 ---@cast content function
-                resultClass.__Prototype.Accessors[identifier] = _MethodToAccessor(content)  ---@diagnostic disable-line : invisible
+                resultClass.__Prototype.Accessors[identifier] = _LUVA._MethodToAccessor(content)  ---@diagnostic disable-line : invisible
             end,
 
             default = function ()
@@ -90,6 +90,3 @@ local function _SetupPrototype(resultClass, prototypeBuilder)
     end
 
 end
-
-
-return _SetupPrototype

@@ -1,7 +1,7 @@
 
 
 
-return {
+_LUVA.Config = {
     --- Modifies the language so it is usable in later versions (5.1->5.4 etc.)
     ---@module "Luva.ForwardCompatibility"
     ---@type boolean
@@ -14,14 +14,4 @@ return {
     ---@type boolean
     ---@deprecated Luva will be hard typed
     FullTypeChecking = true,
-
-    --- If you use Lua 5.1, for environemtns you have `getfenv` and `setfenv`. <br />
-    --- As of Lua 5.2+, they are removed which makes forward-compatibility impossible (one of [Luva'a principle](../README.md#3lua-forward-compatibility)).
-    --- - If you can, use newer Lua versions for environment management. <br />
-    --- - If you have to use Lua 5.1 and need to use environmental functions, change this setting to `false`
-    --- Default: `true`
-    ---@type boolean
-    ---@deprecated
-    ---@see ForwardCompatibility
-    DisableEarlyEnvironments = true,
 }

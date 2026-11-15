@@ -4,34 +4,25 @@
 
 dofile "Luva/luva.lua"
 
+---@package
 _LUVA.Modules = _LUVA.Modules or { }
 
----@param _module any
----@return any ...
----@nodiscard
-local function _get(_module)
-    return type (_module) == "table" and table.unpack(_module) or _module
-end
 
 --- Imports the file with module saving.
---- It means that in case of multiple imports,
---- the file content won't execute more than once.
---- No recalls, resets, redeclarations etc.
----@param path Luva.Path
----@return any ...
+--- It won't re-import already imported file.
+--- Only imports globals, no locals (nor `return`).
+--- If you want to re-import or import locals, use `dofile`.
+---@param path Luva.Path Full path in `FolderA.folderB.luaFile` format, without `.lua` extension
 import = import or function (path)
     path = (path--[[@as string]]):lower():gsub("%.", "/") .. ".lua"
 
-    local _module = _LUVA.Modules[path]
-    if _module ~= nil then
-        return _get(_module)
+    if _LUVA.Modules[path] then
+        return
     end
 
-    _module = select(1, dofile (path))
-    _LUVA.Modules[path] = _module or true
-    return _get(_module)
+    _LUVA.Modules[path] = true
+    dofile (path)
 end
-
 
 --- Lets you export a global with module handling.
 --- If the global was defined earlier, it won't
@@ -39,6 +30,7 @@ end
 ---@param self any
 ---@param content any
 ---@return any
+---@deprecated
 export = export or function (self, content)
     if self == nil then
         return content

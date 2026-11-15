@@ -8,6 +8,5 @@ Luva = Luva or { }
 
 --- Luva engine ingredients
 _LUVA = _LUVA or {
-    Errors = { },
-    Modules = { }
+    Errors = { }
 }

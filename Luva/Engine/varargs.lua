@@ -7,6 +7,6 @@
 ---@param ... any[]
 ---@return any[]
 ---@nodiscard
-varargs = export (varargs, function (...)
+varargs = function (...)
     return select(1, ...)
-end)
+end

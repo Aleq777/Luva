@@ -32,7 +32,7 @@ end
 ---@param filledTemplate Luva.Type[]
 ---@return Luva.Type
 ---@nodiscard
-local function _GenerateFromTemplate(templateClass, filledTemplate)
+function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
 
     ---@type table<Luva.Lang.Identifier, Luva.Type>
     local genericTypes = { }
@@ -76,8 +76,3 @@ local function _GenerateFromTemplate(templateClass, filledTemplate)
 
     return result
 end
-
-
-
-
-return _GenerateFromTemplate

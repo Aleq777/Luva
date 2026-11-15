@@ -24,7 +24,7 @@ end
 ---@param value TValue
 ---@return Luva.Lang.Accessor<TChild, TValue>
 ---@nodiscard
-local function _ConstToAccessor(value)
+function _LUVA._ConstToAccessor(value)
     return field {
         get = function (self)
             return value
@@ -37,7 +37,7 @@ end
 ---@generic TChild : Luva.Object
 ---@param method function
 ---@return Luva.Lang.Accessor<TChild, function>
-local function _MethodToAccessor(method)
+function _LUVA._MethodToAccessor(method)
     return field {
         get = function (self)
             return method
@@ -51,7 +51,7 @@ end
 ---@param name Luva.Lang.Identifier
 ---@return Luva.Lang.Accessor<Luva.Object, any>
 ---@nodiscard
-local function _ReadonlyToAccessor(instance, name)
+function _LUVA._ReadonlyToAccessor(instance, name)
     return field {
         set = function (self, value)
             -- After first set it rewrites itself to become a constant
@@ -63,7 +63,3 @@ local function _ReadonlyToAccessor(instance, name)
         end
     }
 end
-
-
-
-return _ConstToAccessor, _MethodToAccessor, _ReadonlyToAccessor

@@ -1,8 +1,8 @@
 
-local Config = dofile "Luva/Config.lua"
+import "Luva/Config.lua"
 
 
-if not Config.ForwardCompatibility then
+if not _LUVA.Config.ForwardCompatibility then
     return
 end
 
@@ -13,9 +13,9 @@ end
 --- In Luva framework, it is unsupported due to lack of forward-compilability.
 --- Please, create tables and return them to create a module. Use `dofile` to import
 --- or `import()` or `from():import()` functions from Luva framework.
----@deprecated
 ---@param name string
 ---@param ... any
+---@deprecated
 module = function (name, ...)
     error ("Lua's module function is unsupported in Luva framework due to lack of forward-compilability")
 end

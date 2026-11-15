@@ -7,7 +7,7 @@
 ---@param index Luva.Dynamic
 ---@return any
 ---@nodiscard
-local function _secureGet(obj, index)
+function _LUVA._secureGet(obj, index)
     local constant = obj.__Constants[index] ---@diagnostic disable-line : invisible
     if constant then
         return constant
@@ -55,7 +55,7 @@ end
 ---@param obj Luva.Lang.SecuredObject
 ---@param index Luva.Dynamic
 ---@param value Luva.Dynamic
-local function _secureSet(obj, index, value)
+function _LUVA._secureSet(obj, index, value)
     if obj.__Constants[index] then ---@diagnostic disable-line : invisible
         error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
     elseif obj.__Methods[index] then   ---@diagnostic disable-line : invisible
@@ -89,7 +89,3 @@ local function _secureSet(obj, index, value)
 
     error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
 end
-
-
-
-return _secureGet, _secureSet

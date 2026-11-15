@@ -23,7 +23,7 @@ local function _injectRef(obj, components, action)
 end
 
 
-_LUVA.Utils = export (_LUVA.Utils, {
+_LUVA.Utils = {
 
     --- Deep copy of the object
     ---@param obj any
@@ -125,4 +125,4 @@ _LUVA.Utils = export (_LUVA.Utils, {
 
         return true
     end
-})
+}

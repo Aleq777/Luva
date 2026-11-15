@@ -16,6 +16,6 @@ end
 --- when you want to use it like `null` in other languages.
 --- In Luva, you should use `empty` most of the times.
 ---@type Luva.Empty
-empty = export ( empty, {
+empty = {
     __Kind = "empty"
-})
+}
