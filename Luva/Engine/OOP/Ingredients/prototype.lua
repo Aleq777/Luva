@@ -11,8 +11,8 @@
 ---@module "Luva.Engine.kind"
 -- import ("Luva/Engine/kind.lua")
 
-dofile "Luva/import.lua"
-import "Luva.luva"
+-- dofile "Luva/import.lua"
+-- import "Luva.luva"
 import "Luva.Engine.kind"
 import "Luva.Engine.MatchingExpressions.switch"
 

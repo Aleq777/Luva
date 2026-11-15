@@ -6,7 +6,7 @@
 -- _LUVA.SecuredObject = import ("Luva/Engine/SecuredObject.lua")
 ---@module "Luva.Engine.OOP.Ingredients.accessor"
 
-dofile "Luva/import.lua"
+-- dofile "Luva/import.lua"
 import "Luva.Engine.Security.SecuredObject.SecuredObject"
 
 

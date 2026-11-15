@@ -4,7 +4,7 @@
 
 dofile "Luva/luva.lua"
 
-_LUVA.Modules = { }
+_LUVA.Modules = _LUVA.Modules or { }
 
 ---@param _module any
 ---@return any ...

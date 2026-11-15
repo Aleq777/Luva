@@ -8,8 +8,8 @@
 -- _LUVA.Utils                 = import "Luva.Engine.utils"
 -- local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
 
-dofile "Luva/import.lua"
-import "Luva.luva"
+-- dofile "Luva/import.lua"
+-- import "Luva.luva"
 import "Luva.Engine.varargs"
 import "Luva.Engine.utils"
 local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"

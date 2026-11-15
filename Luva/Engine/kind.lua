@@ -6,8 +6,8 @@
 
 -- import "Luva.Engine.MatchingExpressions.switch"
 
-dofile "Luva/import.lua"
-import "Luva.luva"
+-- dofile "Luva/import.lua"
+-- import "Luva.luva"
 import "Luva.Engine.utils"
 import "Luva.Engine.MatchingExpressions.switch"
 

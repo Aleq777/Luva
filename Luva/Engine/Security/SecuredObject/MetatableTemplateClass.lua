@@ -1,7 +1,7 @@
 
 -- local _, _LUVA = dofile "Luva/base.lua"
-dofile "Luva/import.lua"
-import "Luva.luva"
+-- dofile "Luva/import.lua"
+-- import "Luva.luva"
 local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
 
 ---@type metatable

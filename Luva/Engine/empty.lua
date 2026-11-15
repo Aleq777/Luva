@@ -3,7 +3,7 @@
 
 ---@module "Luva.Engine.kind"
 
-dofile "Luva/import.lua"
+-- dofile "Luva/import.lua"
 
 do
     ---@class Luva.Empty : Luva.Lang.StrictKind

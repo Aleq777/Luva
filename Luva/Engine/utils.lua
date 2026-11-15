@@ -1,8 +1,9 @@
 
 ---@module "Luva.base"
-local _, _LUVA = dofile ("Luva/base.lua")
-dofile "Luva/import.lua"
-import "Luva.luva"
+-- local _, _LUVA = dofile ("Luva/base.lua")
+-- print(import)
+-- dofile "Luva/import.lua"
+-- import "Luva.luva"
 
 _LUVA.Errors.INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
 
