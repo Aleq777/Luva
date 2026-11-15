@@ -89,4 +89,5 @@ local function _secureSet(obj, index, value)
 end
 
 
+
 return _secureGet, _secureSet

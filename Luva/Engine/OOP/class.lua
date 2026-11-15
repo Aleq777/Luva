@@ -1,16 +1,13 @@
 
 ---@diagnostic disable : lowercase-global
----@module "LUVA.base"
+
 local _, _LUVA = dofile "Luva/base.lua"
----@module "Luva.Engine.Security.SecuredObject"
-_LUVA.SecuredObject = import "Luva.Engine.Security.SecuredObject.SecuredObject"
----@module "Luva.Engine.OOP.Ingredients.prototype"
-local _SetupPrototype = import "Luva.Engine.OOP.Ingredients.prototype"
----@module "Luva.Engine.OOP.Ingredients.Constructors.base"
-local _SetupConstructorBase = import "Luva.Engine.OOP.Ingredients.Constructors.base"
----@module "Luva.Engine.OOP.Ingredients.Constructors.default"
-local _SetupDefaultConstructorAndMaybeCaller = import "Luva.Engine.OOP.Ingredients.Constructors.default"
 ---@module "Luva.Engine.OOP.Ingredients.luvatype"
+
+_LUVA.SecuredObject                             = import "Luva.Engine.Security.SecuredObject.SecuredObject"
+local _SetupPrototype                           = import "Luva.Engine.OOP.Ingredients.prototype"
+local _SetupConstructorBase                     = import "Luva.Engine.OOP.Ingredients.Constructors.base"
+local _SetupDefaultConstructorAndMaybeCaller    = import "Luva.Engine.OOP.Ingredients.Constructors.default"
 
 do
     ---@generic TInstance : Luva.Object

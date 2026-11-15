@@ -1,6 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
----@module "Luva.base"
+
+
 local _, _LUVA = dofile "Luva/base.lua"
 
 _LUVA.Errors.NO_CASE_MATCHED = "Haven't found a case or default to match value"

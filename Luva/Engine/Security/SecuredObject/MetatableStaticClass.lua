@@ -1,7 +1,8 @@
 
 dofile "Luva/base.lua"
 
-local _secureGet, _secureSet = import "Luva.Engine.Security.SecuredObject._securedGetSet"
+---@module "Luva.Engine.Security.SecuredObject._securedGetSet"
+local _secureGet, _secureSet = import "Luva.Engine.Security.SecuredObject.securedGetSet"
 
 ---@type metatable
 return {
