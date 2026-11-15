@@ -2,16 +2,7 @@
 ---@diagnostic disable : lowercase-global
 
 
--- local _, _LUVA = dofile "Luva/base.lua"
-
--- import "Luva.Engine.varargs"
--- _LUVA.Utils                 = import "Luva.Engine.utils"
--- local _GenerateFromTemplate = import "Luva.Engine.Security.luvatemplatetype"
-
--- dofile "Luva/import.lua"
--- import "Luva.luva"
 _LUVA.SecuredObject = { }
-import "Luva.Engine.varargs"
 import "Luva.Engine.utils"
 import "Luva.Engine.Security.SecuredObject.SecuredObjectMetatables"
 import "Luva.Engine.Security.luvatemplatetype"
@@ -142,7 +133,6 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         __Fields = { },
         __Methods = { },
         __Accessors = { },
-        -- __Externs = { },
         __Generics = { },
         SetGenerics = function (self, generics)
             self.__Generics = generics  ---@diagnostic disable-line : invisible
@@ -155,10 +145,6 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         SetConstants = function (self, constants)
             self.__Constants = constants    ---@diagnostic disable-line : invisible
         end,
-
-        -- SetExterns = function (self, externs)
-        --     self.__Externs = externs    ---@diagnostic disable-line : invisible
-        -- end,
 
         SetFields = function (self, fields)
             self.__Fields = fields  ---@diagnostic disable-line : invisible
@@ -178,22 +164,6 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
             self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
         end,
 
-        -- AddExtern = function (self, extern)
-        --     local externs = self.__Externs  ---@diagnostic disable-line : invisible
-
-        --     if externs == nil then
-        --         externs = { }
-        --         self.__Externs = { }    ---@diagnostic disable-line : invisible
-        --     end
-
-        --     for index, externRef in ipairs(externs) do
-        --         if extern == externRef then
-        --             error ("This extern has been already connected to the SecuredObject at index " .. tostring(index))
-        --         end
-        --     end
-        --     table.insert(externs, extern)
-        -- end,
-
         AddField = function (self, name, _field)
             _checkIfNew(self, name)
             self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
@@ -205,5 +175,4 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         end,
 
     } --[[@as Luva.Lang.SecuredObject]])
-
 end

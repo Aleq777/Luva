@@ -1,9 +1,6 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "Luva.Engine.kind"
-
--- dofile "Luva/import.lua"
 
 do
     ---@class Luva.Empty : Luva.Lang.StrictKind

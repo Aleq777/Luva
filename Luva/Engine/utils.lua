@@ -1,9 +1,4 @@
 
----@module "Luva.base"
--- local _, _LUVA = dofile ("Luva/base.lua")
--- print(import)
--- dofile "Luva/import.lua"
--- import "Luva.luva"
 
 _LUVA.Errors.INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
 
@@ -24,7 +19,6 @@ end
 
 
 _LUVA.Utils = {
-
     --- Deep copy of the object
     ---@param obj any
     ---@return any obj Copy
@@ -81,7 +75,7 @@ _LUVA.Utils = {
     ---@return boolean
     ---@nodiscard
     Has = function (tab, value)
-        for k, v in pairs(tab) do
+        for _, v in pairs(tab) do
             if v == value then
                 return true
             end

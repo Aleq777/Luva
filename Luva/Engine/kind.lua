@@ -1,20 +1,13 @@
 
 ---@diagnostic disable : lowercase-global
 
--- local _, _LUVA  = dofile "Luva/base.lua"
--- _LUVA.Utils     = import "Luva.Engine.utils"
-
--- import "Luva.Engine.MatchingExpressions.switch"
-
--- dofile "Luva/import.lua"
--- import "Luva.luva"
 import "Luva.Engine.utils"
 import "Luva.Engine.MatchingExpressions.switch"
 
 
 
 do
-    ---@alias Luva.Lang.KindTypes
+    ---@alias Luva.Lang.TypeKinds
     ---| "class"
     ---| "struct"
     ---| "record"

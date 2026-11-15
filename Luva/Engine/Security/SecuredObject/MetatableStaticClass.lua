@@ -1,7 +1,4 @@
 
--- dofile "Luva/base.lua"
--- dofile "Luva/import.lua"
-
 import "Luva.Engine.Security.SecuredObject.securedGetSet"
 
 ---@type metatable

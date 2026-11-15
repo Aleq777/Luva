@@ -1,9 +1,5 @@
 
--- dofile "Luva/base.lua"
--- dofile "Luva/import.lua"
 
----@module "Luva.Engine.Security.SecuredObject.securedGetSet"
----@type function, function
 import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
 
 

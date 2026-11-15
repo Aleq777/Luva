@@ -1,7 +1,4 @@
 
--- local _, _LUVA = dofile "Luva/base.lua"
--- dofile "Luva/import.lua"
--- import "Luva.luva"
 
 ---@param obj Luva.Lang.SecuredObject
 ---@param index Luva.Dynamic

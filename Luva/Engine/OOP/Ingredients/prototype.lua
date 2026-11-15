@@ -1,18 +1,6 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "Luva.base"
--- local _, _LUVA = dofile ("Luva/base.lua")
----@module "Luva.Engine.OOP.Ingredients.readonly"
----@module "Luva.Engine.OOP.Ingredients.accessor"
----@module "Luva.Engine.OOP.Ingredients.luvatype"
----@module "Luva.Engine.MatchingExpressions.switch"
--- import ("Luva/Engine/MatchingExpressions/switch.lua")
----@module "Luva.Engine.kind"
--- import ("Luva/Engine/kind.lua")
-
--- dofile "Luva/import.lua"
--- import "Luva.luva"
 import "Luva.Engine.kind"
 import "Luva.Engine.MatchingExpressions.switch"
 
