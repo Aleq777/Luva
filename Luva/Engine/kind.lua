@@ -1,13 +1,13 @@
 
 ---@diagnostic disable : lowercase-global
 
----@module "Luva.Engine.utils"
-_LUVA = dofile ("Luva/Engine/utils.lua")
----@module "Luva.Engine.MatchingExpressions.switch"
-switch = dofile ("Luva/Engine/MatchingExpressions/switch.lua")
+import "Luva.Engine.utils"
+import "Luva.Engine.MatchingExpressions.switch"
+
+
 
 do
-    ---@alias Luva.Lang.KindTypes
+    ---@alias Luva.Lang.TypeKinds
     ---| "class"
     ---| "struct"
     ---| "record"
@@ -23,13 +23,14 @@ do
     ---@alias Luva.Lang.Keyword Luva.Lang.StrictKind
 end
 
+---@type string
+local basicType = "Lua"
 
 --- Returns the kind of an expression
 ---@param expr any
 ---@return string
 ---@nodiscard
 kindof = function (expr)
-    local basicType = "Lua"
     return switch (type (expr), {
         ["string"] = function ()
             if _LUVA.Utils.Has({ "class", "struct", "record", "interface" }, expr) then
@@ -38,6 +39,7 @@ kindof = function (expr)
 
             return basicType
         end,
+
         ["table"] = function ()
             if expr.__Kind ~= nil then
                 ---@cast expr Luva.Lang.StrictKind
@@ -46,11 +48,9 @@ kindof = function (expr)
 
             return basicType
         end,
+
         default = function ()
             return basicType
         end
     })
 end
-
-
-return kindof

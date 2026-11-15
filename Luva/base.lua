@@ -1,38 +1,35 @@
 
+---@diagnostic disable : lowercase-global
+
+---@alias Luva.Path string Path to the file in Simple Notation: `FolderA.FolderB.LuaFile` (instead of slash `/`, use dot `.`, do not include `.lua` file extension)
+---@alias Luva.Lang.Identifier string Name for fields etc
+
+---@alias Luva.Dynamic boolean|string|number|integer|table|function|metatable Not nil
 
 
----@alias Luva.Lang.Identifier string name for fields etc
-
----@alias Luva.Dynamic boolean|string|number|integer|table|function|metatable
-
-
-
---- Luva things to use publicly
-local Luva = { }
+--- Luva's usable module
+Luva = { }
 
 --- Luva engine ingredients
-local _LUVA = {
-
+_LUVA = {
     ---@type table<Luva.Lang.Identifier, string>
     Errors = { },
-    Modules = { },
+    ---@package
+    Modules = { }
 }
 
---- Smart importing. It's like `dofile`, but it saves modules and doesn't re-import them.
---- It prevents redeclarations, unwanted resets and heavy code repeat
----@param path string A path to the file
----@return any
-import = import or function (path)
-    path = path:tolower():trim()
-    
-    local imp = _LUVA.Modules[path]
-    if imp then
-        return imp
+--- Imports the file with module saving.
+--- It won't re-import already imported file.
+--- Only imports globals, no locals (nor `return`).
+--- If you want to re-import or import locals, use `dofile`.
+---@param path Luva.Path Full path in `FolderA.folderB.luaFile` format, without `.lua` extension
+import = function (path)
+    path = (path--[[@as string]]):lower():gsub("%.", "/") .. ".lua"
+
+    if _LUVA.Modules[path] then
+        return
     end
-    
-    imp = dofile (path)
-    return imp
+
+    _LUVA.Modules[path] = true
+    dofile (path)
 end
-
-
-return Luva, _LUVA

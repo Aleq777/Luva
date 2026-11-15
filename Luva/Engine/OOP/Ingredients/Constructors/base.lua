@@ -13,7 +13,7 @@ end
 
 ---@generic TInstance : Luva.Object
 ---@param resultClass Luva.Type<TInstance>
-function _SetupConstructorBase(resultClass)
+function _LUVA._SetupConstructorBase(resultClass)
     rawset(resultClass, "__Constructors", {
         DefaultConstructor = nil,
         DefaultCaller = nil,
@@ -21,5 +21,3 @@ function _SetupConstructorBase(resultClass)
         CustomConstructor = nil
     })
 end
-
-return _SetupConstructorBase

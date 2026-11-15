@@ -1,10 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
----@module "Luva.Engine.SecuredObject"
-_, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
----@module "Luva.Engine.OOP.Ingredients.accessor"
 
-
+import "Luva.Engine.Security.SecuredObject.SecuredObject"
 
 
 
@@ -39,10 +36,3 @@ field = function (accessorBuilder)
         error(_LUVA.Errors.EMPTY_ACCESSOR)
     end
 end
-
-
-
-
-
-
-return field

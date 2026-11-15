@@ -1,7 +1,4 @@
 
----@module "Luva.Engine.OOP.Ingredients.luvatype"
----@module "Luva.Engine.OOP.Ingredients.Constructors.base"
-
 do
     ---@generic TInstance : Luva.Object
     ---@alias Luva.Lang.PostDefaultConstructorCaller fun(self: TInstance)
@@ -14,7 +11,7 @@ end
 ---@generic TInstance : Luva.Object
 ---@param constructors Luva.Lang.ClassConstructors<TInstance>
 ---@param defaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
-function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
+function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
     ---@type Luva.Lang.DefaultConstructor
     constructors.DefaultConstructor = function (class)
         ---@type Luva.Object
@@ -46,6 +43,3 @@ function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
         constructors.DefaultCaller = defaultCaller
     end
 end
-
-
-return _SetupDefaultConstructorAndMaybeCaller

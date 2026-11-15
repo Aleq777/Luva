@@ -1,14 +1,10 @@
 
 ---@diagnostic disable : lowercase-global
----@module "Luva.Engine.SecuredObject"
-_, _LUVA = dofile ("Luva/Engine/SecuredObject.lua")
----@module "Luva.Engine.OOP.Ingredients.prototype"
-_SetupPrototype = dofile ("Luva/Engine/OOP/Ingredients/prototype.lua")
----@module "Luva.Engine.OOP.Ingredients.Constructors.base"
-_SetupConstructorBase = dofile ("Luva/Engine/OOP/Ingredients/Constructors/base.lua")
----@module "Luva.Engine.OOP.Ingredients.Constructors.default"
-_SetupDefaultConstructorAndMaybeCaller = dofile ("Luva/Engine/OOP/Ingredients/Constructors/default.lua")
----@module "Luva.Engine.OOP.Ingredients.luvatype"
+
+import "Luva.Engine.Security.SecuredObject.SecuredObject"
+import "Luva.Engine.OOP.Ingredients.prototype"
+import "Luva.Engine.OOP.Ingredients.Constructors.base"
+import "Luva.Engine.OOP.Ingredients.Constructors.default"
 
 do
     ---@generic TInstance : Luva.Object
@@ -56,7 +52,3 @@ class = function (classBuilder)
 
     return resultClass
 end
-
-
-
-return class
