@@ -12,11 +12,11 @@ Luva = { }
 
 --- Luva engine ingredients
 _LUVA = {
+    ---@type table<Luva.Lang.Identifier, string>
     Errors = { },
     ---@package
     Modules = { }
 }
-
 
 --- Imports the file with module saving.
 --- It won't re-import already imported file.
