@@ -1,7 +1,7 @@
 
 ---@diagnostic disable : lowercase-global
 
-import "Luva.Engine.Security.SecuredObject.SecuredObject"
+import "Luva.Engine.Security.SecuredObject"
 import "Luva.Engine.OOP.Ingredients.prototype"
 import "Luva.Engine.OOP.Ingredients.Constructors.base"
 import "Luva.Engine.OOP.Ingredients.Constructors.default"
