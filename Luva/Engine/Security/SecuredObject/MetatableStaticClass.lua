@@ -1,8 +1,9 @@
 
 dofile "Luva/base.lua"
 
----@module "Luva.Engine.Security.SecuredObject._securedGetSet"
-local _secureGet, _secureSet = import "Luva.Engine.Security.SecuredObject.securedGetSet"
+---@module "Luva.Engine.Security.SecuredObject.securedGetSet"
+---@type function, function
+local _secureGet, _secureSet = import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
 
 ---@type metatable
 return {
