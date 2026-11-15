@@ -15,7 +15,7 @@ Human = class {
 -- local w = Human()
 -- Human.X = empty
 
-Human.X = 4
+-- Human.X = 4
 
 
 print(Human.X)

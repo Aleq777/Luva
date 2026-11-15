@@ -88,5 +88,5 @@ function _LUVA._secureSet(obj, index, value)
         return
     end
 
-    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index))
+    error(_LUVA.Errors.UNDEFINED_FIELD .. ": " .. tostring(index), 3)
 end
