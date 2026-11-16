@@ -12,6 +12,5 @@ _LUVA.Config = {
     --- (no miss-assigned types etc.) <br />
     --- Default: `true`
     ---@type boolean
-    ---@deprecated Luva will be hard typed
     FullTypeChecking = true,
 }
