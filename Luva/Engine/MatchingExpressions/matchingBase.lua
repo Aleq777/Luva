@@ -17,7 +17,7 @@ _LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH = "The value is 'default' in matching exp
 ---@param action fun(result: any): any|nil
 ---@return any|nil
 ---@nodiscard
-local function _switch_match(value, builder, action)
+function _LUVA._switch_match(value, builder, action)
     if value == "default" then
         error(_LUVA.Errors.VALUE_AS_DEFAULT_IN_MATCH)
     end
@@ -34,6 +34,3 @@ local function _switch_match(value, builder, action)
 
     error(_LUVA.Errors.NO_CASE_MATCHED, 3)
 end
-
-
-return _switch_match

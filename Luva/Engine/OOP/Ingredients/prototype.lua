@@ -11,12 +11,11 @@ do
 
     ---@class Luva.Lang.ClassPrototype
     ---@field public PrototypeMetatable Luva.Lang.PseudoMetatable
-    ---@field public Constants table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field public Readonlys table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field public Fields table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field public Methods table<Luva.Lang.Identifier, function>
     ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
-    ---@field public Generics table<Luva.Lang.Identifier, Luva.Type> -- idk if needed
-    ---@field public Externs table<Luva.Lang.Identifier, Luva.Dynamic>[] -- idk if needed
+    -- ---@field public Generics table<Luva.Lang.Identifier, Luva.Type> -- idk if needed
     local __prototype
 end
 
@@ -31,12 +30,12 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         PrototypeMetatable = { },
-        Constants = { },
+        Readonlys = { },
         Fields = { },
         Methods = { },
         Accessors = { },
-        Generics = { },
-        Externs = { },
+        -- Generics = { },
+        -- Externs = { },
     } --[[@as Luva.Lang.ClassPrototype]])
 
     local prototype = resultClass.__Prototype --[[@as Luva.Lang.ClassPrototype]]   ---@diagnostic disable-line : invisible

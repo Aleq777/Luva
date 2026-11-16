@@ -136,5 +136,24 @@ _LUVA.Utils = {
         "__index",
         "__newindex",
         "__call",
-    }
+    },
+
+    --- Index names, that cannot be used (they are a part of Luva). Use rawset, rawget and raweq instead.
+    ProhibitedIndexes = {
+        "__Constants",
+        "__Fields",
+        "__Methods",
+        "__Accessors",
+        "__Generics",
+        "__Metatable",
+        "__AddConstant",
+        "__AddField",
+        "__AddMethod",
+        "__AddAccessor",
+        "__SetConstants",
+        "__SetFields",
+        "__SetMethods",
+        "__SetAccessors",
+        "__SetGenerics",
+    },
 }

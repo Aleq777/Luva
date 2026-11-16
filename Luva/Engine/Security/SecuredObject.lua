@@ -45,8 +45,8 @@ do
     ---@field protected __SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
     ---@field protected __SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
     ---@field protected __SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
+    ---@field protected __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@
-    ---@field private __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@field private __Metatable   Luva.Lang.PseudoMetatable
     ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
@@ -67,9 +67,9 @@ end
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
 _LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"empty\" instead. If the error persists, ensure that you have imported \"empty\" correctly."
-_LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or readonly value"
-_LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is readonly)"
-_LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's readonly or write only)"
+_LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or read-only value"
+_LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is read-only)"
+_LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's read-only or write only)"
 _LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
 _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
