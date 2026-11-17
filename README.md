@@ -16,7 +16,7 @@ That is why I have created **__Luva__**.
 - forward version compatibility (Lua 5.1 - 5.5)
 
 Luva's purpose is to make creating complex projects more unite,
-readable, managable and safe, while still being able to run
+readable, manageable and safe, while still being able to run
 on standard `.lua` files without the need to translate nor compile it.\
 It is written ENTIRELY with **Lua** itself.\
 No AI used.\
@@ -28,15 +28,15 @@ I'm just autistic af lol
 Types, objects etc. have to be ensured as fast as possible.
 Luva shall provide information about any possible error cause.
 
-### 2. Inter-environmental versality
-Luva has been created mainly for [Teardown scirpts]().
-But beacuse Lua is commonly used, it should be universal in any environment.\
+### 2. Inter-environmental versatility
+Luva has been created mainly for [Teardown scripts]().
+But because Lua is commonly used, it should be universal in any environment.\
 (sorry Stormworks scripters, maybe there will be a branch without metatables)
 
 ### 3. Lua forward-compatibility
 Lua's versioning isn't meeting the [semantic versioning]() principles, so it was
 confusing for many, when another minor version removed a function and made it
-uncompatible.\
+incompatible.\
 Luva will try to be compatible by defining more universally built-in functions
 and prohibit from using deprecated ones.
 
