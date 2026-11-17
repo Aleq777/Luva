@@ -1,5 +1,4 @@
 
--- import "Luva.Engine.utils"
 
 ---@param obj Luva.Lang.SecuredObject
 ---@param index Luva.Dynamic

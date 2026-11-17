@@ -1,14 +1,13 @@
 
 
 import "Luva.Engine.OOP.class"
-
+import "Luva.Engine.empty"
 
 do
     ---@class HumanT : Luva.Type
     ---@field X integer
     ---@field Greet function
     ---@field Y integer
-    ---@operator call(): Human
     local __humanT
 end
 
@@ -17,6 +16,7 @@ end
 ---@class Human : Luva.Object
 ---@field Name string
 ---@field Age integer
+---@type HumanT|(fun(): Human)|(fun(name: string, age: integer): Human) -- what the fuck LuaLS & intelisense
 Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mismatch
     static = {
         X = 3,
@@ -31,15 +31,27 @@ Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mism
         Name = string,
         Age = 0
     },
+    default = function (self)
+        Human.Greet()
+    end,
+    constructor = function (setPrototype, name, age)
+        setPrototype {
+            Name = name,
+            Age = age
+        }
+        Human.Greet()
+    end,
+    destructor = function (self)
+        print (type (self))
+    end
 }
 
 
 
-
-local mooseMan = Human() {
-    Name = "moose man2",
-    Age = 20
+local moose1 = Human("moose 1", 20)
+local moose2 = Human() {
+    Name = "Moose 2",
+    Age = 30
 }
 
--- _LUVA.Utils.Entries(mooseMan)
-print(mooseMan)
+print(moose2)

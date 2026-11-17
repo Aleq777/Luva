@@ -1,6 +1,6 @@
 
 
-import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
+import "Luva.Engine.Security.SecuredObject.securedGetSet"
 
 
 ---@type metatable
@@ -23,36 +23,14 @@ _LUVA.SecuredObject.Metatables.InstanceClass = {
     ---@return Luva.Object
     __call = function (self, ...)
         local argsCount = select("#", ...)
-        local args = { ... }
-        local first = ( select(1, ...) )
         local instance = nil
 
-        local function customConstr()
-            return self.__Constructors.CustomConstructor(self, table.unpack(args))
+        if argsCount == 0 then
+            instance = self.__Constructors.DefaultConstructor(self) ---@diagnostic disable-line : invisible
+        else
+            instance = self.__Constructors.CustomConstructor(self, ...)  ---@diagnostic disable-line : invisible
         end
 
-        switch (argsCount, {
-            [0] = function ()
-                instance = self.__Constructors.DefaultConstructor(self)
-            end,
-
-            [1] = function ()
-                -- build constructor
-                if type (first) == "table" then
-                    ---@cast first table
-                    instance = self.__Constructors.BuildConstructor(self, first)
-                else -- same as default
-                    instance = customConstr()
-                end
-            end,
-
-            default = function ()
-                instance = customConstr()
-            end
-        })
-
-        -- ---@cast instance Luva.Object
-        -- setmetatable(instance, self.__Prototype.PrototypeMetatable)
         return instance
-    end
+    end,
 }

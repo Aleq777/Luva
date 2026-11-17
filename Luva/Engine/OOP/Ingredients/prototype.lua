@@ -15,7 +15,6 @@ do
     ---@field public Fields table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field public Methods table<Luva.Lang.Identifier, function>
     ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
-    -- ---@field public Generics table<Luva.Lang.Identifier, Luva.Type> -- idk if needed
     local __prototype
 end
 
@@ -34,8 +33,6 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
         Fields = { },
         Methods = { },
         Accessors = { },
-        -- Generics = { },
-        -- Externs = { },
     } --[[@as Luva.Lang.ClassPrototype]])
 
     local prototype = resultClass.__Prototype --[[@as Luva.Lang.ClassPrototype]]   ---@diagnostic disable-line : invisible
@@ -55,7 +52,7 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                     end,
 
                     ["readonly"] = function ()
-                        ---@cast content Luva.Lang.Readonly<any>
+                        ---@cast content Luva.Dynamic
                         resultClass.__Prototype.Readonlys[identifier] = content ---@diagnostic disable-line : invisible
                     end,
 
@@ -77,5 +74,4 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
         } --[[@as Luva.Lang.MatchingBaseBuilder<type, fun()>]])
     end
-
 end
