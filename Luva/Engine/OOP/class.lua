@@ -17,7 +17,7 @@ do
     ---@field public prototype Luva.Lang.PrototypeBuilder|nil
     ---@field public default fun(self: TInstance)|nil
     ---@field public constructor fun(setPrototype: fun(obj: TInstance), ...: any[])|nil
-    ---@field public destructor Luva.Lang.DestructorBuilder|nil
+    ---@field public destructor fun(self: TInstance)
     ---@field public static table<string, Luva.Dynamic>|nil
     ---@field public const table<string, Luva.Dynamic>|nil
     ---@field public template fun(...: Luva.Type)|nil
@@ -135,16 +135,18 @@ class = function (classBuilder)
     
     if classBuilder.prototype then
         _LUVA._SetupPrototype(resultClass, classBuilder.prototype)
-
+        
         _LUVA._SetupConstructorBase(resultClass)
-
+        
         local constructors = resultClass.__Constructors ---@diagnostic disable-line : invisible
-
+        
         _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, classBuilder.default)
         
         if classBuilder.constructor then
             _LUVA._SetupConstructor(constructors, classBuilder.constructor)
         end
+        
+        rawset(resultClass, "__Destructor", classBuilder.destructor or function () end)
     end
 
     return resultClass

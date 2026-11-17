@@ -46,5 +46,11 @@ _LUVA.SecuredObject.Metatables.InstanceBase = {
         end
 
         return self
+    end,
+
+    ---@version >5.1 On version 5.1, it just won't work
+    ---@param self Luva.Object
+    __gc = function (self)
+        self.__Type.__Destructor(self)
     end
 }

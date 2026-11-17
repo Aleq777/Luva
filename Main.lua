@@ -32,17 +32,27 @@ Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mism
         Age = 0
     },
     default = function (self)
-        print "hi!!"
+        Human.Greet()
     end,
     constructor = function (setPrototype, name, age)
         setPrototype {
             Name = name,
             Age = age
         }
+        Human.Greet()
+    end,
+    destructor = function (self)
+        print (type (self))
     end
 }
 
 
+
+local moose1 = Human("moose 1", 20)
+local moose2 = Human() {
+    Name = "Moose 2",
+    Age = 30
+}
 
 
 -- local mooseMan = Human() {
@@ -53,4 +63,6 @@ Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mism
 
 
 -- _LUVA.Utils.Entries(mooseMan)
-print(mooseMan)
+print(moose1)
+print(moose2)
+

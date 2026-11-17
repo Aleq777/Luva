@@ -32,5 +32,5 @@ _LUVA.SecuredObject.Metatables.InstanceClass = {
         end
 
         return instance
-    end
+    end,
 }
