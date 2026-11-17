@@ -40,6 +40,8 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
     local prototype = resultClass.__Prototype --[[@as Luva.Lang.ClassPrototype]]   ---@diagnostic disable-line : invisible
 
+    prototype.PrototypeMetatable = _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables.InstanceBase)
+
     for identifier, content in pairs(prototypeBuilder) do
         switch (type (content), {
             ["table"] = function ()

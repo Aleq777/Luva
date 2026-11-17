@@ -1,9 +1,10 @@
 
 import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
 
+_LUVA.Errors.TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in it's type or ensure that you have used multi-setter correctly"
 
 ---@type metatable
-return {
+_LUVA.SecuredObject.Metatables.InstanceBase = {
     ---@param self Luva.Object
     ---@param index Luva.Dynamic
     ---@return any
@@ -17,4 +18,33 @@ return {
     __newindex = function (self, index, value)
         _LUVA._secureSet(self, index, value)
     end,
+
+    ---@param self Luva.Object
+    ---@return string
+    ---@nodiscard
+    __tostring = function (self)
+        return self:ToString()
+    end,
+
+    ---@param self Luva.Object
+    ---@param ... table|any[]
+    ---@return Luva.Object|any ...
+    __call = function (self, ...)
+        local userDefined = self.__Type.__Prototype.PrototypeMetatable._index
+        if userDefined then
+            return userDefined(self, ...)
+        end
+
+        local argCount = select("#", ...)
+        local argFirst = ( select(1, ...) )
+        if argCount ~= 1 or type (argFirst) ~= "table" then
+            error(_LUVA.Errors.TRIED_TO_CALL_OBJECT, 3)
+        end
+
+        for fieldName, fieldContent in pairs(argFirst) do
+            self[fieldName] = fieldContent
+        end
+
+        return self
+    end
 }

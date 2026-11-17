@@ -19,41 +19,41 @@ function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCalle
         ---@type Luva.Object
         local instance = {  ---@diagnostic disable-line : missing-fields
             __Type = _class,
+        }
+
+        local proto = _class.__Prototype    ---@diagnostic disable-line : invisible
+        ---@cast proto -nil
+
+        _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+
+        -- Luva.Object
+        _LUVA.Utils.SafeInjectRef(instance.__Methods, {
             Equals = function (self, v)
                 if
-                        type (v) ~= "table"
+                    type (v) ~= "table"
                     or not v.__Type
                     or self.__Type ~= v.__Type  ---@diagnostic disable-line : invisible
                 then
                     return false
                 end
 
-                local keys = { }
-                for key, value in pairs(self) do
-                    if value ~= v[key] then
-                        return false
-                    end
-
-                    table.insert(keys, key)
-                end
-
-                for key, _ in pairs(v) do
-                    if not _LUVA.Utils.Has(keys, key) then
-                        return false
-                    end
-                end
-
-                return true
+                return _LUVA.Utils.IsSameByValue(self, v, true)
             end,
 
             ToString = function (self)
                 local result = "Luva.Object {"
 
-                for k, v in pairs(self) do
-                    if not _LUVA.Utils.Has(_LUVA.Utils.ProhibitedIndexes, k) then
-                        result = result .. "\n\t" .. tostring(k) .. ": " .. tostring(v)
-                    end
-                end
+                -- for k, v in pairs(self) do
+                --     -- is hidden
+                --     if string.sub(k, 1, 2) ~= "__" then
+                --         result = result .. "\n\t" .. tostring(k) .. ":\t" .. tostring(v)
+                --     end
+                --     -- if not _LUVA.Utils.Has(_LUVA.Utils.ProhibitedIndexes, k) then
+                --     -- end
+                -- end
+                _LUVA.Utils.Entries(self, function (index, value)
+                    result = result .. "\n\t" .. tostring(index) .. ":\t" .. tostring(value)
+                end)
 
                 result = result .. "\n}"
 
@@ -88,12 +88,8 @@ function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCalle
 
                 return _LUVA.Utils.Has(t.__Implements, i)   ---@diagnostic disable-line : invisible
             end,
-        }
-
-        local proto = _class.__Prototype    ---@diagnostic disable-line : invisible
-        ---@cast proto -nil
-
-        _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+        })
+        -- instance.__Methods
 
         for identifier, content in pairs(proto.Fields) do
             instance.__Fields[identifier] = content ---@diagnostic disable-line : invisible
@@ -117,39 +113,3 @@ function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCalle
         return instance
     end
 end
-
--- ---@generic TInstance : Luva.Object
--- ---@param constructors Luva.Lang.ClassConstructors<TInstance>
--- ---@param defaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
--- function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
---     ---@type Luva.Lang.DefaultConstructor
---     constructors.DefaultConstructor = function (class)
---         ---@type Luva.Object
---         local instance = {  ---@diagnostic disable-line : missing-fields
---             __Readonlys = { }
---         }
---         local proto = class.__Prototype ---@diagnostic disable-line : invisible
-
---         for identifier, ro in pairs(proto.Readonlys) do
---             _LUVA.Utils.SafeInjectRef(instance.__Readonlys, {   ---@diagnostic disable-line : invisible
---                 [identifier] = _LUVA.Utils.Copy(ro)
---             })
---         end
-
---         _LUVA.Utils.SafeInjectRef(instance, _LUVA.Utils.Copy(proto.Fields))
-
---         ---@cast instance Luva.Object
---         _LUVA.SecuredObject.Secure(instance, proto.Metatable)
-
---         local caller = class.__Constructors.DefaultCaller   ---@diagnostic disable-line : invisible
---         if caller then
---             caller(instance)
---         end
-
---         return instance
---     end
-
---     if defaultCaller then
---         constructors.DefaultCaller = defaultCaller
---     end
--- end

@@ -35,7 +35,11 @@ Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mism
 
 
 
-local mooseMan = Human()
 
+local mooseMan = Human() {
+    Name = "moose man2",
+    Age = 20
+}
 
-
+-- _LUVA.Utils.Entries(mooseMan)
+print(mooseMan)

@@ -23,11 +23,12 @@ _LUVA.SecuredObject.Metatables.InstanceClass = {
     ---@return Luva.Object
     __call = function (self, ...)
         local argsCount = select("#", ...)
+        local args = { ... }
         local first = ( select(1, ...) )
         local instance = nil
 
         local function customConstr()
-            instance = self.__Constructors.CustomConstructor(self, unpack(args))
+            return self.__Constructors.CustomConstructor(self, table.unpack(args))
         end
 
         switch (argsCount, {
@@ -38,15 +39,20 @@ _LUVA.SecuredObject.Metatables.InstanceClass = {
             [1] = function ()
                 -- build constructor
                 if type (first) == "table" then
-                    -- instance = self.__Constructors.BuildConstructor(self, arg)
+                    ---@cast first table
+                    instance = self.__Constructors.BuildConstructor(self, first)
                 else -- same as default
-                    customConstr()
+                    instance = customConstr()
                 end
             end,
 
             default = function ()
-                customConstr()
+                instance = customConstr()
             end
         })
+
+        -- ---@cast instance Luva.Object
+        -- setmetatable(instance, self.__Prototype.PrototypeMetatable)
+        return instance
     end
 }

@@ -6,4 +6,5 @@
 ---@field public ToString fun(self: Luva.Object): Luva.String
 ---@field public Extends fun(self: Luva.Object, t: Luva.Type): Luva.Boolean
 ---@field public Implements fun(self: Luva.Object, i: Luva.Interface): Luva.Boolean
+---@operator call(table): nil If not overriden, it acts like a multiline field modifier-setter
 local Object = struct { }

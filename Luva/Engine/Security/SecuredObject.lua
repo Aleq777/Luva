@@ -29,7 +29,7 @@ do
     ---| "__len"
     ---| "_index" user defined []
     ---| "_newindex" user defined []=
-    ---| "__call"
+    ---| "_call" user defined ()
 
     ---@class Luva.Lang.PseudoMetatable : metatable
     ---@field public _index nil|fun(self: table, index: any): any
@@ -84,14 +84,7 @@ _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class 
 local function _doesIdentifierExist(obj, identifier)
     for tableName, tableContent in pairs(obj) do
         if type(tableContent) ~= "function" then
-            if tableName == "__Externs" then
-                ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
-                for k, _ in ipairs(tableContent) do
-                    if k == identifier then
-                        return true
-                    end
-                end
-            elseif tableContent[identifier] ~= nil then
+            if tableContent[identifier] ~= nil then
                 return true
             end
         end
@@ -112,8 +105,8 @@ end
 
 --- Secures an object
 ---@param obj table
----@param metatableName Luva.Lang.TypesMetatableNames
----@param modifyMetatable metatable|nil
+---@param metatableName Luva.Lang.TypesMetatableNames Which metatable use
+---@param modifyMetatable metatable|nil Modifying (coping and changing) metatable. For `"InstanceBase"` it acts like a ready table to refer to
 function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
     ---@type metatable
     local metatable
@@ -122,10 +115,12 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
             error (_LUVA.Errors.MISSING_INSTANCE_S_CLASS)
         end
 
-        metatable = _LUVA.Utils.SafeInjectRef(
-            _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName]),
-            modifyMetatable
-        ) --[[@as metatable]]
+        metatable = modifyMetatable
+
+        -- metatable = _LUVA.Utils.SafeInjectRef(
+        --     _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables.InstanceBase),
+        --     modifyMetatable
+        -- ) --[[@as metatable]]
     else
         metatable = _LUVA.SecuredObject.Metatables[metatableName]
     end
