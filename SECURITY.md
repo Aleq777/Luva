@@ -27,8 +27,8 @@ TEMP - Temporary support\
 ## Reporting a Vulnerability
 
 Report any problems on:
-- [Discord]()
-- [Discussions]()
+- [Discord]() - coming soon ...
+- [Discussions](https://github.com/Aleq777/Luva/discussions)
 
 You can expect to receive feedback in 1 to 7 days.\
 Describe all details known to you.\
