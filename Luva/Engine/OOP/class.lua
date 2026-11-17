@@ -3,9 +3,10 @@
 
 import "Luva.Engine.Security.SecuredObject"
 import "Luva.Engine.OOP.Ingredients.prototype"
+import "Luva.Engine.OOP.Ingredients.Generics.template"
 import "Luva.Engine.OOP.Ingredients.Constructors.base"
 import "Luva.Engine.OOP.Ingredients.Constructors.default"
-import "Luva.Engine.OOP.Ingredients.Generics.template"
+import "Luva.Engine.OOP.Ingredients.Constructors.custom"
 
 ---@alias Luva.Lang.PropNames "prototype"|"default"|"constructor"|"destructor"|"static"|"const"|"template"|"extends"|"implements"|"static_assert"
 ---@alias Luva.Lang.PropFuncNames "AddConstant"|"AddField"|"AddMethod"|"AddAccessor"
@@ -14,8 +15,8 @@ do
     ---@generic TInstance : Luva.Object
     ---@class Luva.Lang.ClassBuilder : metatable
     ---@field public prototype Luva.Lang.PrototypeBuilder|nil
-    ---@field public default Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
-    ---@field public constructor Luva.Lang.ConstructorBuilder|nil
+    ---@field public default fun(self: TInstance)|nil
+    ---@field public constructor fun(setPrototype: fun(obj: TInstance), ...: any[])|nil
     ---@field public destructor Luva.Lang.DestructorBuilder|nil
     ---@field public static table<string, Luva.Dynamic>|nil
     ---@field public const table<string, Luva.Dynamic>|nil
@@ -140,12 +141,10 @@ class = function (classBuilder)
         local constructors = resultClass.__Constructors ---@diagnostic disable-line : invisible
 
         _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, classBuilder.default)
-        -- _LUVA._SetupBuildConstructor(constructors, classBuilder.prototype)
         
         if classBuilder.constructor then
             _LUVA._SetupConstructor(constructors, classBuilder.constructor)
         end
-        -- _LUVA.SecuredObject.Secure(resultClass, "StaticClass")
     end
 
     return resultClass

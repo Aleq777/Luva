@@ -10,7 +10,7 @@ end
 
 ---@generic TInstance : Luva.Object
 ---@param constructors Luva.Lang.ClassConstructors<TInstance> Reference to class'es constructors
----@param defaultCaller Luva.Lang.PostDefaultConstructorCaller<TInstance>|nil
+---@param defaultCaller fun(self: TInstance)|nil
 function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
     constructors.DefaultCaller = defaultCaller or function (instance) end
 
@@ -107,7 +107,7 @@ function _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, defaultCalle
             instance.__Accessors[identifier] = content  ---@diagnostic disable-line : invisible
         end
 
-        _class.__Constructors.DefaultCaller()   ---@diagnostic disable-line : invisible
+        _class.__Constructors.DefaultCaller(instance)   ---@diagnostic disable-line : invisible
 
         -- setmetatable(instance, proto.PrototypeMetatable)
         return instance
