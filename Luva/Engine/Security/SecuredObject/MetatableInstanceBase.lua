@@ -30,7 +30,7 @@ _LUVA.SecuredObject.Metatables.InstanceBase = {
     ---@param ... table|any[]
     ---@return Luva.Object|any ...
     __call = function (self, ...)
-        local userDefined = self.__Type.__Prototype.PrototypeMetatable._index
+        local userDefined = self.__Type.__Prototype.PrototypeMetatable._index   ---@diagnostic disable-line : invisible
         if userDefined then
             return userDefined(self, ...)
         end
@@ -51,6 +51,6 @@ _LUVA.SecuredObject.Metatables.InstanceBase = {
     ---@version >5.1 On version 5.1, it just won't work
     ---@param self Luva.Object
     __gc = function (self)
-        self.__Type.__Destructor(self)
+        self.__Type.__Destructor(self)  ---@diagnostic disable-line : invisible
     end
 }

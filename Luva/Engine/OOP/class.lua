@@ -7,6 +7,7 @@ import "Luva.Engine.OOP.Ingredients.Generics.template"
 import "Luva.Engine.OOP.Ingredients.Constructors.base"
 import "Luva.Engine.OOP.Ingredients.Constructors.default"
 import "Luva.Engine.OOP.Ingredients.Constructors.custom"
+import "Luva.Engine.OOP.Ingredients.Memory.destructor"
 
 ---@alias Luva.Lang.PropNames "prototype"|"default"|"constructor"|"destructor"|"static"|"const"|"template"|"extends"|"implements"|"static_assert"
 ---@alias Luva.Lang.PropFuncNames "AddConstant"|"AddField"|"AddMethod"|"AddAccessor"
@@ -17,7 +18,7 @@ do
     ---@field public prototype Luva.Lang.PrototypeBuilder|nil
     ---@field public default fun(self: TInstance)|nil
     ---@field public constructor fun(setPrototype: fun(obj: TInstance), ...: any[])|nil
-    ---@field public destructor fun(self: TInstance)
+    ---@field public destructor nil|fun(self: TInstance)
     ---@field public static table<string, Luva.Dynamic>|nil
     ---@field public const table<string, Luva.Dynamic>|nil
     ---@field public template fun(...: Luva.Type)|nil
@@ -43,16 +44,14 @@ local function _GetClassMetatable(classBuilder)
 end
 
 
----@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 ---@param propName Luva.Lang.PropNames
 ---@param callback fun(index: string, content: any)
-local function _tryAddStatic(resultClass, classBuilder, propName, callback)
+local function _tryAddStatic(classBuilder, propName, callback)
     local prop = classBuilder[propName]
     if not prop then
         return
     end
-
 
     for index, content in pairs(prop) do
         callback(index, content)
@@ -62,7 +61,7 @@ end
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticFields(resultClass, classBuilder)
-    _tryAddStatic(resultClass, classBuilder, "static", function (index, content)
+    _tryAddStatic(classBuilder, "static", function (index, content)
         if type (content) == "function" then
             ---@cast content function
             resultClass:__AddMethod(index, content)   ---@diagnostic disable-line : invisible
@@ -75,7 +74,7 @@ end
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticConst(resultClass, classBuilder)
-    _tryAddStatic(resultClass, classBuilder, "const", function (index, content)
+    _tryAddStatic(classBuilder, "const", function (index, content)
         resultClass:__AddConstant(index, content)   ---@diagnostic disable-line : invisible
     end)
 end
@@ -125,28 +124,28 @@ class = function (classBuilder)
     }
 
     _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
-    
+
     _TryAddStaticTemplate(resultClass, classBuilder)
     _TryAddStaticExtends(resultClass, classBuilder)
     _TryAddStaticImplements(resultClass, classBuilder)
     _TryAddStaticConst(resultClass, classBuilder)
     _TryAddStaticFields(resultClass, classBuilder)
-    
-    
+
+
     if classBuilder.prototype then
         _LUVA._SetupPrototype(resultClass, classBuilder.prototype)
-        
+
         _LUVA._SetupConstructorBase(resultClass)
-        
+
         local constructors = resultClass.__Constructors ---@diagnostic disable-line : invisible
-        
+
         _LUVA._SetupDefaultConstructorAndMaybeCaller(constructors, classBuilder.default)
-        
+
         if classBuilder.constructor then
             _LUVA._SetupConstructor(constructors, classBuilder.constructor)
         end
-        
-        rawset(resultClass, "__Destructor", classBuilder.destructor or function () end)
+
+        _LUVA._SetupDestructor(resultClass, classBuilder.destructor)
     end
 
     return resultClass

@@ -82,7 +82,7 @@ _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class 
 ---@return boolean
 ---@nodiscard
 local function _doesIdentifierExist(obj, identifier)
-    for tableName, tableContent in pairs(obj) do
+    for _, tableContent in pairs(obj) do
         if type(tableContent) ~= "function" then
             if tableContent[identifier] ~= nil then
                 return true
@@ -116,11 +116,6 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         end
 
         metatable = modifyMetatable
-
-        -- metatable = _LUVA.Utils.SafeInjectRef(
-        --     _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables.InstanceBase),
-        --     modifyMetatable
-        -- ) --[[@as metatable]]
     else
         metatable = _LUVA.SecuredObject.Metatables[metatableName]
     end

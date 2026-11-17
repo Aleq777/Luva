@@ -14,7 +14,6 @@ do
     local __template
 
     ---@class Luva.TemplateClass : Luva.Lang.StrictKind
-    -- -@field private __Metatable metatable
     ---@field private __GeneratedClasses table<Luva.Type[], Luva.Type> # if it finds something here, it will use it instead of creating
     ---@field private __Template Luva.Lang.Template
     ---@field private __Class Luva.Type # Class without defined generics, for TEMPLATE DUHH
@@ -54,7 +53,6 @@ function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
     ---@type Luva.Type
     local result = {    ---@diagnostic disable-line : missing-fields
         __GenericTypes = genericTypes,
-        -- __Metatable = metatable,
         __Constants = constants,
         __Fields = fields,
         __Methods = methods,

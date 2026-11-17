@@ -1,7 +1,7 @@
 
 
 import "Luva.Engine.OOP.class"
-
+import "Luva.Engine.empty"
 
 do
     ---@class HumanT : Luva.Type
@@ -54,15 +54,4 @@ local moose2 = Human() {
     Age = 30
 }
 
-
--- local mooseMan = Human() {
---     Name = "moose man2",
---     Age = 20
--- }
-
-
-
--- _LUVA.Utils.Entries(mooseMan)
-print(moose1)
 print(moose2)
-

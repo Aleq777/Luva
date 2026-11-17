@@ -1,6 +1,6 @@
 
 
-import "Luva.Engine.Security.SecuredObject.securedGetSet"    ---@diagnostic disable-line : assign-type-mismatch # Intelisense not working
+import "Luva.Engine.Security.SecuredObject.securedGetSet"
 
 
 ---@type metatable
@@ -26,9 +26,9 @@ _LUVA.SecuredObject.Metatables.InstanceClass = {
         local instance = nil
 
         if argsCount == 0 then
-            instance = self.__Constructors.DefaultConstructor(self)
+            instance = self.__Constructors.DefaultConstructor(self) ---@diagnostic disable-line : invisible
         else
-            instance = self.__Constructors.CustomConstructor(self, ...)
+            instance = self.__Constructors.CustomConstructor(self, ...)  ---@diagnostic disable-line : invisible
         end
 
         return instance
