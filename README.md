@@ -50,22 +50,18 @@ Examples:
 Main purpose is to shorten the code and make it a little more readable.
 
 ### 5. Unite different scripts
-Luva framework's projects shall be usable between them (if [`Config.lua`]() has the same properties).
+Luva framework's projects shall be usable between them (if [`Config.lua`](./Config.lua) has the same properties).
 
 # Requirements
-- **Lua** version: 5.1 - newest (check [**SECURITY**]() for current compatibility)
-- Environment: metatables, `dofile` function
+- **Lua** version: 5.1 - newest (check [**SECURITY**](https://github.com/Aleq777/Luva/edit/Official/SECURITY.md) for current compatibility)
+- Environment: **metatables**, `dofile` function
 
 ## Recommended
-- [**LuaLS**]() extension
+- [**LuaLS**](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) extension
 
 # Documentation
-- [**GitHub Wiki**]()
-- [Google docs]()
+- [**GitHub Wiki**](https://github.com/Aleq777/Luva/wiki)
 
 # Contact
-- [**Discord**]()
-- [GitHub discussion]()
-
-# Support
-- [**Buy me a Coffee**]() (Pls I need it to stay awake)
+- [**Discord**]() - coming soon ...
+- [GitHub discussion](https://github.com/Aleq777/Luva/discussions)
