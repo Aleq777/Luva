@@ -5,10 +5,10 @@ import "Luva.Engine.Security.SecuredObject"
 import "Luva.Engine.OOP.Ingredients.prototype"
 import "Luva.Engine.OOP.Ingredients.Constructors.base"
 import "Luva.Engine.OOP.Ingredients.Constructors.default"
-
+import "Luva.Engine.OOP.Ingredients.Generics.template"
 
 ---@alias Luva.Lang.PropNames "prototype"|"default"|"constructor"|"destructor"|"static"|"const"|"template"|"extends"|"implements"|"static_assert"
----@alias Luva.Lang.PropFuncNames
+---@alias Luva.Lang.PropFuncNames "AddConstant"|"AddField"|"AddMethod"|"AddAccessor"
 
 do
     ---@generic TInstance : Luva.Object
@@ -22,7 +22,6 @@ do
     ---@field public template fun(...: Luva.Type)|nil
     ---@field public extends Luva.Type|nil
     ---@field public implements Luva.Interface[]|nil
-    ---@field public static_assert nil|fun(assertion: fun(): boolean)
     local __classBuilder
 end
 
@@ -46,43 +45,71 @@ end
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 ---@param propName Luva.Lang.PropNames
----@param funcName Luva.Lang.PropFuncNames
-local function _tryAddStatic(resultClass, classBuilder, propName, funcName)
+---@param callback fun(index: string, content: any)
+local function _tryAddStatic(resultClass, classBuilder, propName, callback)
     local prop = classBuilder[propName]
     if not prop then
         return
     end
 
+
     for index, content in pairs(prop) do
-        resultClass[funcName](resultClass, index, content)
+        callback(index, content)
     end
 end
 
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticFields(resultClass, classBuilder)
-    local static = classBuilder.static
-    if not static then
-        return
-    end
-
-    for index, content in pairs(static) do
-        resultClass:AddField(index, content)  ---@diagnostic disable-line : invisible
-    end
+    _tryAddStatic(resultClass, classBuilder, "static", function (index, content)
+        if type (content) == "function" then
+            ---@cast content function
+            resultClass:__AddMethod(index, content)   ---@diagnostic disable-line : invisible
+        else
+            resultClass:__AddField(index, content)  ---@diagnostic disable-line : invisible
+        end
+    end)
 end
 
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticConst(resultClass, classBuilder)
-    local const = classBuilder.const
-    if not const then
+    _tryAddStatic(resultClass, classBuilder, "const", function (index, content)
+        resultClass:__AddConstant(index, content)   ---@diagnostic disable-line : invisible
+    end)
+end
+
+---@param resultClass Luva.Type
+---@param classBuilder Luva.Lang.ClassBuilder
+local function _TryAddStaticTemplate(resultClass, classBuilder)
+    local template = classBuilder.template
+    if not template then
         return
     end
 
-    for index, content in pairs(const) do
-        resultClass:AddConstant(index, content) ---@diagnostic disable-line : invisible
-    end
+    _LUVA._ImplementTemplate(resultClass, classBuilder, template)
 end
+
+---@param resultClass Luva.Type
+---@param classBuilder Luva.Lang.ClassBuilder
+local function _TryAddStaticExtends(resultClass, classBuilder)
+    if not classBuilder.extends then
+        classBuilder.extends = Luva.Object
+    end
+
+    -- handle extend
+end
+
+---@param resultClass Luva.Type
+---@param classBuilder Luva.Lang.ClassBuilder
+local function _TryAddStaticImplements(resultClass, classBuilder)
+    if not classBuilder.implements then
+        return
+    end
+
+    -- handle implements
+end
+
 
 
 --- Creates a class
@@ -97,8 +124,13 @@ class = function (classBuilder)
     }
 
     _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
+    
+    _TryAddStaticTemplate(resultClass, classBuilder)
+    _TryAddStaticExtends(resultClass, classBuilder)
+    _TryAddStaticImplements(resultClass, classBuilder)
+    _TryAddStaticConst(resultClass, classBuilder)
     _TryAddStaticFields(resultClass, classBuilder)
-
+    
     
     if classBuilder.prototype then
         _LUVA._SetupPrototype(resultClass, classBuilder.prototype)

@@ -1,4 +1,5 @@
 
+-- import "Luva.Engine.utils"
 
 ---@param obj Luva.Lang.SecuredObject
 ---@param index Luva.Dynamic
@@ -54,11 +55,11 @@ end
 ---@param value Luva.Dynamic
 function _LUVA._secureSet(obj, index, value)
     if obj.__Constants[index] then ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
+        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT, 3)
     elseif obj.__Methods[index] then   ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_METHOD)
+        error(_LUVA.Errors.TRIED_MODIFY_METHOD, 3)
     elseif obj.__Generics and obj.__Generics[index] then  ---@diagnostic disable-line : invisible
-        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT)
+        error(_LUVA.Errors.TRIED_MODIFY_CONSTANT, 3)
     end
 
     if value == nil then

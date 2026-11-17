@@ -31,7 +31,7 @@ _LUVA.Utils = {
         local result = { }
 
         for k, v in pairs(obj) do
-            result[k] = _LUVA.Copy(v)
+            result[k] = _LUVA.Utils.Copy(v)
         end
 
         return result
@@ -45,7 +45,7 @@ _LUVA.Utils = {
     ---@param components table Components to inject (reference)
     SafeInjectRef = function (obj, components)
         _injectRef(obj, components, function (k, v)
-            error(_LUVA.Errors.INJECTION_FAILED_DUPLICATE)
+            error(_LUVA.Errors.INJECTION_FAILED_DUPLICATE, 4)
         end)
     end,
 
@@ -87,12 +87,18 @@ _LUVA.Utils = {
     ---Compares `objA` and `objB` by values
     ---@param objA any
     ---@param objB any
+    ---@param ignoreFunctions boolean|nil `Default: false` It won't check functions (they may have different reference)
     ---@return boolean
     ---@nodiscard
-    IsSameByValue = function (objA, objB)
+    IsSameByValue = function (objA, objB, ignoreFunctions)
         local t = type (objA)
+
         if t ~= type (objB) then
             return false
+        end
+
+        if ignoreFunctions and t == "function" then
+            return true
         end
 
         if t ~= "table" then
@@ -102,7 +108,7 @@ _LUVA.Utils = {
         local checkedIndexes = { }
 
         for k, v in pairs(objA) do
-            local same = _LUVA.Utils.IsSameByValue(v, objB[k])
+            local same = _LUVA.Utils.IsSameByValue(v, objB[k], ignoreFunctions)
 
             if not same then
                 return false
@@ -118,5 +124,55 @@ _LUVA.Utils = {
         end
 
         return true
-    end
+    end,
+
+    --- Iterates through Luva.Object fields
+    ---@generic T : Luva.Object
+    ---@param obj T
+    ---@param func fun(index: string, value: any)
+    Entries = function (obj, func)
+        for _, propName in ipairs { "__Methods", "__Constants", "__Fields", "__Accessors" } do
+            for k, v in pairs(obj[propName]) do
+                func(k, v)
+            end
+        end
+    end,
+
+    MetamethodsNames = {
+        "__add",
+        "__sub",
+        "__mul",
+        "__div",
+        "__unm",
+        "__mod",
+        "__pow",
+        "__eq",
+        "__lt",
+        "__le",
+        "__concat",
+        "__len",
+        "__index",
+        "__newindex",
+        "__call",
+    },
+
+    --- Index names, that cannot be used (they are a part of Luva). Use rawset, rawget and raweq instead.
+    ProhibitedIndexes = {
+        "__Constants",
+        "__Fields",
+        "__Methods",
+        "__Accessors",
+        "__Generics",
+        "__Metatable",
+        "__AddConstant",
+        "__AddField",
+        "__AddMethod",
+        "__AddAccessor",
+        "__SetConstants",
+        "__SetFields",
+        "__SetMethods",
+        "__SetAccessors",
+        "__SetGenerics",
+        "__Type"
+    },
 }

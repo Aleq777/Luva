@@ -29,7 +29,7 @@ do
     ---| "__len"
     ---| "_index" user defined []
     ---| "_newindex" user defined []=
-    ---| "__call"
+    ---| "_call" user defined ()
 
     ---@class Luva.Lang.PseudoMetatable : metatable
     ---@field public _index nil|fun(self: table, index: any): any
@@ -37,16 +37,16 @@ do
     local __pseudo
 
     ---@class Luva.Lang.SecuredObject : Luva.Lang.StrictKind
-    ---@field protected AddConstant     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, constant: Luva.Dynamic)
-    ---@field protected AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
-    ---@field protected AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
-    ---@field protected AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
-    ---@field protected SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
-    ---@field protected SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
-    ---@field protected SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
-    ---@field protected SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
+    ---@field protected __AddConstant     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, constant: Luva.Dynamic)
+    ---@field protected __AddField        fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, _field: Luva.Dynamic)
+    ---@field protected __AddMethod       fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, method: function)
+    ---@field protected __AddAccessor     fun(self: Luva.Lang.SecuredObject, name: Luva.Lang.Identifier, accessor: Luva.Lang.Accessor<Luva.Object>)
+    ---@field protected __SetConstants    fun(self: Luva.Lang.SecuredObject, constants: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected __SetFields       fun(self: Luva.Lang.SecuredObject, fields: table<Luva.Lang.Identifier, Luva.Dynamic>)
+    ---@field protected __SetMethods      fun(self: Luva.Lang.SecuredObject, methods: table<Luva.Lang.Identifier, function>)
+    ---@field protected __SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
+    ---@field protected __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@
-    ---@field private SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@field private __Metatable   Luva.Lang.PseudoMetatable
     ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
@@ -67,9 +67,9 @@ end
 
 _LUVA.Errors.UNDEFINED_FIELD = "Tried to access undefined field"
 _LUVA.Errors.ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"empty\" instead. If the error persists, ensure that you have imported \"empty\" correctly."
-_LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or readonly value"
-_LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is readonly)"
-_LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's readonly or write only)"
+_LUVA.Errors.TRIED_MODIFY_CONSTANT= "Tried to modify a constant or read-only value"
+_LUVA.Errors.TRIED_MODIFY_METHOD = "Tried to modify a method (which is read-only)"
+_LUVA.Errors.NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's read-only or write only)"
 _LUVA.Errors.TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
 _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
@@ -84,14 +84,7 @@ _LUVA.Errors.MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class 
 local function _doesIdentifierExist(obj, identifier)
     for tableName, tableContent in pairs(obj) do
         if type(tableContent) ~= "function" then
-            if tableName == "__Externs" then
-                ---@cast tableContent table<Luva.Lang.Identifier, Luva.Dynamic>
-                for k, _ in ipairs(tableContent) do
-                    if k == identifier then
-                        return true
-                    end
-                end
-            elseif tableContent[identifier] ~= nil then
+            if tableContent[identifier] ~= nil then
                 return true
             end
         end
@@ -112,8 +105,8 @@ end
 
 --- Secures an object
 ---@param obj table
----@param metatableName Luva.Lang.TypesMetatableNames
----@param modifyMetatable metatable|nil
+---@param metatableName Luva.Lang.TypesMetatableNames Which metatable use
+---@param modifyMetatable metatable|nil Modifying (coping and changing) metatable. For `"InstanceBase"` it acts like a ready table to refer to
 function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
     ---@type metatable
     local metatable
@@ -122,10 +115,12 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
             error (_LUVA.Errors.MISSING_INSTANCE_S_CLASS)
         end
 
-        metatable = _LUVA.Utils.SafeInjectRef(
-            _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables[metatableName]),
-            modifyMetatable
-        ) --[[@as metatable]]
+        metatable = modifyMetatable
+
+        -- metatable = _LUVA.Utils.SafeInjectRef(
+        --     _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables.InstanceBase),
+        --     modifyMetatable
+        -- ) --[[@as metatable]]
     else
         metatable = _LUVA.SecuredObject.Metatables[metatableName]
     end
@@ -137,42 +132,42 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
         __Methods = { },
         __Accessors = { },
         __Generics = { },
-        SetGenerics = function (self, generics)
+        __SetGenerics = function (self, generics)
             self.__Generics = generics  ---@diagnostic disable-line : invisible
         end,
 
-        SetAccessors = function (self, accessors)
+        __SetAccessors = function (self, accessors)
             self.__Accessors = accessors    ---@diagnostic disable-line : invisible
         end,
 
-        SetConstants = function (self, constants)
+        __SetConstants = function (self, constants)
             self.__Constants = constants    ---@diagnostic disable-line : invisible
         end,
 
-        SetFields = function (self, fields)
+        __SetFields = function (self, fields)
             self.__Fields = fields  ---@diagnostic disable-line : invisible
         end,
 
-        SetMethods = function (self, methods)
+        __SetMethods = function (self, methods)
             self.__Methods = methods    ---@diagnostic disable-line : invisible
         end,
 
-        AddAccessor = function (self, name, accessor)
+        __AddAccessor = function (self, name, accessor)
             _checkIfNew(self, name)
             self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
         end,
 
-        AddConstant = function (self, name, constant)
+        __AddConstant = function (self, name, constant)
             _checkIfNew(self, name)
             self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
         end,
 
-        AddField = function (self, name, _field)
+        __AddField = function (self, name, _field)
             _checkIfNew(self, name)
             self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
         end,
 
-        AddMethod = function (self, name, method)
+        __AddMethod = function (self, name, method)
             _checkIfNew(self, name)
             self.__Methods[name] = method   ---@diagnostic disable-line : invisible
         end,
