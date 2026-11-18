@@ -12,7 +12,7 @@ end
 
 --- In Luva framework, it is unsupported due to lack of forward-compilability.
 --- Please, create tables and return them to create a module. Use `dofile` to import
---- or `import()` or `from():import()` functions from Luva framework.
+--- or `import` function from Luva framework.
 ---@param name string
 ---@param ... any
 ---@deprecated
