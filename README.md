@@ -1,13 +1,18 @@
+[![Static badge](https://img.shields.io/badge/language-English-blue)](README.md)
+[![Static badge](https://img.shields.io/badge/language-Polski-red)](README.pl-PL.md)\
+:uk:/:us: English
+
 # Introduction
 
-[**Lua**]( https://www.lua.org/ ) is a simple, yet powerful scripting language
+## Lua
+[**Lua**](https://www.lua.org/) is a simple, yet powerful scripting language
 commonly used among many apps, games and environments.
 It is very good for simple projects and small mods.\
 But some of us want to create a big, complex and safe scripts,
 that significantly modify the addon: big mods, advanced scripts etc.\
 That is why I have created **__Luva__**.
 
-# Luva
+## About Luva framework
 
 **__Luva__** is a powerful Lua framework that introduces:
 - many new behaviours
@@ -46,22 +51,55 @@ Examples:
 - Many functions were later joined into one (`loadstring` and `load`, `gfind` and `gmatch` etc.)
 
 ### 4. Provide useful keyword-like functions
-[switch](), [match](), [typeof](), [class]() etc.\
+for example: [switch](), [typeof](), [class](), ...
+
 Main purpose is to shorten the code and make it a little more readable.
 
 ### 5. Unite different scripts
-Luva framework's projects shall be usable between them (if [`Config.lua`](./Config.lua) has the same properties).
+Luva framework's projects shall be usable between them (if [`Config.lua`](./Luva/Config.lua) has the same properties).
 
-# Requirements
-- **Lua** version: 5.1 - newest (check [**SECURITY**](https://github.com/Aleq777/Luva/edit/Official/SECURITY.md) for current compatibility)
+## Requirements
+- **Lua** version: 5.1 - newest (check [**SECURITY.md**](./SECURITY.md) for current compatibility)
 - Environment: **metatables**, `dofile` function
 
-## Recommended
-- [**LuaLS**](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) extension
+> [!TIP]
+> [LuaLS](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) is recommended for intelisense and highlighting
+### Recommended
 
-# Documentation
-- [**GitHub Wiki**](https://github.com/Aleq777/Luva/wiki)
+# Creating a project
+Shortly: download the repo, set `Program.lua` as an entry point in your environment
+and write the code in `Main.lua`, additional files and packages import in `Main.lua` (or `Program.lua`)
 
-# Contact
-- [**Discord**]() - coming soon ...
-- [GitHub discussion](https://github.com/Aleq777/Luva/discussions)
+More detailed:
+## Configure your environment
+
+### Visual Studio Code
+> [!NOTE]
+> You will find here an instruction only for Visual Studio Code.
+> If you use other editors/IDEs and know how to implement Luva in them,
+> you can commit to the [README](./README.md) or [wiki]()
+
+1. Clone the repo
+2. Install [LuaLS](https://marketplace.visualstudio.com/items?itemName=sumneko.lua)
+3. In extension's settings, choose:
+    - Lua version
+    - Add requiring function as `import`
+4. In your environment, set `Program.lua` as entry point (for example, in Teardown, place there main functions, set the file as main in config or change the file's name)
+
+## Multiple files
+
+You can add new files and import them with `import` function.
+
+## Adding packages
+
+Place installed packages in a named folder (just like Luva is in `Luva` folder).
+Import from the project your needed file.
+
+## Debugging
+
+Personally, I use [Lua debugger for VSC]()
+
+# Media
+- [Documentation]()
+- Report an issue [here]()
+- [Discord]() ... coming soon

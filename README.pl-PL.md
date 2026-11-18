@@ -7,12 +7,12 @@
 # Wstęp
 
 ## Lua
-[Lua]() to prosty, ale potężny język skryptowy używany często w wielu aplikacjach, grach i środowiskach. Jest rewelacyjna w przypadku prostych projektów i małych modów.
+[Lua](https://www.lua.org/) to prosty, ale potężny język skryptowy używany często w wielu aplikacjach, grach i środowiskach. Jest rewelacyjna w przypadku prostych projektów i małych modów.
 Jednak niektórzy z nas chcą tworzyć większe, skomplikowane i bezpieczne skrypty, które znacząco modyfikują treść: duże mody, zaawansowane skrypty itd.\
 Dlatego stworzyłem ***Luvę***.
 
 ## O frameworku Luva
-***Luva*** to potężny framework dla Lua, który wprowadza:
+**__Luva__** to potężny framework dla Lua, który wprowadza:
 - Wiele nowych zachowań języka
 - Twarde typowanie (strict typing)
 - Zaawansowane programowanie obiektowe (OOP)
@@ -24,6 +24,7 @@ Nie użyto AI.\
 Jestem po prostu kurwa architektem.
 
 ## Założenia
+
 ### 1. Bezpieczne programowanie
 Typy, obiekty itp. są sprawdzane najszybciej jak to tylko możliwe. Luva będzie informować o wszystkich możliwie problematycznych błędach.
 
@@ -46,27 +47,31 @@ Np. [switch](), [typeof](), [class](), ...
 Pozwalają na skrócenie kodu, wydzielenie niektórych ważnych funkcjonalności poza obiekty i zwiększenie czytelności.
 
 ### 5. Ujednolicenie skryptów
-Projekty stworzone w Luva framework powinny być kompatybilne między sobą ([Config.lua]() powinien mieć te same ustawienia).
+Projekty stworzone w Luva framework powinny być kompatybilne między sobą [Config.lua](./Luva/Config.lua) powinien mieć te same ustawienia).
 
 ## Wymagania
-- Wersja Lua: 5.1 - najnowsza (sprawdź [SECURITY.md]() dla aktualnej kompatybilności)
+- Wersja **Lua**: 5.1 - najnowsza (sprawdź [**SECURITY.md**](./SECURITY.pl-PL.md) dla aktualnej kompatybilności)
 - Środowisko: metatabele, funkcja `dofile`
 
-### Zalecane
-- [Rozszerzenie LuaLS]()
+> [!TIP]
+> Zalecane jest rozszerzenie [LuaLS](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) dla intelisense i podpowiedzi
 
 # Tworzenie projektu
-W skrócie, pobierz repozytorium, w środowisku ustaw `Program.lua` jako plik wejściowy
+W skrócie: pobierz repozytorium, w środowisku ustaw `Program.lua` jako plik wejściowy
 i pisz kod w `Main.lua`, a kolejne pliki i pakiety importuj w `Main.lua` (lub w `Program.lua`).
 
 Dokładniej:
 ## Konfiguracja środowiska
 
 ### Visual Studio Code
+> [!NOTE]
+> Znajdziesz tu instrukcje tylko dla Visual Studio Code.
+> Jeśli używasz innego programu i wiesz jak tam zaimplementować Luvę,
+> możesz dodać poradnik dla [README](./README.pl-PL.md) lub [wiki]()
 Niestety, w innych edytorach/IDE nie sprawdzałem projektu, więc musicie sami ogarnąć.
 
 1. Sklonuj repozytorium
-2. Zainstaluj [LuaLS]()
+2. Zainstaluj [LuaLS](https://marketplace.visualstudio.com/items?itemName=sumneko.lua)
 3. W ustawieniach rozszerzenia, wybierz:
   - Wersja Lua
   - Funkcja importowania
