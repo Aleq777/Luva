@@ -13,27 +13,4 @@ _LUVA.Config = {
     --- Default: `true`
     ---@type boolean
     FullTypeChecking = true,
-
-    --- Selects which function should Luva use to import modules
-    ---@type Luva.Lang.Config.ImportingEnum
-    ImportingFunction = "luva",
-
-    --- Configs for each environment
-    Environments = {
-        --- Teardown game
-        Teardown = {
-
-            --- How Luva should search for your mod
-            ---@type Luva.Lang.Config.Teardown.FetchMethodEnum
-            FetchMethod = "distinct_file",
-
-            --- Value for FetchMethod
-            ---@type string
-            ModID = "",
-
-            --- Value for FetchMethod
-            ---@type string
-            DistinctFileName = "",
-        },
-    },
 }
