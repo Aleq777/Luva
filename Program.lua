@@ -6,6 +6,6 @@
 
 
 dofile "Luva/base.lua"
-
+import "Luva.ForwardCompatibility"
 
 import "Main"
