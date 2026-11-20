@@ -74,14 +74,26 @@ local _importPrefix = GetString(prefix .. teardown.ModID .. ".path")
 --- If you want to re-import or import locals, use `dofile`.
 ---@param path Luva.Path Full path in `FolderA.folderB.luaFile` format, without `.lua` extension
 import = function (path)
-    path = _importPrefix .. path
+    local newPath = _importPrefix .. path
 
-    if _LUVA.Modules[path] then
+    if _LUVA.Modules[newPath] then
         return
     end
 
-    _LUVA.Modules[path] = true
+    _LUVA.Modules[newPath] = true
 
-    path = path:gsub("%.", "/") .. ".lua"
-    dofile (path)
+    newPath = path:gsub("%.", "/") .. ".lua"
+
+    local success = pcall(dofile, newPath)
+
+    if not success then
+        local debugPath = Config.Environments.Teardown.LocalFilePath .. '/'
+        local finalPath = debugPath .. path:gsub("%.", "/") .. ".lua"
+        if _LUVA.Modules[finalPath] then
+            return
+        end
+
+        _LUVA.Modules[finalPath] = true
+        dofile (finalPath)
+    end
 end

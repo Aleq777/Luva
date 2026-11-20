@@ -25,6 +25,11 @@ Config = {
             --- Value for FetchMethod
             ---@type string
             DistinctFileName = "",
+
+            --- For debugging if you don't want to publish your work.
+            --- Enter here the absolute path of your local mod
+            ---@type string
+            LocalFilePath = "",
         },
     },
 }
