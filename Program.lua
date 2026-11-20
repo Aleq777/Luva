@@ -5,7 +5,8 @@
 -- Luva will handle the rest!!!
 
 
-dofile "Luva/base.lua"
+---@diagnostic disable-next-line : exp-in-action, undefined-global
+#include "Luva/base.lua"
 
 
-import "Main"
+
