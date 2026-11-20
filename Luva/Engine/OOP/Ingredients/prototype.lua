@@ -2,13 +2,11 @@
 ---@diagnostic disable : lowercase-global
 
 import "Luva.Engine.kind"
-import "Luva.Engine.MatchingExpressions.switch"
+import "Luva.Engine.matching_expr"
 
+---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
 
 do
-    ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
-
-
     ---@class Luva.Lang.ClassPrototype
     ---@field public PrototypeMetatable Luva.Lang.PseudoMetatable
     ---@field public Readonlys table<Luva.Lang.Identifier, Luva.Dynamic>
@@ -18,7 +16,7 @@ do
     local __prototype
 end
 
-_LUVA.Errors.NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
+local ERR_NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
 
 
 
@@ -64,6 +62,7 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
             end,
 
             ["function"] = function ()
+                -- to constant??
                 ---@cast content function
                 resultClass.__Prototype.Accessors[identifier] = _LUVA._MethodToAccessor(content)  ---@diagnostic disable-line : invisible
             end,
