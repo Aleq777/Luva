@@ -8,5 +8,6 @@
 ---@diagnostic disable-next-line : exp-in-action, undefined-global
 #include "Luva/base.lua"
 
+import "ForwardCompatibility"
 
 
