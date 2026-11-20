@@ -54,7 +54,7 @@ end
 
 
 
-local teardown = _LUVA.Config.Environments.Teardown
+local teardown = Config.Environments.Teardown
 local fetchMethod = teardown.FetchMethod
 local prefix = "mods.available"
 

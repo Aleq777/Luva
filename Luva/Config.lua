@@ -1,7 +1,7 @@
 
 
 
-_LUVA.Config = {
+Config = {
     --- Requires Luva to check each time for type-to-type compitability
     --- It slowers the execution, but ensures that you will code faster
     --- (no miss-assigned types etc.) <br />
