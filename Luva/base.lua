@@ -82,12 +82,12 @@ import = function (path)
 
     _LUVA.Modules[newPath] = true
 
-    newPath = path:gsub("%.", "/") .. ".lua"
+    newPath = newPath:gsub("%.", "/") .. ".lua"
 
     local success = pcall(dofile, newPath)
 
     if not success then
-        local debugPath = Config.Environments.Teardown.LocalFilePath .. '/'
+        local debugPath = teardown.LocalFilePath .. '/'
         local finalPath = debugPath .. path:gsub("%.", "/") .. ".lua"
         if _LUVA.Modules[finalPath] then
             return
