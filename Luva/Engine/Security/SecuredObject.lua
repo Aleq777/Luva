@@ -4,12 +4,8 @@
 
 _LUVA.SecuredObject = { }
 import "Luva.Engine.utils"
-import "Luva.Engine.Security.SecuredObject.SecuredObjectMetatables"
-import "Luva.Engine.Security.luvatemplatetype"
-import "Luva.Engine.Security.SecuredObject.MetatableTemplateClass"
-import "Luva.Engine.Security.SecuredObject.MetatableStaticClass"
-import "Luva.Engine.Security.SecuredObject.MetatableInstanceClass"
-import "Luva.Engine.Security.SecuredObject.MetatableInstanceBase"
+import "Luva.Engine.Security.SecuredObject"
+import "Luva.Engine.Security.luvatype"
 
 
 
