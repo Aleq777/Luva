@@ -1,4 +1,9 @@
 
+---@generic TInstance : Luva.Object
+---@alias Luva.Lang.PostDefaultConstructorCaller fun(self: TInstance)
+    
+---@generic TInstance : Luva.Object
+---@alias Luva.Lang.DefaultConstructor fun(_class: Luva.Type): TInstance
 
 do
     ---@generic TInstance : Luva.Object
@@ -9,23 +14,11 @@ do
     local __constructors
 end
 
-
----@generic TInstance : Luva.Object
----@param resultClass Luva.Type<TInstance>
-function _LUVA._SetupConstructorBase(resultClass)
-    rawset(resultClass, "__Constructors", {
-        DefaultConstructor = nil, ---@diagnostic disable-line : assign-type-mismatch
-        DefaultCaller = nil,    ---@diagnostic disable-line : assign-type-mismatch
-        CustomConstructor = nil
-    } --[[@as Luva.Lang.ClassConstructors]])
-end
-
-
 ---@param _class Luva.Type
 ---@param ... any[]
 ---@return Luva.Object
 ---@nodiscard
-function _LUVA._GeneralConstructor(_class, ...)
+local function _GeneralConstructor(_class, ...)
 
     ---@type Luva.Object
     local instance = { }    ---@diagnostic disable-line : missing-fields
@@ -108,4 +101,47 @@ function _LUVA._GeneralConstructor(_class, ...)
     end
 
     return instance
+end
+
+---@generic TInstance : Luva.Object
+---@param constructorsRef Luva.Lang.ClassConstructors<TInstance>
+---@param func fun(setPrototype: fun(obj: table), ...: any[])
+local function _SetupConstructor(constructorsRef, func)
+    constructorsRef.CustomConstructor = function (_class, ...)
+
+        local instance = _GeneralConstructor(_class)
+        func(function (obj)
+            for k, v in pairs(obj) do
+                instance[k] = v
+            end
+        end, ...)
+
+        return instance
+    end
+end
+
+
+
+---@generic TInstance : Luva.Object
+---@param constructors Luva.Lang.ClassConstructors<TInstance> Reference to class'es constructors
+---@param defaultCaller fun(self: TInstance)|nil
+local function _SetupDefaultConstructorAndMaybeCaller(constructors, defaultCaller)
+    constructors.DefaultCaller = defaultCaller or function (instance) end
+
+    ---@type Luva.Lang.DefaultConstructor    
+    constructors.DefaultConstructor = function (_class)
+        local instance = _GeneralConstructor(_class)
+        _class.__Constructors.DefaultCaller(instance)   ---@diagnostic disable-line : invisible
+        return instance
+    end
+end
+
+---@generic TInstance : Luva.Object
+---@param resultClass Luva.Type<TInstance>
+local function _SetupConstructorBase(resultClass)
+    rawset(resultClass, "__Constructors", {
+        DefaultConstructor = nil, ---@diagnostic disable-line : assign-type-mismatch
+        DefaultCaller = nil,    ---@diagnostic disable-line : assign-type-mismatch
+        CustomConstructor = nil
+    } --[[@as Luva.Lang.ClassConstructors]])
 end
