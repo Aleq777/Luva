@@ -25,6 +25,9 @@ _LUVA = {
     Modules = { }
 }
 
+---@diagnostic disable-next-line : exp-in-action, undefined-global
+#include "Luva/Config.lua"
+
 
 
 
@@ -51,22 +54,19 @@ end
 
 
 
-local _importPrefix = ""
-if _LUVA.Config.ImportingFunction == "teardown" then
-    local fetchMethod = _LUVA.Config.Environments.Teardown.FetchMethod
-    local prefix = "mods.available"
-    local teardown = _LUVA.Config.Environments.Teardown
+local teardown = _LUVA.Config.Environments.Teardown
+local fetchMethod = teardown.FetchMethod
+local prefix = "mods.available"
 
-    if fetchMethod == "distinct_file" then
-        _TD_searchForModId(teardown, prefix)
-    elseif fetchMethod == "mod_id" then
-        teardown.ModID = "steam-" .. teardown.ModID
-    end
-
-    ---@diagnostic disable-next-line : undefined-global
-    _importPrefix = GetString(prefix .. teardown.ModID .. ".path")
-
+if fetchMethod == "distinct_file" then
+    _TD_searchForModId(teardown, prefix)
+elseif fetchMethod == "mod_id" then
+    teardown.ModID = "steam-" .. teardown.ModID
 end
+
+---@diagnostic disable-next-line : undefined-global
+local _importPrefix = GetString(prefix .. teardown.ModID .. ".path")
+
 
 --- Imports the file with module saving.
 --- It won't re-import already imported file.
