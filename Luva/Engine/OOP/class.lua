@@ -1,13 +1,12 @@
 
+
 ---@diagnostic disable : lowercase-global
 
 import "Luva.Engine.Security.SecuredObject"
 import "Luva.Engine.OOP.Ingredients.prototype"
-import "Luva.Engine.OOP.Ingredients.Generics.template"
-import "Luva.Engine.OOP.Ingredients.Constructors.base"
-import "Luva.Engine.OOP.Ingredients.Constructors.default"
-import "Luva.Engine.OOP.Ingredients.Constructors.custom"
-import "Luva.Engine.OOP.Ingredients.Memory.destructor"
+import "Luva.Engine.OOP.Ingredients.template"
+import "Luva.Engine.OOP.Ingredients.constructor"
+import "Luva.Engine.OOP.Ingredients.destructor"
 
 ---@alias Luva.Lang.PropNames "prototype"|"default"|"constructor"|"destructor"|"static"|"const"|"template"|"extends"|"implements"|"static_assert"
 ---@alias Luva.Lang.PropFuncNames "AddConstant"|"AddField"|"AddMethod"|"AddAccessor"
