@@ -23,7 +23,8 @@
 
 | Lua Version | Luva branches |
 | --- | --- |
-| Lua 5.1 | Official |
+| Lua 5.1 | Official <br /> Experimental |
+| Lua JIT | ? |
 | Lua 5.2 | Official |
 | Lua 5.3 | Official |
 | Lua 5.4 | Official |
