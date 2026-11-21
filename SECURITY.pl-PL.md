@@ -17,25 +17,7 @@
 
 | Branch | Wersja | Wsparcie |
 | --- | --- | :---: |
-| Official | 0.1.0-beta-1.0.0 | TEMP |
+| Official | 0.0-beta-x| TEMP |
+| Teardown | 0.0-beta-1.3.0td | :x: |
 
-### Wersje Lua
-
-| Wersje Lua | Branche Luva |
-| --- | --- |
-| Lua 5.1 | Official |
-| Lua 5.2 | Official |
-| Lua 5.3 | Official |
-| Lua 5.4 | Official |
-| Lua 5.5 | ? |
-
-## Zgłaszanie problemu
-
-Zgłoś problem na:
-- [Discord]() - niedługo ...
-- [Dyskusje](https://github.com/Aleq777/Luva/discussions)
-
-> [!IMPORTANT]
-> Możesz spodziewać się odpowiedzi w ciągu 1-7 dni.\
-> Opisz wszystkie detale jakie znasz.\
-> Z góry dzięki!
+<h6>Branch Teardown niewspierany, zobacz <https://github.com/Aleq777/Teardown-Luva></h6>
