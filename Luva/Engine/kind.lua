@@ -18,7 +18,9 @@ Luva.KindsEnum = {
     Accessor = "accessor",
     Field = "field",
     Empty = "empty",
+    Instance = "instance",
     ScalarLua = "scalar_lua",
+    ScalarLuaAsRef = "scalar_lua_ref"
 }
 
 do
