@@ -4,6 +4,8 @@
 [![Static badge](https://img.shields.io/badge/language-Polski-red)](README.pl-PL.md)\
 :poland: Polski
 
+<h6>Aktualna wersja: 0.0-beta-1.3.0</h6>
+
 # Wstęp
 
 ## Lua
