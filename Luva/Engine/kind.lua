@@ -2,55 +2,47 @@
 ---@diagnostic disable : lowercase-global
 
 import "Luva.Engine.utils"
-import "Luva.Engine.matching_expr"
 
-
+---@enum Luva.KindsEnum
+Luva.KindsEnum = {
+    Class = "class",
+    AbstractClass = "abstract_class",
+    Struct = "struct",
+    Record = "record",
+    Interface = "interface",
+    Singleton = "singleton",
+    LuvaType = "luva_type",
+    Readonly = "readonly",
+    Reference = "ref",
+    Constant = "const",
+    Accessor = "accessor",
+    Field = "field",
+    Empty = "empty",
+    ScalarLua = "scalar_lua",
+}
 
 do
-    ---@alias Luva.Lang.TypeKinds
-    ---| "class"
-    ---| "struct"
-    ---| "record"
-    ---| "interface"
-
-
     --- It tells what kind of expression is that.
     --- Types are data-interpretation
     ---@class Luva.Lang.StrictKind
-    ---@field private __Kind string|nil
+    ---@field private __Kind Luva.KindsEnum
     local __strictType
 
     ---@alias Luva.Lang.Keyword Luva.Lang.StrictKind
 end
 
----@type string
-local basicType = "Lua"
-
 --- Returns the kind of an expression
 ---@param expr any
----@return string
+---@return Luva.KindsEnum
 ---@nodiscard
 kindof = function (expr)
-    return switch (type (expr), {
-        ["string"] = function ()
-            if _LUVA.Utils.Has({ "class", "struct", "record", "interface" }, expr) then
-                return "Luva.Type"
-            end
+    local t = type (expr)
 
-            return basicType
-        end,
+    if t == "string" and _LUVA.Utils.Has(Luva.KindsEnum, expr) then
+        return Luva.KindsEnum.LuvaType
+    elseif t ~= "table" or expr.__Kind == nil then
+        return Luva.KindsEnum.ScalarLua
+    end
 
-        ["table"] = function ()
-            if expr.__Kind ~= nil then
-                ---@cast expr Luva.Lang.StrictKind
-                return expr.__Kind  ---@diagnostic disable-line : invisible
-            end
-
-            return basicType
-        end,
-
-        default = function ()
-            return basicType
-        end
-    })
+    return expr.__Kind
 end

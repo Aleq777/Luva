@@ -360,6 +360,7 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
     end
 
     _LUVA.Utils.SafeInjectRef(obj, {
+        __Kind = "scalar_lua", -- default
         __Metatable = metatable,
         __Constants = { },
         __Fields = { },
