@@ -1,5 +1,5 @@
 
-import "Luva/Config.lua"
+import "Luva.Config"
 
 if setmetatable == nil or getmetatable == nil or dofile == nil then
     error ("Luva framework environmental requirements haven't met: metatables, dofile")

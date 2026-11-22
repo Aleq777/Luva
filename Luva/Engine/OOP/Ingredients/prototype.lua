@@ -3,6 +3,7 @@
 
 import "Luva.Engine.kind"
 import "Luva.Engine.matching_expr"
+import "Luva.Engine.OOP.Ingredients.field"
 
 ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
 
@@ -69,11 +70,26 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                     -- Reference to the type or just a table
                     default = function ()
                         local isLuvaType = kindof (kind) == "luva_type"
+                        local _t, _v = nil, nil
+
+                        if isLuvaType then
+                            _t = content
+                            _v = default (content)
+                        else
+                            if content == string then
+                                _t = "string"
+                            elseif content == table then
+                                _t = "table"
+                            else
+                                _t = "table"
+                                _v = content
+                            end
+                        end
 
                         prototype.Fields[identifier] = {
                             __Kind = "field",
-                            Type            = isLuvaType and content --[[@as Luva.Type]]    or "table",
-                            DefaultValue    = isLuvaType and default (content)              or content
+                            Type            = _t,
+                            DefaultValue    = _v
                         } --[[@as Luva.Lang.Field]]
                     end
                 })

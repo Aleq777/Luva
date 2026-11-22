@@ -119,10 +119,13 @@ class = function (classBuilder)
 
     ---@type Luva.Type
     local resultClass = {   ---@diagnostic disable-line : missing-fields
-        __Kind = "class"
+        -- __Kind = "class"
     }
 
     _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
+
+    resultClass.__Kind = "class"  ---@diagnostic disable-line : invisible
+
 
     _TryAddStaticTemplate(resultClass, classBuilder)
     _TryAddStaticExtends(resultClass, classBuilder)
