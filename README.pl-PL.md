@@ -35,7 +35,7 @@ Luva została stworzona głównie z powodu gry [Teardown](), ale skoro Lua jest 
 (sory Stormworkerzy, póki co framework nie jest dostosowany dla was, może kiedyś powstanie branch do tego)
 
 ### 3. Kompatybilność wsteczna Lua
-Wersjonowanie Lua nie jest zgodne z [semantic versioning](), przez co drobne przeskoki między wersjami usuwają funkcje i nie są kompatybilne ze sobą.\
+Wersjonowanie Lua nie jest zgodne z [semantic versioning](https://semver.org/), przez co drobne przeskoki między wersjami usuwają funkcje i nie są kompatybilne ze sobą.\
 Luva będzie próbować umożliwić kompatybilność nadpisując niektóre funkcje i blokując używania niektórych starych.
 
 Przykłady:
