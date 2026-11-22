@@ -7,6 +7,7 @@ do
     ---@field public Value T|nil Default or current value (depends on context). Nil value depends on: is initialised, .IsNilable
     ---@field public IsNilable boolean Can Value be nil?
     ---@field public IsByRef boolean Should Luva copy and access this as an reference? (defaultly, Luva uses values)
+    ---@field public IsReadonly boolean Is read-only? Read-only lets you change value from `nil` to any (not nil). It is by then immutable
     local __field
 end
 
@@ -35,6 +36,7 @@ function _LUVA._ParseField(value)
         Type = _type,
         Value = _value,
         IsNilable = false,
-        IsByRef = false
+        IsByRef = false,
+        IsReadonly = false
     }   --[[@as Luva.Lang.Field]]
 end

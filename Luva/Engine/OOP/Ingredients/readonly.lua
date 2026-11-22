@@ -7,7 +7,7 @@
 --- | Must assign instantly | ✅ | ❌ |
 --- | Can be assigned in constructor | ❌ | ✅ |
 --- | Mutable | ❌ | ❌ |
----@param _type type|Luva.Type Cannot be empty
+---@param _type type|Luva.Type|stringlib|tablelib Cannot be empty
 ---@return Luva.Lang.Field
 ---@nodiscard
 readonly = function (_type)
@@ -17,6 +17,9 @@ readonly = function (_type)
     return {
         __Kind = "readonly",
         Type = t,
-        Value = nil
+        Value = nil,
+        IsByRef = false,
+        IsNilable = false,
+        IsReadonly = true
     }
 end

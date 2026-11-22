@@ -114,7 +114,12 @@ local function _secureGet(obj, index)
     local _field = obj.__Fields[index]  ---@diagnostic disable-line : invisible
     if _field then
         ---@cast _field Luva.Lang.Field
-        return _field.Value
+        local v = _field.Value
+        if _field.IsReadonly and v == nil then
+            error ("Read-only field not initialised yet!")
+        end
+
+        return v
     end
 
     local method = obj.__Methods[index]    ---@diagnostic disable-line : invisible
@@ -171,6 +176,8 @@ local function _secureSet(obj, index, value)
     if field then
         if isValueNil and not field.IsNilable then
             error (ERR_ASSIGNED_NIL)
+        elseif field.IsReadonly and field.Value ~= nil then
+            error (ERR_TRIED_MODIFY_CONSTANT)
         end
 
         fields[index]--[[@as Luva.Lang.Field]].Value = value

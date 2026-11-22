@@ -88,18 +88,18 @@ function _LUVA._GeneralConstructor(_class, ...)
         __Type = _class
     })
 
-    local propNameToTypeName = {
-        __Fields = "Fields",
-        __Constants = "Readonlys",
-        __Methods = "Methods",
-        __Accessors = "Accessors"
-    }
-
-    for propName, propTypeName in pairs (propNameToTypeName) do
-        for identifier, content in pairs(proto[propTypeName]) do
-            instance[propName][identifier] = content
-        end
+    for identifier, content in pairs(proto.Fields) do
+        instance.__Fields[identifier] = _LUVA.Utils.Copy(content)   ---@diagnostic disable-line : invisible
     end
+
+    for identifier, content in pairs(proto.Readonlys) do
+        instance.__Fields[identifier] = _LUVA.Utils.Copy(content)    ---@diagnostic disable-line : invisible
+    end
+
+    -- by ref
+    instance.__Methods = proto.Methods  ---@diagnostic disable-line : invisible
+    -- by ref
+    instance.__Accessors = proto.Accessors  ---@diagnostic disable-line : invisible
 
     return instance
 end
@@ -109,7 +109,6 @@ end
 ---@param func fun(setPrototype: fun(obj: table), ...: any[])
 function _LUVA._SetupConstructor(constructorsRef, func)
     constructorsRef.CustomConstructor = function (_class, ...)
-
         local instance = _LUVA._GeneralConstructor(_class)
         func(function (obj)
             for k, v in pairs(obj) do
