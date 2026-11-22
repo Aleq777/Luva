@@ -162,6 +162,38 @@ _LUVA.Utils = {
         return false
     end,
 
+    --- Checks, if the provided `expr` is Luva.Type or type. <br />
+    ---@param expr any
+    ---@return boolean isType
+    ---@nodiscard
+    ---@see _LUVA.Utils.IsInstance Inverse of this function
+    IsType = function (expr)
+        local _type = type (expr)
+
+        return switch (expr, {
+            ["string"] = function ()
+                return _LUVA.Utils.Has(_LUVA.Utils.ScalarLuaTypes, _type)
+            end,
+
+            ["table"] = function ()
+                return expr == string or expr == table or kindof (kindof (expr)) == "luva_type"
+            end,
+
+            default = function ()
+                return false
+            end
+        })
+    end,
+
+    --- Checkes, if the provided `expr` is a clean value and not a type-representative. <br />
+    ---@param expr any
+    ---@return boolean isInstance
+    ---@nodiscard
+    ---@see _LUVA.Utils.IsType Inverse of this function
+    IsInstance = function (expr)
+        return not _LUVA.Utils.IsType(expr)
+    end,
+
     --- Returns type (any-style) as a strict type (Luva.Type or type-string)
     ---@param _type any
     ---@return Luva.Type|type

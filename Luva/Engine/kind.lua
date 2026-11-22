@@ -34,6 +34,8 @@ do
     ---@alias Luva.Lang.Keyword Luva.Lang.StrictKind
 end
 
+local typesKindsList = { "class", "struct", "record", "abstract_class", "interface", "singleton" }
+
 --- Returns the kind of an expression
 ---@param expr any
 ---@return Luva.KindsEnum
@@ -41,10 +43,10 @@ end
 kindof = function (expr)
     local t = type (expr)
 
-    if t == "string" and _LUVA.Utils.Has(Luva.KindsEnum, expr) then
-        return Luva.KindsEnum.LuvaType
+    if t == "string" and _LUVA.Utils.Has(typesKindsList, expr) then
+        return "luva_type"
     elseif t ~= "table" or expr.__Kind == nil then
-        return Luva.KindsEnum.ScalarLua
+        return "scalar_lua"
     end
 
     return expr.__Kind

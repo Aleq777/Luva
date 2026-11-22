@@ -5,7 +5,7 @@ import "Luva.Engine.matching_expr"
 
 
 --- Returns the reference to the
---- type of `expr`.
+--- type of `expr` or just string for scalar Lua types.
 ---@param expr any
 ---@return Luva.Type|type type # In case of scalars, returns `table`, `string` or special reference representations
 ---@nodiscard

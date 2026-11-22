@@ -317,7 +317,7 @@ _LUVA.SecuredObject.Metatables = {
         ---@return string
         ---@nodiscard
         __tostring = function (self)
-            return self:ToString()
+            return self:ToString():ToPrime()
         end,
 
         ---@param self Luva.Object
@@ -409,12 +409,12 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
 
         __AddConstant = function (self, name, constant)
             _checkIfNew(self, name)
-            self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
+            self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
         end,
 
         __AddField = function (self, name, _field)
             _checkIfNew(self, name)
-            self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
+            self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
         end,
 
         __AddMethod = function (self, name, method)

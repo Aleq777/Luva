@@ -14,8 +14,8 @@ do
     ---@field public Fields table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field public Methods table<Luva.Lang.Identifier, function>
     ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
-    ---@field public References table<Luva.Lang.Identifier, Luva.Lang.Field<Luva.Ref<any>>>
-    ---@field public Nilables table<Luva.Lang.Identifier, Luva.Lang.Field<Luva.Maybe<any>>>
+    ---@field public References table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
+    ---@field public Nilables table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     local __prototype
 end
 
@@ -55,39 +55,51 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                     end,
 
                     ["readonly"] = function ()
-                        ---@cast content Luva.Dynamic
+                        ---@cast content Luva.Lang.Field
                         prototype.Readonlys[identifier] = content
                     end,
 
                     ["ref"] = function ()
-                        ---@cast content Luva.Ref
+                        ---@cast content Luva.Lang.Field
                         prototype.Fields[identifier] = content
                     end,
 
                     ["maybe"] = function ()
-                        ---@cast content Luva.Nilable
+                        ---@cast content Luva.Lang.Field
                         prototype.Fields[identifier] = content
+                    end,
+
+                    ["const"] = function ()
+                        error ("Constants should be defined as static or use 'maybe'!")
                     end,
 
                     -- Reference to the type or just a table
                     default = function ()
                         local isLuvaType = kindof (kind) == "luva_type"
                         ---@type (Luva.Type|string), (any)
-                        local _t, _v = nil, nil
+                        local _t, _v
 
                         if isLuvaType then
                             ---@cast content Luva.Type
                             _t = content
-                            _v = default (content)
+                            _v = nil
                         else
-                            if content == string then
-                                _t = "string"
-                            elseif content == table then
-                                _t = "table"
-                            else
-                                _t = "table"
-                                _v = content
-                            end
+                            switch (content, {
+                                [string] = function ()
+                                    _t = "string"
+                                    _v = nil
+                                end,
+
+                                [table] = function ()
+                                    _t = "table"
+                                    _v = nil
+                                end,
+
+                                default = function ()
+                                    _t = "table"
+                                    _v = content
+                                end
+                            })
                         end
 
                         prototype.Fields[identifier] = {

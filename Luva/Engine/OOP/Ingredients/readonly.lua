@@ -7,19 +7,18 @@
 --- | Must assign instantly | ✅ | ❌ |
 --- | Can be assigned in constructor | ❌ | ✅ |
 --- | Mutable | ❌ | ❌ |
----@param _type type|Luva.Type|stringlib|tablelib Cannot be empty
+---@param _type type|Luva.Type|stringlib|tablelib Cannot be empty nor a ready-value
 ---@return Luva.Lang.Field
 ---@nodiscard
 readonly = function (_type)
-    local t = _LUVA.Utils.ParseType(_type)
+    if _LUVA.Utils.IsInstance(_type) then
+        error ("Readonlys can have only types as an argument, not nil nor value!")
+    end
 
-    ---@type Luva.Lang.Field
-    return {
-        __Kind = "readonly",
-        Type = t,
-        Value = nil,
-        IsByRef = false,
-        IsNilable = false,
-        IsReadonly = true
-    }
+    local raw = _LUVA._ParseProp(_type)
+
+    raw.IsReadonly = true
+    raw.__Kind = "readonly" ---@diagnostic disable-line : invisible
+
+    return raw
 end
