@@ -138,6 +138,30 @@ _LUVA.Utils = {
         end
     end,
 
+    --- Checks if `expr` is Lua scalar type <br />
+    ---@param expr any
+    ---@return boolean
+    ---@nodiscard
+    ---@see type
+    IsScalar = function (expr)
+        return not _LUVA.Utils.IsLuvaObject(expr)
+    end,
+
+    --- Checks if `expr` is Luva.Object
+    ---@param expr any
+    ---@return boolean
+    ---@nodiscard
+    ---@see Luva.Object
+    IsLuvaObject = function (expr)
+        local t = type (expr)
+
+        if type (t) == "table" and expr.__Type then
+            return true
+        end
+
+        return false
+    end,
+
     MetamethodsNames = {
         "__add",
         "__sub",
@@ -175,4 +199,15 @@ _LUVA.Utils = {
         "__SetGenerics",
         "__Type"
     },
+
+    --- Scalars used in Luva
+    ---@type type[]
+    ScalarLuaTypes = {
+        "nil",
+        "number",
+        "string",
+        "boolean",
+        "table",
+        "function"
+    }
 }

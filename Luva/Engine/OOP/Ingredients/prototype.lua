@@ -10,9 +10,11 @@ do
     ---@class Luva.Lang.ClassPrototype
     ---@field public PrototypeMetatable Luva.Lang.PseudoMetatable
     ---@field public Readonlys table<Luva.Lang.Identifier, Luva.Dynamic>
-    ---@field public Fields table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field public Fields table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field public Methods table<Luva.Lang.Identifier, function>
     ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
+    ---@field public References table<Luva.Lang.Identifier, Luva.Lang.Field<Luva.Ref<any>>>
+    ---@field public Nilables table<Luva.Lang.Identifier, Luva.Lang.Field<Luva.Maybe<any>>>
     local __prototype
 end
 
@@ -31,13 +33,15 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
         Fields = { },
         Methods = { },
         Accessors = { },
+        References = { },
+        Nilables = { }
     } --[[@as Luva.Lang.ClassPrototype]])
 
-    local prototype = resultClass.__Prototype --[[@as Luva.Lang.ClassPrototype]]   ---@diagnostic disable-line : invisible
-
+    local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
     prototype.PrototypeMetatable = _LUVA.Utils.Copy(_LUVA.SecuredObject.Metatables.InstanceBase)
 
     for identifier, content in pairs(prototypeBuilder) do
+        ---@cast prototype -nil
         switch (type (content), {
             ["table"] = function ()
                 ---@cast content table
@@ -54,21 +58,36 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                         resultClass.__Prototype.Readonlys[identifier] = content ---@diagnostic disable-line : invisible
                     end,
 
+                    ["ref"] = function ()
+                        
+                    end,
+
+                    ["maybe"] = function ()
+                        
+                    end,
+
+                    -- Reference to the type or just a table
                     default = function ()
-                        prototype.Fields[identifier] = content
+                        local isLuvaType = kindof (kind) == "luva_type"
+
+                        prototype.Fields[identifier] = {
+                            __Kind = "field",
+                            Type            = isLuvaType and content --[[@as Luva.Type]]    or "table",
+                            DefaultValue    = isLuvaType and default (content)              or content
+                        } --[[@as Luva.Lang.Field]]
                     end
                 })
 
             end,
 
             ["function"] = function ()
-                -- to constant??
                 ---@cast content function
-                resultClass.__Prototype.Accessors[identifier] = _LUVA._MethodToAccessor(content)  ---@diagnostic disable-line : invisible
+                prototype.Methods[identifier] = content
             end,
 
             default = function ()
-                prototype.Fields[identifier] = content
+                -- scalar type or value
+                prototype.Fields[identifier] = _LUVA._ParseField(content)
             end
 
         } --[[@as Luva.Lang.MatchingBaseBuilder<type, fun()>]])
