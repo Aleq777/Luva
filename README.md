@@ -41,7 +41,7 @@ But because Lua is commonly used, it should be universal in any environment.\
 (sorry Stormworks scripters, maybe there will be a branch without metatables)
 
 ### 3. Lua forward-compatibility
-Lua's versioning isn't meeting the [semantic versioning]() principles, so it was
+Lua's versioning isn't meeting the [semantic versioning](https://semver.org/) principles, so it was
 confusing for many, when another minor version removed a function and made it
 incompatible.\
 Luva will try to be compatible by defining more universally built-in functions
