@@ -2,15 +2,18 @@
 
 import "Luva.Engine.OOP.class"
 import "Luva.Engine.empty"
+import "Luva.Engine.OOP.Ingredients.readonly"
 
 
 
 Human = class {
     prototype = {
-        Name = "Hello"
+        Name = readonly(string)
     }
 }
 
-local moose = Human()
+local moose = Human() {
+    Name = "h"
+}
 
-print(moose.Name.DefaultValue)
+print(moose.Name)

@@ -19,7 +19,7 @@ do
     local __prototype
 end
 
-local ERR_NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
+-- local ERR_NO_FIELD_FOUND_PROTOTYPE = "Haven't found a field corresponding to GetByIdentifier's argument"
 
 
 
@@ -51,28 +51,32 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                 switch (kind, {
                     ["accessor"] = function ()
                         ---@cast content Luva.Lang.Accessor<Luva.Object, any>
-                        resultClass.__Prototype.Accessors[identifier] = content ---@diagnostic disable-line : invisible
+                        prototype.Accessors[identifier] = content
                     end,
 
                     ["readonly"] = function ()
                         ---@cast content Luva.Dynamic
-                        resultClass.__Prototype.Readonlys[identifier] = content ---@diagnostic disable-line : invisible
+                        prototype.Readonlys[identifier] = content
                     end,
 
                     ["ref"] = function ()
-                        
+                        ---@cast content Luva.Ref
+                        prototype.Fields[identifier] = content
                     end,
 
                     ["maybe"] = function ()
-                        
+                        ---@cast content Luva.Nilable
+                        prototype.Fields[identifier] = content
                     end,
 
                     -- Reference to the type or just a table
                     default = function ()
                         local isLuvaType = kindof (kind) == "luva_type"
+                        ---@type (Luva.Type|string), (any)
                         local _t, _v = nil, nil
 
                         if isLuvaType then
+                            ---@cast content Luva.Type
                             _t = content
                             _v = default (content)
                         else
@@ -88,8 +92,8 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
                         prototype.Fields[identifier] = {
                             __Kind = "field",
-                            Type            = _t,
-                            DefaultValue    = _v
+                            Type     = _t,
+                            Value    = _v
                         } --[[@as Luva.Lang.Field]]
                     end
                 })

@@ -162,6 +162,36 @@ _LUVA.Utils = {
         return false
     end,
 
+    --- Returns type (any-style) as a strict type (Luva.Type or type-string)
+    ---@param _type any
+    ---@return Luva.Type|type
+    ---@nodiscard
+    ParseType = function (_type)
+        --- type of type
+        local t = type (_type)
+
+        -- more like "type"
+        if t == "string" then
+            return _type
+        end
+        -- its table
+
+        return match (_type, {
+            [table] = "table",
+            [string] = "string",
+            default = (function ()
+                local k = kindof (kindof (_type))
+
+                if k == "luva_type" then
+                    ---@cast _type Luva.Type
+                    return _type
+                end
+
+                return "table"
+            end)()
+        } --[[@as Luva.Lang.MatchingBaseBuilder]])
+    end,
+
     MetamethodsNames = {
         "__add",
         "__sub",

@@ -44,8 +44,8 @@ do
     ---@field protected __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@
     ---@field private __Metatable   Luva.Lang.PseudoMetatable
-    ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
-    ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
+    ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field private __Methods     table<Luva.Lang.Identifier, function>
     ---@field private __Accessors   table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
     ---@field private __Generics    table<Luva.Lang.Identifier, Luva.Type|nil>
@@ -108,12 +108,13 @@ local ERR_TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in
 local function _secureGet(obj, index)
     local constant = obj.__Constants[index] ---@diagnostic disable-line : invisible
     if constant then
-        return constant
+        return constant.Value
     end
 
     local _field = obj.__Fields[index]  ---@diagnostic disable-line : invisible
     if _field then
-        return _field
+        ---@cast _field Luva.Lang.Field
+        return _field.Value
     end
 
     local method = obj.__Methods[index]    ---@diagnostic disable-line : invisible
@@ -125,11 +126,11 @@ local function _secureGet(obj, index)
     local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
     ---@cast accessor Luva.Lang.Accessor<Luva.Object>
     if accessor then
-        if accessor.get then
-            return accessor:get()
-        else
+        if not accessor.get then
             error (ERR_NO_GET_OR_SET)
         end
+
+        return accessor:get()
     end
 
     local generics = obj.__Generics    ---@diagnostic disable-line : invisible
@@ -160,25 +161,31 @@ local function _secureSet(obj, index, value)
         error (ERR_TRIED_MODIFY_METHOD, 3)
     elseif obj.__Generics and obj.__Generics[index] then  ---@diagnostic disable-line : invisible
         error (ERR_TRIED_MODIFY_CONSTANT, 3)
-    elseif value == nil then
-        error (ERR_ASSIGNED_NIL, 3)
     end
 
+    local isValueNil = value == nil
+
     local fields = obj.__Fields  ---@diagnostic disable-line : invisible
-    if fields[index] ~= nil then
-        fields[index] = value
+    ---@type Luva.Lang.Field
+    local field = fields[index]
+    if field then
+        if isValueNil and not field.IsNilable then
+            error (ERR_ASSIGNED_NIL)
+        end
+
+        fields[index]--[[@as Luva.Lang.Field]].Value = value
         return
     end
 
     ---@type Luva.Lang.Accessor<Luva.Object>
     local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
     if accessor then
-        if accessor.set then
-            accessor:set(value)
-            return
-        else
+        if not accessor.set then
             error (ERR_NO_GET_OR_SET)
         end
+
+        accessor:set(value)
+        return
     end
 
     local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
@@ -201,13 +208,13 @@ _LUVA.SecuredObject.Metatables = {
             local templ = self.__Template   ---@diagnostic disable-line : invisible
             ---@type Luva.Type[]
             local filledTemplate = { }
-    
+
             if #templ == 1 then -- only 1 generic type, accept template[T] and template[{T}]
                 -- if array
                 if kindof (index) == "lua" then
                     index = index[1]
                 end
-    
+
                 ---@cast index -Luva.Type[]
                 table.insert(filledTemplate, index)
             else -- many generic types, accept only template[{...}]
@@ -220,7 +227,7 @@ _LUVA.SecuredObject.Metatables = {
                     error (ERR_TEMPLATE_NOT_ENOUGH_TYPES)
                 end
             end
-    
+
             -- search for existing
             local generatedClasses = self.__GeneratedClasses    ---@diagnostic disable-line : invisible
             for existingTemplate, existingType in pairs(generatedClasses) do
@@ -228,11 +235,11 @@ _LUVA.SecuredObject.Metatables = {
                     return existingType
                 end
             end
-    
+
             -- generate a new type
             local generatedClass = _LUVA._GenerateFromTemplate(self, filledTemplate)
             generatedClasses[filledTemplate] = generatedClass
-    
+
             return generatedClass
         end
     },
@@ -244,7 +251,7 @@ _LUVA.SecuredObject.Metatables = {
         __index = function (self, index)
             return _secureGet(self, index)
         end,
-    
+
         ---@param self Luva.Lang.SecuredObject
         ---@param index Luva.Dynamic
         ---@param value Luva.Dynamic
@@ -259,27 +266,27 @@ _LUVA.SecuredObject.Metatables = {
         __index = function (self, index)
             return _secureGet(self, index)
         end,
-    
+
         ---@param self Luva.Type
         ---@param index Luva.Dynamic
         ---@param value Luva.Dynamic
         __newindex = function (self, index, value)
             _secureSet(self, index, value)
         end,
-    
+
         ---@param self Luva.Type
         ---@param ... any[]
         ---@return Luva.Object
         __call = function (self, ...)
             local argsCount = select ("#", ...)
             local instance = nil
-    
+
             if argsCount == 0 then
                 instance = self.__Constructors.DefaultConstructor(self) ---@diagnostic disable-line : invisible
             else
                 instance = self.__Constructors.CustomConstructor(self, ...)  ---@diagnostic disable-line : invisible
             end
-    
+
             return instance
         end,
     },
@@ -314,20 +321,21 @@ _LUVA.SecuredObject.Metatables = {
             if userDefined then
                 return userDefined(self, ...)
             end
-    
+
+            -- mutli-setter with self-return
             local argCount = select ("#", ...)
             local argFirst = ( select (1, ...) )
             if argCount ~= 1 or type (argFirst) ~= "table" then
                 error (ERR_TRIED_TO_CALL_OBJECT, 3)
             end
-    
+
             for fieldName, fieldContent in pairs(argFirst) do
                 self[fieldName] = fieldContent
             end
-    
+
             return self
         end,
-    
+
         ---@version >5.1 On version 5.1, it just won't work
         ---@param self Luva.Object
         __gc = function (self)

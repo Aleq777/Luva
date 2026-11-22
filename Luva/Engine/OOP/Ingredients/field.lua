@@ -4,7 +4,9 @@ do
     ---@generic T
     ---@class Luva.Lang.Field : Luva.Lang.StrictKind
     ---@field public Type Luva.Type|string
-    ---@field public DefaultValue T|nil
+    ---@field public Value T|nil Default or current value (depends on context). Nil value depends on: is initialised, .IsNilable
+    ---@field public IsNilable boolean Can Value be nil?
+    ---@field public IsByRef boolean Should Luva copy and access this as an reference? (defaultly, Luva uses values)
     local __field
 end
 
@@ -31,6 +33,8 @@ function _LUVA._ParseField(value)
     return {
         __Kind = "field",
         Type = _type,
-        DefaultValue = _value
+        Value = _value,
+        IsNilable = false,
+        IsByRef = false
     }   --[[@as Luva.Lang.Field]]
 end

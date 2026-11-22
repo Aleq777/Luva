@@ -7,10 +7,10 @@ import "Luva.Engine.OOP.Ingredients.field"
 
 do
     ---@generic TChild : Luva.Object
-    ---@generic TField
+    ---@generic TFieldValue
     ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind
-    ---@field public get nil|fun(self: TChild): TField
-    ---@field public set nil|fun(self: TChild, value: TField)
+    ---@field public get nil|fun(self: TChild): TFieldValue
+    ---@field public set nil|fun(self: TChild, value: TFieldValue)
     local __accessor
 end
 
