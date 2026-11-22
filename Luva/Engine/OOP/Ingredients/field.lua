@@ -51,6 +51,7 @@ function _LUVA._ParseConstant(constant)
     raw.IsByRef = nil
     raw.IsNilable = nil
     raw.IsReadonly = nil
+    raw.Value = constant
     raw.__Kind = "const"    ---@diagnostic disable-line : invisible
 
     return raw

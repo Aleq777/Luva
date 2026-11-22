@@ -85,7 +85,7 @@ function _LUVA._GeneralConstructor(_class, ...)
     })
 
     _LUVA.Utils.SafeInjectRef(instance.__Constants, {   ---@diagnostic disable-line : invisible
-        __Type = _class
+        __Type = _LUVA._ParseConstant(_class)
     })
 
     for identifier, content in pairs(proto.Fields) do

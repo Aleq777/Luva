@@ -170,7 +170,7 @@ _LUVA.Utils = {
     IsType = function (expr)
         local _type = type (expr)
 
-        return switch (expr, {
+        return switch (_type, {
             ["string"] = function ()
                 return _LUVA.Utils.Has(_LUVA.Utils.ScalarLuaTypes, _type)
             end,
