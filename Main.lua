@@ -24,10 +24,18 @@ Human = class {
         Tester = function ()
             print "Test"
         end
-    }
+    },
+
+    ["string"] = function (instance)
+        return tostring(instance)
+    end
 }
 
 local moose = Human()
 
 -- param (Human, Human)
-param (3, "number")
+-- print(as(moose, "string"))
+-- print(moose)
+moose {
+    
+}

@@ -40,7 +40,6 @@ do
     ---@field protected __SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
     ---@field protected __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@
-    ---@field private __Metatable   Luva.Lang.PseudoMetatable
     ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field private __Methods     table<Luva.Lang.Identifier, function>
@@ -148,7 +147,8 @@ local function _secureGet(obj, index)
         end
     end
 
-    local userDef = obj.__Metatable._index ---@diagnostic disable-line : invisible
+    -- local userDef = obj.__Metatable._index ---@diagnostic disable-line : invisible
+    local userDef = getmetatable (obj)._index
     if userDef then
         return userDef(obj, index)
     end
@@ -198,7 +198,8 @@ local function _secureSet(obj, index, value)
         return
     end
 
-    local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
+    -- local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
+    local userDef = getmetatable (obj)._newindex
     if userDef then
         userDef(obj, index, value)
         return
@@ -320,14 +321,14 @@ _LUVA.SecuredObject.Metatables = {
         ---@return string
         ---@nodiscard
         __tostring = function (self)
-            return self:ToString():ToPrime()
+            return self:ToString()
         end,
 
         ---@param self Luva.Object
         ---@param ... table|any[]
         ---@return Luva.Object|any ...
         __call = function (self, ...)
-            local userDefined = self.__Type.__Prototype.PrototypeMetatable._index   ---@diagnostic disable-line : invisible
+            local userDefined = getmetatable (self)._index   ---@diagnostic disable-line : invisible
             if userDefined then
                 return userDefined(self, ...)
             end
@@ -367,7 +368,7 @@ function _LUVA.SecuredObject.Secure(obj, metatable, kind)
 
     _LUVA.Utils.SafeInjectRef(obj, {
         __Kind = kind, -- default
-        __Metatable = metatable,
+        -- __Metatable = metatable,
         __Constants = { },
         __Fields = { },
         __Methods = { },
