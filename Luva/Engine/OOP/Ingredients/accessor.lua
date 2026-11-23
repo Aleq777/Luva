@@ -51,6 +51,6 @@ accessor = function (accessorBuilder)
         error (ERR_EMPTY_ACCESSOR)
     end
 
-    accessorBuilder.__Kind = "accessor"    ---@diagnostic disable-line : invisible
+    accessorBuilder--[[@as Luva.Lang.Field]].__Kind = "accessor"    ---@diagnostic disable-line : invisible
     return accessorBuilder
 end

@@ -3,6 +3,7 @@
 import "Luva.Engine.OOP.class"
 import "Luva.Engine.OOP.Ingredients.readonly"
 import "Luva.Engine.OOP.Ingredients.accessor"
+import "Luva.Engine.param"
 
 
 Human = class {
@@ -31,18 +32,7 @@ Human = class {
     }
 }
 
-print(Human.T)
-Human.Tester()
+local moose = Human()
 
--- local moose = Human()
-
--- moose.Name = "y"
-
--- -- moose:Greet()
-
--- print (moose.Test)
--- moose.Test = 10
--- print (moose.Age)
-
--- print(typeof (moose).__Prototype)
--- print(moose.__Kind)
+-- param (Human, Human)
+param ("3", "number")

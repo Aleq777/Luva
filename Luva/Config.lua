@@ -13,13 +13,4 @@ _LUVA.Config = {
     --- Default: `true`
     ---@type boolean
     FullTypeChecking = true,
-
-    --- Selected function for importing files.
-    --- By default it's `dofile`.
-    --- If your environment doesn't support `dofile`,
-    --- then use other function (`require`, `include`, `loadfile` etc)
-    --- CURRENTLY DOESN'T DO ANYTHING!!!
-    ---@deprecated
-    ---@type function
-    ImportingFunction = dofile,
 }
