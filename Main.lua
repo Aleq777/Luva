@@ -8,12 +8,13 @@ import "Luva.Engine.OOP.Ingredients.readonly"
 
 Human = class {
     prototype = {
-        Name = readonly(string)
-    }
+        Name = readonly(string),
+        Age = "integer"
+    },
 }
 
-local moose = Human() {
-    Name = "h"
-}
+local moose = Human()
 
-print(moose.Name)
+-- moose.Name = "y"
+
+print(moose.Age)

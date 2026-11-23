@@ -84,6 +84,21 @@ _LUVA.Utils = {
         return false
     end,
 
+    --- Returns the keys in the `tab` table
+    ---@generic T
+    ---@param tab table<T, Luva.Dynamic>
+    ---@return T[]
+    ---@nodiscard
+    KeysOf = function (tab)
+        local result = { }
+        
+        for key, _ in pairs(tab) do
+            table.insert(result, key)
+        end
+
+        return result
+    end,
+
     ---Compares `objA` and `objB` by values
     ---@param objA any
     ---@param objB any
