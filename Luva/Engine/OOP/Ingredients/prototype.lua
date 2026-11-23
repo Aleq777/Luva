@@ -124,7 +124,7 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                     -- Reference to the type or just a table
                     default = function ()
                         local isLuvaType = kindof (content) == "luva_type"
-                        ---@type (Luva.Type|string), (any)
+                        ---@type (Luva.Type|type), (any)
                         local _t, _v
 
                         if isLuvaType then
@@ -132,22 +132,9 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                             _t = content
                             _v = nil
                         else
-                            switch (content, {
-                                [string] = function ()
-                                    _t = "string"
-                                    _v = nil
-                                end,
-
-                                [table] = function ()
-                                    _t = "table"
-                                    _v = nil
-                                end,
-
-                                default = function ()
-                                    _t = "table"
-                                    _v = content
-                                end
-                            })
+                            ---@cast content type
+                            _t = "table"
+                            _v = content
                         end
 
                         prototype.Fields[identifier] = {

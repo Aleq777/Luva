@@ -3,7 +3,7 @@
 
 Human = class {
     prototype = {
-        Name = readonly (string),
+        Name = readonly ("string"),
         Age = "integer",
         Greet = function (self)
             print("Hello, my name is " .. self.Name)

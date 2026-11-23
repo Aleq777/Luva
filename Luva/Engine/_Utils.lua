@@ -193,7 +193,7 @@ _LUVA.Utils = {
             end,
 
             ["table"] = function ()
-                return expr == string or expr == table or kindof (kindof (expr)) == "luva_type"
+                return kindof (expr) == "luva_type"
             end,
 
             default = function ()
@@ -211,6 +211,7 @@ _LUVA.Utils = {
         return not _LUVA.Utils.IsType(expr)
     end,
 
+    --[[
     --- Returns type (any-style) as a strict type (Luva.Type or type-string)
     ---@param _type any
     ---@return Luva.Type|type
@@ -238,9 +239,9 @@ _LUVA.Utils = {
 
                 return "table"
             end)()
-        } --[[@as Luva.Lang.MatchingBaseBuilder]])
+        } --]]--[[@as Luva.Lang.MatchingBaseBuilder)
     end,
-
+    ]]
     MetamethodsNames = {
         "__add",
         "__sub",

@@ -13,11 +13,13 @@ do
 end
 
 
+---@param value any
+---@return Luva.Lang.Field
 function _LUVA._ParseProp(value)
     local _type, _value
 
     if _LUVA.Utils.IsType(value) then
-        _type = _LUVA.Utils.ParseType(value)
+        _type = value
         _value = nil
     else
         _type = typeof (value)
