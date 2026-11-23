@@ -16,7 +16,7 @@ typeof = function (expr)
         return t
     end
 
-    if not expr.__Kind or expr.__Kind == "instance" then
+    if not expr.__Kind or expr.__Kind ~= "instance" then
         return "table"
     end
 

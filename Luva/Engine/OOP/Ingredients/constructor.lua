@@ -86,7 +86,13 @@ function _LUVA._GeneralConstructor(_class, ...)
     })
 
     _LUVA.Utils.SafeInjectRef(instance.__Constants, {   ---@diagnostic disable-line : invisible
-        __Type = _LUVA._ParseConstant(_class)
+        -- __Type = _LUVA._ParseConstant(_class)
+        __Type = {
+            __Kind = "const",
+            Value = _class,
+            Type = "table",
+            IsByRef = true
+        } --[[@as Luva.Lang.Field]]
     })
 
     for identifier, content in pairs(proto.Fields) do

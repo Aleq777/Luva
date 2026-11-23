@@ -79,7 +79,7 @@ local ERR_MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class whi
 ---@nodiscard
 local function _doesIdentifierExist(obj, identifier)
     for _, tableContent in pairs(obj) do
-        if tableContent[identifier] then
+        if type (tableContent) == "table" and tableContent[identifier] then
             return true
         end
     end
@@ -116,9 +116,9 @@ local function _secureGet(obj, index)
         local v = _field.Value
         if v == nil then
             if _field.IsReadonly then
-                error ("Read-only field not initialised yet!")
+                error ("Read-only field not initialised yet!", 3)
             elseif not _field.IsNilable then
-                error ("Tried refering to an not-initialised non-nilable field")
+                error ("Tried refering to an not-initialised non-nilable field", 3)
             end
         end
 
@@ -138,7 +138,8 @@ local function _secureGet(obj, index)
             error (ERR_NO_GET_OR_SET)
         end
 
-        return accessor:get()
+        ---@cast obj Luva.Object
+        return accessor.get(obj)
     end
 
     local generics = obj.__Generics    ---@diagnostic disable-line : invisible
@@ -194,7 +195,9 @@ local function _secureSet(obj, index, value)
             error (ERR_NO_GET_OR_SET)
         end
 
-        accessor:set(value)
+        -- accessor:set(value)
+        ---@cast obj Luva.Object
+        accessor.set(obj, value)
         return
     end
 
@@ -483,7 +486,7 @@ end
 ---@param metatableName "StaticClass"|"InstanceClass"|"TemplateClass"
 ---@param kind "class"|"struct"|"record"|"singleton"|"interface"
 function _LUVA.SecuredObject.SecureType(obj, metatableName, kind)
-    _LUVA.Utils.Secure(obj, _LUVA.SecuredObject.Metatables[metatableName], kind)
+    _LUVA.SecuredObject.Secure(obj, _LUVA.SecuredObject.Metatables[metatableName], kind)
     -- local metatable = _LUVA.SecuredObject.Metatables[metatableName]
 
     -- _LUVA.Utils.SafeInjectRef(obj, {
