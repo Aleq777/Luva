@@ -149,6 +149,8 @@ class = function (classBuilder)
         end
 
         _LUVA._SetupDestructor(resultClass, classBuilder.destructor)
+
+        _LUVA._SetupConvertions(resultClass, classBuilder)
     end
 
     return resultClass
