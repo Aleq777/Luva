@@ -79,10 +79,8 @@ local ERR_MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class whi
 ---@nodiscard
 local function _doesIdentifierExist(obj, identifier)
     for _, tableContent in pairs(obj) do
-        if type(tableContent) ~= "function" then
-            if tableContent[identifier] ~= nil then
-                return true
-            end
+        if tableContent[identifier] then
+            return true
         end
     end
 
@@ -97,7 +95,7 @@ local function _checkIfNew(obj, identifier)
     end
 end
 
----@alias Luva.Lang.TypesMetatableNames "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
+---@alias Luva.Lang.TypesMetatableNames "TemplateClass"|"StaticClass"|"InstanceClass"
 
 local ERR_TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in it's type or ensure that you have used multi-setter correctly"
 
@@ -108,6 +106,7 @@ local ERR_TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in
 local function _secureGet(obj, index)
     local constant = obj.__Constants[index] ---@diagnostic disable-line : invisible
     if constant then
+        ---@cast constant Luva.Lang.Field
         return constant.Value
     end
 
@@ -115,8 +114,12 @@ local function _secureGet(obj, index)
     if _field then
         ---@cast _field Luva.Lang.Field
         local v = _field.Value
-        if _field.IsReadonly and v == nil then
-            error ("Read-only field not initialised yet!")
+        if v == nil then
+            if _field.IsReadonly then
+                error ("Read-only field not initialised yet!")
+            elseif not _field.IsNilable then
+                error ("Tried refering to an not-initialised non-nilable field")
+            end
         end
 
         return v
@@ -244,7 +247,7 @@ _LUVA.SecuredObject.Metatables = {
             end
 
             -- generate a new type
-            local generatedClass = _LUVA._GenerateFromTemplate(self, filledTemplate)
+            local generatedClass = _LUVA._GenerateFromTemplate(self, "class", filledTemplate)
             generatedClasses[filledTemplate] = generatedClass
 
             return generatedClass
@@ -346,36 +349,24 @@ _LUVA.SecuredObject.Metatables = {
         ---@version >5.1 On version 5.1, it just won't work
         ---@param self Luva.Object
         __gc = function (self)
-            self.__Type.__Destructor(self)  ---@diagnostic disable-line : invisible
+            local destr = self.__Type.__Destructor  ---@diagnostic disable-line : invisible
+            if destr then
+                destr(self)
+            end
         end
     },
 }
 
 
 
-
-
-
-
 --- Secures an object
 ---@param obj table
----@param metatableName Luva.Lang.TypesMetatableNames Which metatable use
----@param modifyMetatable metatable|nil Modifying (coping and changing) metatable. For `"InstanceBase"` it acts like a ready table to refer to
-function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
-    ---@type metatable
-    local metatable
-    if metatableName == "InstanceBase" then
-        if modifyMetatable == nil then
-            error (ERR_MISSING_INSTANCE_S_CLASS)
-        end
-
-        metatable = modifyMetatable
-    else
-        metatable = _LUVA.SecuredObject.Metatables[metatableName]
-    end
+---@param metatable metatable
+---@param kind string
+function _LUVA.SecuredObject.Secure(obj, metatable, kind)
 
     _LUVA.Utils.SafeInjectRef(obj, {
-        __Kind = "scalar_lua", -- default
+        __Kind = kind, -- default
         __Metatable = metatable,
         __Constants = { },
         __Fields = { },
@@ -425,4 +416,124 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
     } --[[@as Luva.Lang.SecuredObject]])
 
     setmetatable (obj, metatable)
+end
+
+
+--- Secures an (not-yet)instance of a type
+---@param instance table
+---@param prototypeMetatable metatable
+function _LUVA.SecuredObject.SecureInstance(instance, prototypeMetatable)
+    _LUVA.SecuredObject.Secure(instance, prototypeMetatable, "instance")
+
+
+    -- _LUVA.Utils.SafeInjectRef(instance, {
+    --     __Kind = "instance",
+    --     __Metatable = prototypeMetatable,
+    --     __Constants = { },
+    --     __Fields = { },
+    --     __Methods = { },
+    --     __Accessors = { },
+    --     __Generics = { },
+    --     __SetGenerics = function (self, generics)
+    --         self.__Generics = generics  ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetAccessors = function (self, accessors)
+    --         self.__Accessors = accessors    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetConstants = function (self, constants)
+    --         self.__Constants = constants    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetFields = function (self, fields)
+    --         self.__Fields = fields  ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetMethods = function (self, methods)
+    --         self.__Methods = methods    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddAccessor = function (self, name, accessor)
+    --         _checkIfNew(self, name)
+    --         self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddConstant = function (self, name, constant)
+    --         _checkIfNew(self, name)
+    --         self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddField = function (self, name, _field)
+    --         _checkIfNew(self, name)
+    --         self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddMethod = function (self, name, method)
+    --         _checkIfNew(self, name)
+    --         self.__Methods[name] = method   ---@diagnostic disable-line : invisible
+    --     end,
+    -- })
+
+    -- setmetatable(instance, prototypeMetatable)
+end
+
+--- Secures a type
+---@param obj table
+---@param metatableName "StaticClass"|"InstanceClass"|"TemplateClass"
+---@param kind "class"|"struct"|"record"|"singleton"|"interface"
+function _LUVA.SecuredObject.SecureType(obj, metatableName, kind)
+    _LUVA.Utils.Secure(obj, _LUVA.SecuredObject.Metatables[metatableName], kind)
+    -- local metatable = _LUVA.SecuredObject.Metatables[metatableName]
+
+    -- _LUVA.Utils.SafeInjectRef(obj, {
+    --     __Kind = kind,
+    --     __Metatable = metatable,
+    --     __Constants = { },
+    --     __Fields = { },
+    --     __Methods = { },
+    --     __Accessors = { },
+    --     __Generics = { },
+    --     __SetGenerics = function (self, generics)
+    --         self.__Generics = generics  ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetAccessors = function (self, accessors)
+    --         self.__Accessors = accessors    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetConstants = function (self, constants)
+    --         self.__Constants = constants    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetFields = function (self, fields)
+    --         self.__Fields = fields  ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __SetMethods = function (self, methods)
+    --         self.__Methods = methods    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddAccessor = function (self, name, accessor)
+    --         _checkIfNew(self, name)
+    --         self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddConstant = function (self, name, constant)
+    --         _checkIfNew(self, name)
+    --         self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddField = function (self, name, _field)
+    --         _checkIfNew(self, name)
+    --         self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
+    --     end,
+
+    --     __AddMethod = function (self, name, method)
+    --         _checkIfNew(self, name)
+    --         self.__Methods[name] = method   ---@diagnostic disable-line : invisible
+    --     end,
+    -- })
+
+    -- setmetatable(obj, metatable)
 end

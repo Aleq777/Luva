@@ -20,9 +20,11 @@ Luva = { }
 --- Luva engine ingredients
 _LUVA = {
     ---@type table<Luva.Lang.Identifier, string>
-    Errors = { },
     ---@package
-    Modules = { }
+    Modules = { },
+
+    ---@type string[]
+    Modes = { },
 }
 
 dofile "Luva/Config.lua"

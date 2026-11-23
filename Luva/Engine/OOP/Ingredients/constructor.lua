@@ -27,7 +27,8 @@ function _LUVA._GeneralConstructor(_class, ...)
     local proto = _class.__Prototype --[[@as Luva.Lang.ClassPrototype]] ---@diagnostic disable-line : invisible
 
 
-    _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+    -- _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+    _LUVA.SecuredObject.SecureInstance(instance, proto.PrototypeMetatable)
 
     _LUVA.Utils.SafeInjectRef(instance.__Methods, { ---@diagnostic disable-line : invisible
         Equals = function (self, v)
@@ -76,12 +77,12 @@ function _LUVA._GeneralConstructor(_class, ...)
             return false
         end,
 
-        Implements = function (self, i)
-            ---@type Luva.Type
-            local t = self.__Type   ---@diagnostic disable-line : invisible
+        -- Implements = function (self, i)
+        --     ---@type Luva.Type
+        --     local t = self.__Type   ---@diagnostic disable-line : invisible
 
-            return _LUVA.Utils.Has(t.__Implements, i)   ---@diagnostic disable-line : invisible
-        end,
+        --     return _LUVA.Utils.Has(t.__Implements, i)   ---@diagnostic disable-line : invisible
+        -- end,
     })
 
     _LUVA.Utils.SafeInjectRef(instance.__Constants, {   ---@diagnostic disable-line : invisible
@@ -92,9 +93,9 @@ function _LUVA._GeneralConstructor(_class, ...)
         instance.__Fields[identifier] = _LUVA.Utils.Copy(content)   ---@diagnostic disable-line : invisible
     end
 
-    for identifier, content in pairs(proto.Readonlys) do
-        instance.__Fields[identifier] = _LUVA.Utils.Copy(content)    ---@diagnostic disable-line : invisible
-    end
+    -- for identifier, content in pairs(proto.Readonlys) do
+    --     instance.__Fields[identifier] = _LUVA.Utils.Copy(content)    ---@diagnostic disable-line : invisible
+    -- end
 
     -- by ref
     instance.__Methods = proto.Methods  ---@diagnostic disable-line : invisible

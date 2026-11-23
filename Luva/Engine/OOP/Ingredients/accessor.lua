@@ -42,10 +42,10 @@ accessor = function (accessorBuilder)
         end
     end
 
-    if atLeastOne then
-        accessorBuilder.__Kind = "accessor"    ---@diagnostic disable-line : invisible
-        return accessorBuilder
-    else
+    if not atLeastOne then
         error (ERR_EMPTY_ACCESSOR)
     end
+
+    accessorBuilder.__Kind = "accessor"    ---@diagnostic disable-line : invisible
+    return accessorBuilder
 end

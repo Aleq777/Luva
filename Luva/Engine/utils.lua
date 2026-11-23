@@ -1,6 +1,6 @@
 
 
-_LUVA.Errors.INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
+local ERR_INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
 
 
 
@@ -45,7 +45,7 @@ _LUVA.Utils = {
     ---@param components table Components to inject (reference)
     SafeInjectRef = function (obj, components)
         _injectRef(obj, components, function (k, v)
-            error(_LUVA.Errors.INJECTION_FAILED_DUPLICATE, 4)
+            error(ERR_INJECTION_FAILED_DUPLICATE, 4)
         end)
     end,
 
@@ -159,7 +159,8 @@ _LUVA.Utils = {
     ---@nodiscard
     ---@see type
     IsScalar = function (expr)
-        return not _LUVA.Utils.IsLuvaObject(expr)
+        return type (typeof (expr)) == "string"
+        -- return not _LUVA.Utils.IsLuvaObject(expr)
     end,
 
     --- Checks if `expr` is Luva.Object
@@ -168,13 +169,14 @@ _LUVA.Utils = {
     ---@nodiscard
     ---@see Luva.Object
     IsLuvaObject = function (expr)
-        local t = type (expr)
+        return not _LUVA.Utils.IsScalar(expr)
+        -- local t = type (expr)
 
-        if type (t) == "table" and expr.__Type then
-            return true
-        end
+        -- if type (t) == "table" and expr.__Type then
+        --     return true
+        -- end
 
-        return false
+        -- return false
     end,
 
     --- Checks, if the provided `expr` is Luva.Type or type. <br />

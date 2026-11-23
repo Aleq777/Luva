@@ -4,5 +4,7 @@
 ---@param resultClass Luva.Type
 ---@param destructor fun(self: T)|nil
 function _LUVA._SetupDestructor(resultClass, destructor)
-    rawset(resultClass, "__Destructor", destructor or function (self) end)
+    if destructor then
+        rawset(resultClass, "__Destructor", destructor)
+    end
 end

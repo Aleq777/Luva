@@ -9,7 +9,7 @@ do
     ---@field private __Constructors Luva.Lang.ClassConstructors|nil
     ---@field private __Destructor fun(self: Luva.Object)
     ---@field private __Extends Luva.Type
-    ---@field private __Implements Luva.Interface[]
+    -- ---@field private __Implements Luva.Interface[]
     local __luvatype
 end
 
@@ -38,10 +38,11 @@ end
 
 --- Generates a standard class from a generic class
 ---@param templateClass Luva.TemplateClass
+---@param kind "class"|"struct"|"interface"|"singleton"
 ---@param filledTemplate Luva.Type[]
 ---@return Luva.Type
 ---@nodiscard
-function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
+function _LUVA._GenerateFromTemplate(templateClass, kind, filledTemplate)
 
     ---@type table<Luva.Lang.Identifier, Luva.Type>
     local genericTypes = { }
@@ -80,7 +81,7 @@ function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
     ---@type "InstanceClass"|"StaticClass"
     local classType
 
-    _LUVA.SecuredObject.Secure(result, classType)
+    _LUVA.SecuredObject.SecureType(result, classType, kind)
 
     return result
 end

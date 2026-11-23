@@ -10,12 +10,10 @@ import "Luva.Engine.OOP.Ingredients.field"
 do
     ---@class Luva.Lang.ClassPrototype
     ---@field public PrototypeMetatable Luva.Lang.PseudoMetatable
-    ---@field public Readonlys table<Luva.Lang.Identifier, Luva.Dynamic>
+    -- ---@field public Readonlys table<Luva.Lang.Identifier, Luva.Dynamic>
     ---@field public Fields table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field public Methods table<Luva.Lang.Identifier, function>
     ---@field public Accessors table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
-    ---@field public References table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
-    ---@field public Nilables table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     local __prototype
 end
 
@@ -30,12 +28,10 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
     rawset(resultClass, "__Prototype", {
         PrototypeMetatable = { },
-        Readonlys = { },
+        -- Readonlys = { },
         Fields = { },
         Methods = { },
         Accessors = { },
-        References = { },
-        Nilables = { }
     } --[[@as Luva.Lang.ClassPrototype]])
 
     local prototype = resultClass.__Prototype   ---@diagnostic disable-line : invisible
@@ -46,9 +42,9 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
         switch (type (content), {
             ["table"] = function ()
                 ---@cast content table
-                local kind = kindof (content)
+                local subKind = subkindof (content)
 
-                switch (kind, {
+                switch (subKind, {
                     ["accessor"] = function ()
                         ---@cast content Luva.Lang.Accessor<Luva.Object, any>
                         prototype.Accessors[identifier] = content
@@ -56,7 +52,8 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
                     ["readonly"] = function ()
                         ---@cast content Luva.Lang.Field
-                        prototype.Readonlys[identifier] = content
+                        -- prototype.Readonlys[identifier] = content
+                        prototype.Fields[identifier] = content
                     end,
 
                     ["ref"] = function ()
@@ -75,7 +72,7 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
 
                     -- Reference to the type or just a table
                     default = function ()
-                        local isLuvaType = kindof (kind) == "luva_type"
+                        local isLuvaType = kindof (content) == "luva_type"
                         ---@type (Luva.Type|string), (any)
                         local _t, _v
 

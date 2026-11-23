@@ -3,6 +3,12 @@
 
 import "Luva.Engine.utils"
 
+do
+    ---@class Luva.Lang.StrictKind
+    ---@field private __Kind string
+    local __strictKind
+end
+
 local _luva_type, _field = "luva_type", "field"
 
 -- ---@type Luva.Kinds

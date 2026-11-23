@@ -22,7 +22,7 @@ do
     ---@field public const table<string, Luva.Dynamic>|nil
     ---@field public template fun(...: Luva.Type)|nil
     ---@field public extends Luva.Type|nil
-    ---@field public implements Luva.Interface[]|nil
+    -- ---@field public implements Luva.Interface[]|nil
     local __classBuilder
 end
 
@@ -30,7 +30,7 @@ end
 ---@param classBuilder Luva.Lang.ClassBuilder
 ---@return Luva.Lang.TypesMetatableNames
 ---@nodiscard
-local function _GetClassMetatable(classBuilder)
+local function _GetClassMetatableName(classBuilder)
     if classBuilder.template then
         return "TemplateClass"
     end
@@ -98,7 +98,7 @@ local function _TryAddStaticExtends(resultClass, classBuilder)
 
     -- handle extend
 end
-
+--[[
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticImplements(resultClass, classBuilder)
@@ -108,7 +108,7 @@ local function _TryAddStaticImplements(resultClass, classBuilder)
 
     -- handle implements
 end
-
+]]
 
 
 --- Creates a class
@@ -122,14 +122,15 @@ class = function (classBuilder)
         -- __Kind = "class"
     }
 
-    _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
+    _LUVA.SecuredObject.SecureType(resultClass, _GetClassMetatableName(classBuilder), "class")
+    -- _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
 
-    resultClass.__Kind = "class"  ---@diagnostic disable-line : invisible
+    -- resultClass.__Kind = "class"  ---@diagnostic disable-line : invisible
 
 
     _TryAddStaticTemplate(resultClass, classBuilder)
     _TryAddStaticExtends(resultClass, classBuilder)
-    _TryAddStaticImplements(resultClass, classBuilder)
+    -- _TryAddStaticImplements(resultClass, classBuilder)
     _TryAddStaticConst(resultClass, classBuilder)
     _TryAddStaticFields(resultClass, classBuilder)
 
