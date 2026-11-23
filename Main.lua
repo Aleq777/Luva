@@ -30,4 +30,4 @@ Human = class {
 local moose = Human()
 
 -- param (Human, Human)
-param ("3", "number")
+param (3, "number")

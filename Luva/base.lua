@@ -43,7 +43,7 @@ import = function (path)
     dofile (path)
 end
 
-import "Config"
+import "Luva.Config"
 if _LUVA.Config.ForwardCompatibility then
-    import "ForwardCompatibility"
+    import "Luva.ForwardCompatibility"
 end
