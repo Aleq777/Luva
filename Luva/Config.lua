@@ -10,6 +10,7 @@ _LUVA.Config = {
     --- Requires Luva to check each time for type-to-type compitability
     --- It slowers the execution, but ensures that you will code faster
     --- (no miss-assigned types etc.) <br />
+    --- It will also affect the `param` expression. <br />
     --- Default: `true`
     ---@type boolean
     FullTypeChecking = true,

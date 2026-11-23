@@ -1,9 +1,6 @@
 
 ---@diagnostic disable : lowercase-global
 
-import "Luva.Engine.kind"
-import "Luva.Engine.matching_expr"
-import "Luva.Engine.OOP.Ingredients.field"
 
 ---@alias Luva.Lang.PrototypeBuilder table<Luva.Lang.Identifier, any>
 

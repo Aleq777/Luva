@@ -3,9 +3,6 @@
 
 
 _LUVA.SecuredObject = { }
-import "Luva.Engine.utils"
-import "Luva.Engine.Security.SecuredObject"
-import "Luva.Engine.Security.luvatype"
 
 
 
@@ -427,58 +424,6 @@ end
 ---@param prototypeMetatable metatable
 function _LUVA.SecuredObject.SecureInstance(instance, prototypeMetatable)
     _LUVA.SecuredObject.Secure(instance, prototypeMetatable, "instance")
-
-
-    -- _LUVA.Utils.SafeInjectRef(instance, {
-    --     __Kind = "instance",
-    --     __Metatable = prototypeMetatable,
-    --     __Constants = { },
-    --     __Fields = { },
-    --     __Methods = { },
-    --     __Accessors = { },
-    --     __Generics = { },
-    --     __SetGenerics = function (self, generics)
-    --         self.__Generics = generics  ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetAccessors = function (self, accessors)
-    --         self.__Accessors = accessors    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetConstants = function (self, constants)
-    --         self.__Constants = constants    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetFields = function (self, fields)
-    --         self.__Fields = fields  ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetMethods = function (self, methods)
-    --         self.__Methods = methods    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddAccessor = function (self, name, accessor)
-    --         _checkIfNew(self, name)
-    --         self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddConstant = function (self, name, constant)
-    --         _checkIfNew(self, name)
-    --         self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddField = function (self, name, _field)
-    --         _checkIfNew(self, name)
-    --         self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddMethod = function (self, name, method)
-    --         _checkIfNew(self, name)
-    --         self.__Methods[name] = method   ---@diagnostic disable-line : invisible
-    --     end,
-    -- })
-
-    -- setmetatable(instance, prototypeMetatable)
 end
 
 --- Secures a type
@@ -487,56 +432,4 @@ end
 ---@param kind "class"|"struct"|"record"|"singleton"|"interface"
 function _LUVA.SecuredObject.SecureType(obj, metatableName, kind)
     _LUVA.SecuredObject.Secure(obj, _LUVA.SecuredObject.Metatables[metatableName], kind)
-    -- local metatable = _LUVA.SecuredObject.Metatables[metatableName]
-
-    -- _LUVA.Utils.SafeInjectRef(obj, {
-    --     __Kind = kind,
-    --     __Metatable = metatable,
-    --     __Constants = { },
-    --     __Fields = { },
-    --     __Methods = { },
-    --     __Accessors = { },
-    --     __Generics = { },
-    --     __SetGenerics = function (self, generics)
-    --         self.__Generics = generics  ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetAccessors = function (self, accessors)
-    --         self.__Accessors = accessors    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetConstants = function (self, constants)
-    --         self.__Constants = constants    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetFields = function (self, fields)
-    --         self.__Fields = fields  ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __SetMethods = function (self, methods)
-    --         self.__Methods = methods    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddAccessor = function (self, name, accessor)
-    --         _checkIfNew(self, name)
-    --         self.__Accessors[name] = accessor   ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddConstant = function (self, name, constant)
-    --         _checkIfNew(self, name)
-    --         self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddField = function (self, name, _field)
-    --         _checkIfNew(self, name)
-    --         self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
-    --     end,
-
-    --     __AddMethod = function (self, name, method)
-    --         _checkIfNew(self, name)
-    --         self.__Methods[name] = method   ---@diagnostic disable-line : invisible
-    --     end,
-    -- })
-
-    -- setmetatable(obj, metatable)
 end

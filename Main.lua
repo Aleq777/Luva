@@ -1,10 +1,5 @@
 
 
-import "Luva.Engine.OOP.class"
-import "Luva.Engine.OOP.Ingredients.readonly"
-import "Luva.Engine.OOP.Ingredients.accessor"
-import "Luva.Engine.param"
-
 
 Human = class {
     prototype = {

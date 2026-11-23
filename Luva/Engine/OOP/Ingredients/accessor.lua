@@ -2,8 +2,6 @@
 ---@diagnostic disable : lowercase-global
 
 
-import "Luva.Engine.Security.SecuredObject"
-import "Luva.Engine.OOP.Ingredients.field"
 
 do
     ---@generic TChild : Luva.Object
