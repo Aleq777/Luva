@@ -7,6 +7,9 @@
 ---@return Luva.Lang.Field
 ---@nodiscard
 maybe = function (_type)
+    if not _LUVA.Utils.IsType(_type) then
+        error ("Should be type", 2)
+    end
     local raw = _LUVA._ParseProp(_type)
     raw.IsNilable = true
     raw.__Kind = "maybe"    ---@diagnostic disable-line : invisible

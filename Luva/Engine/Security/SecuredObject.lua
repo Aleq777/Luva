@@ -181,7 +181,7 @@ local function _secureSet(obj, index, value)
             error (ERR_TRIED_MODIFY_CONSTANT)
         end
 
-        _LUVA.AssureType(value, field.Type, 4)
+        _LUVA.AssureType(value, field.Type, 4, field.IsNilable)
 
         fields[index]--[[@as Luva.Lang.Field]].Value = value
         return

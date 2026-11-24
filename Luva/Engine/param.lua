@@ -5,9 +5,10 @@
 --- Expression that lets you assure that
 --- `var` is type of `requiredType`
 ---@param var any
----@param requiredType Luva.Type|type 
-param = function (var, requiredType)
-    _LUVA.AssureType(var, requiredType, 4)
+---@param requiredType Luva.Type|type
+---@param acceptNil boolean|nil Should `nil` be accepted?
+param = function (var, requiredType, acceptNil)
+    _LUVA.AssureType(var, requiredType, 4, acceptNil or false)
 end
 
 
@@ -15,9 +16,14 @@ end
 ---@param var any
 ---@param requiredType Luva.Type|type 
 ---@param level integer
+---@param acceptNil boolean
 ---@param fieldName string|nil
-function _LUVA.AssureType(var, requiredType, level, fieldName)
+function _LUVA.AssureType(var, requiredType, level, acceptNil, fieldName)
     if not _LUVA.Config.FullTypeChecking then
+        return
+    end
+
+    if var == nil and acceptNil then
         return
     end
 

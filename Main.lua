@@ -4,7 +4,7 @@
 Human = class {
     prototype = {
         Name = readonly ("string"),
-        Age = "number",
+        Age = maybe("number"),
         Greet = function (self)
             print("Hello, my name is " .. self.Name)
         end,
@@ -32,21 +32,10 @@ Human = class {
 }
 
 local moose = Human()
+moose.Age = 10
+moose.Age = nil
 
-function sum(a, b)
-    param (a, "number")
-    param (b, "number")
-
-    return a + b
-end
-
-print(
-    sum(
-        1, true
-    )
-)
-
-
+print(moose.Age)
 -- param (Human, Human)
 -- print(as(moose, "string"))
 -- print(moose)
