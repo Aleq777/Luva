@@ -181,6 +181,8 @@ local function _secureSet(obj, index, value)
             error (ERR_TRIED_MODIFY_CONSTANT)
         end
 
+        _LUVA.AssureType(value, field.Type, 4)
+
         fields[index]--[[@as Luva.Lang.Field]].Value = value
         return
     end
@@ -335,12 +337,15 @@ _LUVA.SecuredObject.Metatables = {
 
             -- mutli-setter with self-return
             local argCount = select ("#", ...)
-            local argFirst = ( select (1, ...) )
+            local argFirst = select (1, ...)
             if argCount ~= 1 or type (argFirst) ~= "table" then
                 error (ERR_TRIED_TO_CALL_OBJECT, 3)
             end
 
             for fieldName, fieldContent in pairs(argFirst) do
+                if self.__Fields[fieldName] then
+                    _LUVA.AssureType(fieldContent, self.__Fields[fieldName].Type, 3, fieldName)
+                end
                 self[fieldName] = fieldContent
             end
 

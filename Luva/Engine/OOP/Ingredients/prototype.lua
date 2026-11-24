@@ -44,7 +44,11 @@ function _LUVA._SetupPrototype(resultClass, prototypeBuilder)
                 local result = "Luva.Object {"
 
                 _LUVA.Utils.Entries(self, function (index, value)
-                    result = result .. "\n\t" .. tostring(index) .. ":\t" .. tostring(value)
+                    if kindof (value) == "field" then
+                        result = result .. "\n\t" .. tostring(index) .. ":\t" .. tostring(value.Value)
+                    else
+                        result = result .. "\n\t" .. tostring(index) .. ":\t" .. tostring(value)
+                    end
                 end)
 
                 result = result .. "\n}"

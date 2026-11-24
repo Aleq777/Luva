@@ -33,8 +33,8 @@ as = function (var, newType)
 
         return match (newType, {
             ["string"] = tostring(var),
-            ["table"] = var:ToPrimeTable(),
-            ["number"] = tonumber(var),
+            ["table"] = { var },
+            ["number"] = var == false and 0 or (tonumber(var) or 1),
             ["boolean"] = var ~= nil and var ~= false and var ~= 0,
         })
     end

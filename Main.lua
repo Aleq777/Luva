@@ -4,7 +4,7 @@
 Human = class {
     prototype = {
         Name = readonly ("string"),
-        Age = "integer",
+        Age = "number",
         Greet = function (self)
             print("Hello, my name is " .. self.Name)
         end,
@@ -33,9 +33,26 @@ Human = class {
 
 local moose = Human()
 
+function sum(a, b)
+    param (a, "number")
+    param (b, "number")
+
+    return a + b
+end
+
+print(
+    sum(
+        1, as(true, "number")
+    )
+)
+
+
 -- param (Human, Human)
 -- print(as(moose, "string"))
 -- print(moose)
-moose {
-    
-}
+-- moose {
+--     Name = 20,
+--     Age = "x"
+-- }
+
+-- print(moose.Age)
