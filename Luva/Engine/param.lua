@@ -17,6 +17,10 @@ end
 ---@param level integer
 ---@param fieldName string|nil
 function _LUVA.AssureType(var, requiredType, level, fieldName)
+    if not _LUVA.Config.FullTypeChecking then
+        return
+    end
+
     local type_requiredType = type (requiredType)
 
     -- Scalar

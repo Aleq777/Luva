@@ -42,7 +42,7 @@ end
 
 print(
     sum(
-        1, as(true, "number")
+        1, true
     )
 )
 
