@@ -2,7 +2,7 @@
 [![Static badge](https://img.shields.io/badge/language-Polski-red)](README.pl-PL.md)\
 :uk:/:us: English
 
-<h6>Current version: -</h6>
+<h6>Current version: 0.0-beta-1.4.0<</h6>
 
 # Introduction
 
