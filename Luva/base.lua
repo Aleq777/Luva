@@ -6,13 +6,11 @@
 
 ---@alias Luva.Dynamic boolean|string|number|integer|table|function|metatable Not nil
 
----@alias Luva.Lang.Config.ImportingEnum
----| "luva" # Uses `dofile` with simple module saving
----| "teardown" # Similar to luva, but it searches for mod location
 
----@alias Luva.Lang.Config.Teardown.FetchMethodEnum
----| "distinct_file" # Filename that exists only in your mod (in case you don't know nor don't want to use mod ID)
----| "mod_id" # Steam workshop mod's ID
+if setmetatable == nil or getmetatable == nil or dofile == nil then
+    error ("Luva framework environmental requirements haven't met: metatables, dofile")
+end
+
 
 --- Luva's usable module
 Luva = { }
@@ -20,12 +18,12 @@ Luva = { }
 --- Luva engine ingredients
 _LUVA = {
     ---@type table<Luva.Lang.Identifier, string>
-    Errors = { },
     ---@package
-    Modules = { }
-}
+    Modules = { },
 
-dofile "Luva/Config.lua"
+    ---@type string[]
+    Modes = { },
+}
 
 
 
@@ -43,4 +41,9 @@ import = function (path)
 
     path = path:gsub("%.", "/") .. ".lua"
     dofile (path)
+end
+
+import "Luva.Config"
+if _LUVA.Config.ForwardCompatibility then
+    import "Luva.ForwardCompatibility"
 end

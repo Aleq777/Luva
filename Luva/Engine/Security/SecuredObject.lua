@@ -3,9 +3,6 @@
 
 
 _LUVA.SecuredObject = { }
-import "Luva.Engine.utils"
-import "Luva.Engine.Security.SecuredObject"
-import "Luva.Engine.Security.luvatype"
 
 
 
@@ -43,9 +40,8 @@ do
     ---@field protected __SetAccessors    fun(self: Luva.Lang.SecuredObject, accessors: table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>)
     ---@field protected __SetGenerics fun(self: Luva.Lang.SecuredObject, generics: table<Luva.Lang.Identifier, Luva.Type|nil>)
     ---@
-    ---@field private __Metatable   Luva.Lang.PseudoMetatable
-    ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Dynamic>
-    ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Dynamic>
+    ---@field private __Constants   table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
+    ---@field private __Fields      table<Luva.Lang.Identifier, Luva.Lang.Field<any>>
     ---@field private __Methods     table<Luva.Lang.Identifier, function>
     ---@field private __Accessors   table<Luva.Lang.Identifier, Luva.Lang.Accessor<Luva.Object>>
     ---@field private __Generics    table<Luva.Lang.Identifier, Luva.Type|nil>
@@ -62,12 +58,11 @@ end
 
 
 local ERR_UNDEFINED_FIELD = "Tried to access undefined field"
-local ERR_ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"empty\" instead. If the error persists, ensure that you have imported \"empty\" correctly."
+local ERR_ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"maybe(-type-)\" instead. If the error persists, ensure that you have imported \"maybe\" correctly."
 local ERR_TRIED_MODIFY_CONSTANT= "Tried to modify a constant or read-only value"
 local ERR_TRIED_MODIFY_METHOD = "Tried to modify a method (which is read-only)"
 local ERR_NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's read-only or write only)"
 local ERR_TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
-local ERR_MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
 
 
@@ -79,10 +74,8 @@ local ERR_MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class whi
 ---@nodiscard
 local function _doesIdentifierExist(obj, identifier)
     for _, tableContent in pairs(obj) do
-        if type(tableContent) ~= "function" then
-            if tableContent[identifier] ~= nil then
-                return true
-            end
+        if type (tableContent) == "table" and tableContent[identifier] then
+            return true
         end
     end
 
@@ -97,7 +90,7 @@ local function _checkIfNew(obj, identifier)
     end
 end
 
----@alias Luva.Lang.TypesMetatableNames "TemplateClass"|"StaticClass"|"InstanceClass"|"InstanceBase"
+---@alias Luva.Lang.TypesMetatableNames "TemplateClass"|"StaticClass"|"InstanceClass"
 
 local ERR_TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in it's type or ensure that you have used multi-setter correctly"
 
@@ -108,12 +101,23 @@ local ERR_TRIED_TO_CALL_OBJECT = "Tried to call object. Override the operator in
 local function _secureGet(obj, index)
     local constant = obj.__Constants[index] ---@diagnostic disable-line : invisible
     if constant then
-        return constant
+        ---@cast constant Luva.Lang.Field
+        return constant.Value
     end
 
     local _field = obj.__Fields[index]  ---@diagnostic disable-line : invisible
     if _field then
-        return _field
+        ---@cast _field Luva.Lang.Field
+        local v = _field.Value
+        if v == nil then
+            if _field.IsReadonly then
+                error ("Read-only field not initialised yet!", 3)
+            elseif not _field.IsNilable then
+                error ("Tried refering to an not-initialised non-nilable field", 3)
+            end
+        end
+
+        return v
     end
 
     local method = obj.__Methods[index]    ---@diagnostic disable-line : invisible
@@ -125,11 +129,12 @@ local function _secureGet(obj, index)
     local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
     ---@cast accessor Luva.Lang.Accessor<Luva.Object>
     if accessor then
-        if accessor.get then
-            return accessor:get()
-        else
+        if not accessor.get then
             error (ERR_NO_GET_OR_SET)
         end
+
+        ---@cast obj Luva.Object
+        return accessor.get(obj)
     end
 
     local generics = obj.__Generics    ---@diagnostic disable-line : invisible
@@ -141,7 +146,8 @@ local function _secureGet(obj, index)
         end
     end
 
-    local userDef = obj.__Metatable._index ---@diagnostic disable-line : invisible
+    -- local userDef = obj.__Metatable._index ---@diagnostic disable-line : invisible
+    local userDef = getmetatable (obj)._index
     if userDef then
         return userDef(obj, index)
     end
@@ -160,28 +166,41 @@ local function _secureSet(obj, index, value)
         error (ERR_TRIED_MODIFY_METHOD, 3)
     elseif obj.__Generics and obj.__Generics[index] then  ---@diagnostic disable-line : invisible
         error (ERR_TRIED_MODIFY_CONSTANT, 3)
-    elseif value == nil then
-        error (ERR_ASSIGNED_NIL, 3)
     end
 
+    local isValueNil = value == nil
+
     local fields = obj.__Fields  ---@diagnostic disable-line : invisible
-    if fields[index] ~= nil then
-        fields[index] = value
+    ---@type Luva.Lang.Field
+    local field = fields[index]
+    if field then
+        if isValueNil and not field.IsNilable then
+            error (ERR_ASSIGNED_NIL)
+        elseif field.IsReadonly and field.Value ~= nil then
+            error (ERR_TRIED_MODIFY_CONSTANT)
+        end
+
+        _LUVA.AssureType(value, field.Type, 4, field.IsNilable)
+
+        fields[index]--[[@as Luva.Lang.Field]].Value = value
         return
     end
 
     ---@type Luva.Lang.Accessor<Luva.Object>
     local accessor = obj.__Accessors[index]    ---@diagnostic disable-line : invisible
     if accessor then
-        if accessor.set then
-            accessor:set(value)
-            return
-        else
+        if not accessor.set then
             error (ERR_NO_GET_OR_SET)
         end
+
+        -- accessor:set(value)
+        ---@cast obj Luva.Object
+        accessor.set(obj, value)
+        return
     end
 
-    local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
+    -- local userDef = obj.__Metatable._newindex  ---@diagnostic disable-line : invisible
+    local userDef = getmetatable (obj)._newindex
     if userDef then
         userDef(obj, index, value)
         return
@@ -201,13 +220,13 @@ _LUVA.SecuredObject.Metatables = {
             local templ = self.__Template   ---@diagnostic disable-line : invisible
             ---@type Luva.Type[]
             local filledTemplate = { }
-    
+
             if #templ == 1 then -- only 1 generic type, accept template[T] and template[{T}]
                 -- if array
                 if kindof (index) == "lua" then
                     index = index[1]
                 end
-    
+
                 ---@cast index -Luva.Type[]
                 table.insert(filledTemplate, index)
             else -- many generic types, accept only template[{...}]
@@ -220,7 +239,7 @@ _LUVA.SecuredObject.Metatables = {
                     error (ERR_TEMPLATE_NOT_ENOUGH_TYPES)
                 end
             end
-    
+
             -- search for existing
             local generatedClasses = self.__GeneratedClasses    ---@diagnostic disable-line : invisible
             for existingTemplate, existingType in pairs(generatedClasses) do
@@ -228,11 +247,11 @@ _LUVA.SecuredObject.Metatables = {
                     return existingType
                 end
             end
-    
+
             -- generate a new type
-            local generatedClass = _LUVA._GenerateFromTemplate(self, filledTemplate)
+            local generatedClass = _LUVA._GenerateFromTemplate(self, "class", filledTemplate)
             generatedClasses[filledTemplate] = generatedClass
-    
+
             return generatedClass
         end
     },
@@ -244,7 +263,7 @@ _LUVA.SecuredObject.Metatables = {
         __index = function (self, index)
             return _secureGet(self, index)
         end,
-    
+
         ---@param self Luva.Lang.SecuredObject
         ---@param index Luva.Dynamic
         ---@param value Luva.Dynamic
@@ -259,27 +278,27 @@ _LUVA.SecuredObject.Metatables = {
         __index = function (self, index)
             return _secureGet(self, index)
         end,
-    
+
         ---@param self Luva.Type
         ---@param index Luva.Dynamic
         ---@param value Luva.Dynamic
         __newindex = function (self, index, value)
             _secureSet(self, index, value)
         end,
-    
+
         ---@param self Luva.Type
         ---@param ... any[]
         ---@return Luva.Object
         __call = function (self, ...)
             local argsCount = select ("#", ...)
             local instance = nil
-    
+
             if argsCount == 0 then
                 instance = self.__Constructors.DefaultConstructor(self) ---@diagnostic disable-line : invisible
             else
                 instance = self.__Constructors.CustomConstructor(self, ...)  ---@diagnostic disable-line : invisible
             end
-    
+
             return instance
         end,
     },
@@ -310,57 +329,54 @@ _LUVA.SecuredObject.Metatables = {
         ---@param ... table|any[]
         ---@return Luva.Object|any ...
         __call = function (self, ...)
-            local userDefined = self.__Type.__Prototype.PrototypeMetatable._index   ---@diagnostic disable-line : invisible
+            local userDefined = getmetatable (self)._index   ---@diagnostic disable-line : invisible
             if userDefined then
                 return userDefined(self, ...)
             end
-    
+
+            -- mutli-setter with self-return
             local argCount = select ("#", ...)
-            local argFirst = ( select (1, ...) )
+            local argFirst = select (1, ...)
             if argCount ~= 1 or type (argFirst) ~= "table" then
                 error (ERR_TRIED_TO_CALL_OBJECT, 3)
             end
-    
+
             for fieldName, fieldContent in pairs(argFirst) do
+                local f = self.__Fields[fieldName]  ---@diagnostic disable-line : invisible
+                
+                if f then
+                    -- assure type only for fields, because accessors don't have auto-type-checks
+                    _LUVA.AssureType(fieldContent, f.Type, 3, fieldName)
+                end
+
                 self[fieldName] = fieldContent
             end
-    
+
             return self
         end,
-    
+
         ---@version >5.1 On version 5.1, it just won't work
         ---@param self Luva.Object
         __gc = function (self)
-            self.__Type.__Destructor(self)  ---@diagnostic disable-line : invisible
+            local destr = self.__Type.__Destructor  ---@diagnostic disable-line : invisible
+            if destr then
+                destr(self)
+            end
         end
     },
 }
 
 
 
-
-
-
-
 --- Secures an object
 ---@param obj table
----@param metatableName Luva.Lang.TypesMetatableNames Which metatable use
----@param modifyMetatable metatable|nil Modifying (coping and changing) metatable. For `"InstanceBase"` it acts like a ready table to refer to
-function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
-    ---@type metatable
-    local metatable
-    if metatableName == "InstanceBase" then
-        if modifyMetatable == nil then
-            error (ERR_MISSING_INSTANCE_S_CLASS)
-        end
-
-        metatable = modifyMetatable
-    else
-        metatable = _LUVA.SecuredObject.Metatables[metatableName]
-    end
+---@param metatable metatable
+---@param kind string
+function _LUVA.SecuredObject.Secure(obj, metatable, kind)
 
     _LUVA.Utils.SafeInjectRef(obj, {
-        __Metatable = metatable,
+        __Kind = kind, -- default
+        -- __Metatable = metatable,
         __Constants = { },
         __Fields = { },
         __Methods = { },
@@ -393,12 +409,12 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
 
         __AddConstant = function (self, name, constant)
             _checkIfNew(self, name)
-            self.__Constants[name] = constant   ---@diagnostic disable-line : invisible
+            self.__Constants[name] = _LUVA._ParseConstant(constant)   ---@diagnostic disable-line : invisible
         end,
 
         __AddField = function (self, name, _field)
             _checkIfNew(self, name)
-            self.__Fields[name] = _field    ---@diagnostic disable-line : invisible
+            self.__Fields[name] = _LUVA._ParseField(_field)    ---@diagnostic disable-line : invisible
         end,
 
         __AddMethod = function (self, name, method)
@@ -409,4 +425,20 @@ function _LUVA.SecuredObject.Secure(obj, metatableName, modifyMetatable)
     } --[[@as Luva.Lang.SecuredObject]])
 
     setmetatable (obj, metatable)
+end
+
+
+--- Secures an (not-yet)instance of a type
+---@param instance table
+---@param prototypeMetatable metatable
+function _LUVA.SecuredObject.SecureInstance(instance, prototypeMetatable)
+    _LUVA.SecuredObject.Secure(instance, prototypeMetatable, "instance")
+end
+
+--- Secures a type
+---@param obj table
+---@param metatableName "StaticClass"|"InstanceClass"|"TemplateClass"
+---@param kind "class"|"struct"|"record"|"singleton"|"interface"
+function _LUVA.SecuredObject.SecureType(obj, metatableName, kind)
+    _LUVA.SecuredObject.Secure(obj, _LUVA.SecuredObject.Metatables[metatableName], kind)
 end

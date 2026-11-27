@@ -2,11 +2,6 @@
 
 ---@diagnostic disable : lowercase-global
 
-import "Luva.Engine.Security.SecuredObject"
-import "Luva.Engine.OOP.Ingredients.prototype"
-import "Luva.Engine.OOP.Ingredients.template"
-import "Luva.Engine.OOP.Ingredients.constructor"
-import "Luva.Engine.OOP.Ingredients.destructor"
 
 ---@alias Luva.Lang.PropNames "prototype"|"default"|"constructor"|"destructor"|"static"|"const"|"template"|"extends"|"implements"|"static_assert"
 ---@alias Luva.Lang.PropFuncNames "AddConstant"|"AddField"|"AddMethod"|"AddAccessor"
@@ -22,7 +17,7 @@ do
     ---@field public const table<string, Luva.Dynamic>|nil
     ---@field public template fun(...: Luva.Type)|nil
     ---@field public extends Luva.Type|nil
-    ---@field public implements Luva.Interface[]|nil
+    -- ---@field public implements Luva.Interface[]|nil
     local __classBuilder
 end
 
@@ -30,7 +25,7 @@ end
 ---@param classBuilder Luva.Lang.ClassBuilder
 ---@return Luva.Lang.TypesMetatableNames
 ---@nodiscard
-local function _GetClassMetatable(classBuilder)
+local function _GetClassMetatableName(classBuilder)
     if classBuilder.template then
         return "TemplateClass"
     end
@@ -98,7 +93,7 @@ local function _TryAddStaticExtends(resultClass, classBuilder)
 
     -- handle extend
 end
-
+--[[
 ---@param resultClass Luva.Type
 ---@param classBuilder Luva.Lang.ClassBuilder
 local function _TryAddStaticImplements(resultClass, classBuilder)
@@ -108,7 +103,7 @@ local function _TryAddStaticImplements(resultClass, classBuilder)
 
     -- handle implements
 end
-
+]]
 
 
 --- Creates a class
@@ -119,14 +114,18 @@ class = function (classBuilder)
 
     ---@type Luva.Type
     local resultClass = {   ---@diagnostic disable-line : missing-fields
-        __Kind = "class"
+        -- __Kind = "class"
     }
 
-    _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
+    _LUVA.SecuredObject.SecureType(resultClass, _GetClassMetatableName(classBuilder), "class")
+    -- _LUVA.SecuredObject.Secure(resultClass, _GetClassMetatable(classBuilder))
+
+    -- resultClass.__Kind = "class"  ---@diagnostic disable-line : invisible
+
 
     _TryAddStaticTemplate(resultClass, classBuilder)
     _TryAddStaticExtends(resultClass, classBuilder)
-    _TryAddStaticImplements(resultClass, classBuilder)
+    -- _TryAddStaticImplements(resultClass, classBuilder)
     _TryAddStaticConst(resultClass, classBuilder)
     _TryAddStaticFields(resultClass, classBuilder)
 
@@ -145,6 +144,8 @@ class = function (classBuilder)
         end
 
         _LUVA._SetupDestructor(resultClass, classBuilder.destructor)
+
+        _LUVA._SetupConvertions(resultClass, classBuilder)
     end
 
     return resultClass

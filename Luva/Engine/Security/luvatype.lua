@@ -1,5 +1,8 @@
 
----@module "Luva.Engine.OOP.Ingredients.Constructors.base"
+---@diagnostic disable : lowercase-global
+
+
+
 
 do
     ---@class Luva.Type : Luva.Lang.SecuredObject
@@ -7,20 +10,12 @@ do
     ---@field private __GenericTypes table<Luva.Lang.Identifier, Luva.Type> # "T" -> Luva.Type
     ---@field private __Prototype Luva.Lang.ClassPrototype|nil
     ---@field private __Constructors Luva.Lang.ClassConstructors|nil
-    ---@field private __Destructor fun(self: Luva.Object)
+    ---@field private __Destructor nil|fun(self: Luva.Object)
     ---@field private __Extends Luva.Type
-    ---@field private __Implements Luva.Interface[]
+    ---@field private __Conversions nil|table<Luva.Type|type, fun(instance: Luva.Object): Luva.Object>
+    -- ---@field private __Implements nil|Luva.Interface[]
     local __luvatype
-end
 
-
----@diagnostic disable : lowercase-global
-
-import "Luva.Engine.utils"
-import "Luva.Engine.Security.SecuredObject"
-
-
-do
     ---@alias Luva.Lang.Template Luva.Lang.Generic[]
 
     ---@class Luva.Lang.Generic
@@ -38,10 +33,11 @@ end
 
 --- Generates a standard class from a generic class
 ---@param templateClass Luva.TemplateClass
+---@param kind "class"|"struct"|"interface"|"singleton"
 ---@param filledTemplate Luva.Type[]
 ---@return Luva.Type
 ---@nodiscard
-function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
+function _LUVA._GenerateFromTemplate(templateClass, kind, filledTemplate)
 
     ---@type table<Luva.Lang.Identifier, Luva.Type>
     local genericTypes = { }
@@ -80,7 +76,7 @@ function _LUVA._GenerateFromTemplate(templateClass, filledTemplate)
     ---@type "InstanceClass"|"StaticClass"
     local classType
 
-    _LUVA.SecuredObject.Secure(result, classType)
+    _LUVA.SecuredObject.SecureType(result, classType, kind)
 
     return result
 end

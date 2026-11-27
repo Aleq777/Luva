@@ -2,16 +2,19 @@
 ---@diagnostic disable : lowercase-global
 
 
-import "Luva.Engine.Security.SecuredObject"
-import "Luva.Engine.OOP.Ingredients.field"
 
 do
     ---@generic TChild : Luva.Object
     ---@generic TField
-    ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind
+    ---@class Luva.Lang.Accessor : Luva.Lang.StrictKind, Luva.Lang.AccessorBuilder
+    local __accessor
+
+    ---@generic TChild : Luva.Object
+    ---@generic TField
+    ---@class Luva.Lang.AccessorBuilder
     ---@field public get nil|fun(self: TChild): TField
     ---@field public set nil|fun(self: TChild, value: TField)
-    local __accessor
+    local __accessorBuilder
 end
 
 
@@ -28,7 +31,7 @@ local ERR_EMPTY_ACCESSOR = "Accessor requires at least one function (get and/or 
 --- Custom getters and setters
 ---@generic TChild : Luva.Object
 ---@generic TField
----@param accessorBuilder Luva.Lang.Accessor At least one function required (get and/or set)
+---@param accessorBuilder Luva.Lang.AccessorBuilder At least one function required (get and/or set)
 ---@return Luva.Lang.Accessor<TChild, TField>
 ---@nodiscard
 accessor = function (accessorBuilder)
@@ -42,10 +45,10 @@ accessor = function (accessorBuilder)
         end
     end
 
-    if atLeastOne then
-        accessorBuilder.__Kind = "accessor"    ---@diagnostic disable-line : invisible
-        return accessorBuilder
-    else
+    if not atLeastOne then
         error (ERR_EMPTY_ACCESSOR)
     end
+
+    accessorBuilder--[[@as Luva.Lang.Field]].__Kind = "accessor"    ---@diagnostic disable-line : invisible
+    return accessorBuilder
 end

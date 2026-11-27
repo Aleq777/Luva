@@ -1,57 +1,86 @@
 
 
-import "Luva.Engine.OOP.class"
-import "Luva.Engine.empty"
-
-do
-    ---@class HumanT : Luva.Type
-    ---@field X integer
-    ---@field Greet function
-    ---@field Y integer
-    local __humanT
-end
-
-
-
----@class Human : Luva.Object
----@field Name string
----@field Age integer
----@type HumanT|(fun(): Human)|(fun(name: string, age: integer): Human) -- what the fuck LuaLS & intelisense
-Human = class { --[[@type HumanT]]---@diagnostic disable-line : assign-type-mismatch
-    static = {
-        X = 3,
-        Greet = function ()
-            print "Hi"
-        end
-    },
-    const = {
-        Y = 10
-    },
+Human = class {
     prototype = {
-        Name = string,
-        Age = 0
+        _Parent = maybe("table"),
+        Parent = accessor {
+            get = function (self)
+                return self._Parent
+            end,
+            set = function (self, value)
+                param (value, Human)
+                self._Parent = value
+            end
+        },
+        Name = readonly("string"),
+        Age = accessor {
+            get = function (self)
+                return self._Age
+            end,
+
+            set = function (self, value)
+                print "I am older!"
+                self._Age = value
+            end
+        },
+        _Age = "number",
+        Greet = function (self)
+            print ("Hello, I am " .. self.Name)
+        end,
     },
-    default = function (self)
-        Human.Greet()
-    end,
-    constructor = function (setPrototype, name, age)
+
+    constructor = function (setPrototype, name, age, parent)
         setPrototype {
             Name = name,
-            Age = age
+            Age = age,
+            -- Parent = parent
         }
-        Human.Greet()
+        Human.HumansCreated = Human.HumansCreated + 1
     end,
-    destructor = function (self)
-        print (type (self))
+
+    default = function ()
+        Human.HumansCreated = Human.HumansCreated + 1
+        print "Human created"
+    end,
+
+    static = {
+        HumansCreated = 0,
+        WhoIsOlder = function (humanA, humanB)
+            if humanA.Age > humanB.Age then
+                print (humanA.Name .. " is older")
+            elseif humanA.Age < humanB.Age then
+                print (humanB.Age .. " is older")
+            else
+                print("Same age")
+            end
+        end
+    },
+
+    ["number"] = function (self)
+        return self.Age
+    end,
+
+    __add = function (self, h2)
+        return self.Age + h2.Age
     end
 }
 
 
 
-local moose1 = Human("moose 1", 20)
-local moose2 = Human() {
-    Name = "Moose 2",
-    Age = 30
+local moose = Human()
+local aleq = Human()
+
+aleq {
+    Name = "aleq",
+    Age = 20
 }
 
-print(moose2)
+moose {
+    Name = "moose",
+    Age = 20
+}
+
+-- moose.RealName = ""
+
+-- print(moose + aleq)
+

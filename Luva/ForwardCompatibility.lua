@@ -1,13 +1,4 @@
 
-import "Luva/Config.lua"
-
-if setmetatable == nil or getmetatable == nil or dofile == nil then
-    error ("Luva framework environmental requirements haven't met: metatables, dofile")
-end
-
-if not _LUVA.Config.ForwardCompatibility then
-    return
-end
 
 --- In Luva framework, it is unsupported due to lack of forward-compilability.
 --- Please, create tables and return them to create a module. Use `dofile` to import

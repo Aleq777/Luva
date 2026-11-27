@@ -1,6 +1,6 @@
 
 
-_LUVA.Errors.INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
+local ERR_INJECTION_FAILED_DUPLICATE = "Failed to inject: duplicate fields (SafeInject)"
 
 
 
@@ -45,7 +45,7 @@ _LUVA.Utils = {
     ---@param components table Components to inject (reference)
     SafeInjectRef = function (obj, components)
         _injectRef(obj, components, function (k, v)
-            error(_LUVA.Errors.INJECTION_FAILED_DUPLICATE, 4)
+            error(ERR_INJECTION_FAILED_DUPLICATE, 4)
         end)
     end,
 
@@ -82,6 +82,21 @@ _LUVA.Utils = {
         end
 
         return false
+    end,
+
+    --- Returns the keys in the `tab` table
+    ---@generic T
+    ---@param tab table<T, Luva.Dynamic>
+    ---@return T[]
+    ---@nodiscard
+    KeysOf = function (tab)
+        local result = { }
+        
+        for key, _ in pairs(tab) do
+            table.insert(result, key)
+        end
+
+        return result
     end,
 
     ---Compares `objA` and `objB` by values
@@ -138,6 +153,95 @@ _LUVA.Utils = {
         end
     end,
 
+    --- Checks if `expr` is Lua scalar type <br />
+    ---@param expr any
+    ---@return boolean
+    ---@nodiscard
+    ---@see type
+    IsScalar = function (expr)
+        return type (typeof (expr)) == "string"
+        -- return not _LUVA.Utils.IsLuvaObject(expr)
+    end,
+
+    --- Checks if `expr` is Luva.Object
+    ---@param expr any
+    ---@return boolean
+    ---@nodiscard
+    ---@see Luva.Object
+    IsLuvaObject = function (expr)
+        return not _LUVA.Utils.IsScalar(expr)
+        -- local t = type (expr)
+
+        -- if type (t) == "table" and expr.__Type then
+        --     return true
+        -- end
+
+        -- return false
+    end,
+
+    --- Checks, if the provided `expr` is Luva.Type or type. <br />
+    ---@param expr any
+    ---@return boolean isType
+    ---@nodiscard
+    ---@see _LUVA.Utils.IsInstance Inverse of this function
+    IsType = function (expr)
+        local _type = type (expr)
+
+        return switch (_type, {
+            ["string"] = function ()
+                return _LUVA.Utils.Has(_LUVA.Utils.ScalarLuaTypes, _type)
+            end,
+
+            ["table"] = function ()
+                return kindof (expr) == "luva_type"
+            end,
+
+            default = function ()
+                return false
+            end
+        })
+    end,
+
+    --- Checkes, if the provided `expr` is a clean value and not a type-representative. <br />
+    ---@param expr any
+    ---@return boolean isInstance
+    ---@nodiscard
+    ---@see _LUVA.Utils.IsType Inverse of this function
+    IsInstance = function (expr)
+        return not _LUVA.Utils.IsType(expr)
+    end,
+
+    --[[
+    --- Returns type (any-style) as a strict type (Luva.Type or type-string)
+    ---@param _type any
+    ---@return Luva.Type|type
+    ---@nodiscard
+    ParseType = function (_type)
+        --- type of type
+        local t = type (_type)
+
+        -- more like "type"
+        if t == "string" then
+            return _type
+        end
+        -- its table
+
+        return match (_type, {
+            [table] = "table",
+            [string] = "string",
+            default = (function ()
+                local k = kindof (kindof (_type))
+
+                if k == "luva_type" then
+                    ---@cast _type Luva.Type
+                    return _type
+                end
+
+                return "table"
+            end)()
+        } --]]--[[@as Luva.Lang.MatchingBaseBuilder)
+    end,
+    ]]
     MetamethodsNames = {
         "__add",
         "__sub",
@@ -175,4 +279,15 @@ _LUVA.Utils = {
         "__SetGenerics",
         "__Type"
     },
+
+    --- Scalars used in Luva
+    ---@type type[]
+    ScalarLuaTypes = {
+        "nil",
+        "number",
+        "string",
+        "boolean",
+        "table",
+        "function"
+    }
 }

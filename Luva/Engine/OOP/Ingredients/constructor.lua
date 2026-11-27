@@ -27,79 +27,34 @@ function _LUVA._GeneralConstructor(_class, ...)
     local proto = _class.__Prototype --[[@as Luva.Lang.ClassPrototype]] ---@diagnostic disable-line : invisible
 
 
-    _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+    -- _LUVA.SecuredObject.Secure(instance, "InstanceBase", proto.PrototypeMetatable)
+    _LUVA.SecuredObject.SecureInstance(instance, proto.PrototypeMetatable)
 
     _LUVA.Utils.SafeInjectRef(instance.__Methods, { ---@diagnostic disable-line : invisible
-        Equals = function (self, v)
-            if
-                type (v) ~= "table"
-                or not v.__Type
-                or self.__Type ~= v.__Type  ---@diagnostic disable-line : invisible
-            then
-                return false
-            end
-
-            return _LUVA.Utils.IsSameByValue(self, v, true)
-        end,
-
-        ToString = function (self)
-            local result = "Luva.Object {"
-
-            _LUVA.Utils.Entries(self, function (index, value)
-                result = result .. "\n\t" .. tostring(index) .. ":\t" .. tostring(value)
-            end)
-
-            result = result .. "\n}"
-
-            return result
-        end,
-
-        Extends = function (self, t)
-            -- All Luva Objects do inherit Luva.Object
-            if t == Luva.Object then
-                return true
-            end
-
-            ---@type Luva.Type
-            local temp = self.__Type.__Extends  ---@diagnostic disable-line : invisible
-
-            while temp ~= Luva.Object do
-                if temp == t then -- found - the type is inheriting `t`
-                    return true
-                end
-
-                -- dig deeper
-                temp = temp.__Extends   ---@diagnostic disable-line : invisible
-            end
-
-            -- At Luva.Object, there is nothing to dig deeper
-            return false
-        end,
-
-        Implements = function (self, i)
-            ---@type Luva.Type
-            local t = self.__Type   ---@diagnostic disable-line : invisible
-
-            return _LUVA.Utils.Has(t.__Implements, i)   ---@diagnostic disable-line : invisible
-        end,
     })
 
     _LUVA.Utils.SafeInjectRef(instance.__Constants, {   ---@diagnostic disable-line : invisible
-        __Type = _class
+        -- __Type = _LUVA._ParseConstant(_class)
+        __Type = {
+            __Kind = "const",
+            Value = _class,
+            Type = "table",
+            IsByRef = true
+        } --[[@as Luva.Lang.Field]]
     })
 
-    local propNameToTypeName = {
-        __Fields = "Fields",
-        __Constants = "Readonlys",
-        __Methods = "Methods",
-        __Accessors = "Accessors"
-    }
-
-    for propName, propTypeName in pairs (propNameToTypeName) do
-        for identifier, content in pairs(proto[propTypeName]) do
-            instance[propName][identifier] = content
-        end
+    for identifier, content in pairs(proto.Fields) do
+        instance.__Fields[identifier] = _LUVA.Utils.Copy(content)   ---@diagnostic disable-line : invisible
     end
+
+    -- for identifier, content in pairs(proto.Readonlys) do
+    --     instance.__Fields[identifier] = _LUVA.Utils.Copy(content)    ---@diagnostic disable-line : invisible
+    -- end
+
+    -- by ref
+    instance.__Methods = proto.Methods  ---@diagnostic disable-line : invisible
+    -- by ref
+    instance.__Accessors = proto.Accessors  ---@diagnostic disable-line : invisible
 
     return instance
 end
@@ -109,7 +64,6 @@ end
 ---@param func fun(setPrototype: fun(obj: table), ...: any[])
 function _LUVA._SetupConstructor(constructorsRef, func)
     constructorsRef.CustomConstructor = function (_class, ...)
-
         local instance = _LUVA._GeneralConstructor(_class)
         func(function (obj)
             for k, v in pairs(obj) do
