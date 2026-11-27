@@ -12,7 +12,7 @@ do
     ---@field private __Constructors Luva.Lang.ClassConstructors|nil
     ---@field private __Destructor nil|fun(self: Luva.Object)
     ---@field private __Extends Luva.Type
-    ---@field private __Convertions nil|table<Luva.Type|type, fun(instance: Luva.Object): Luva.Object>
+    ---@field private __Conversions nil|table<Luva.Type|type, fun(instance: Luva.Object): Luva.Object>
     -- ---@field private __Implements nil|Luva.Interface[]
     local __luvatype
 

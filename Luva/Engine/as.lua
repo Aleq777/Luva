@@ -13,20 +13,14 @@
 ---@return TNew var # converted copy
 ---@nodiscard
 as = function (var, newType)
-    if type (newType) == "string" then
-        -- Scalars - handable
+    local conversion = typeof (var).__Conversions[newType]  ---@diagnostic disable-line : invisible
 
-        -- from Luva.Object to scalar
-        if kindof (var) == "instance" then
-            if typeof (var).__Convertions[newType] then
-                return typeof (var).__Convertions[newType](var)
-            end
-
-            error ("No possible convertion existis", 2)
-        end
-
+    if not conversion then
+        error ("No possible convertion exists", 2)
+    end
+    
+    if type (newType) == "string" and kindof (var) ~= "instance"  then
         -- from scalar to scalar
-
         if _LUVA.Utils.Has({ "function", "nil", "thread", "userdata" }--[[@as (type[])]], newType) then
             error ("No possible convertion existis", 2)
         end
@@ -39,10 +33,6 @@ as = function (var, newType)
         })
     end
     -- Luva.Object to Luva.Object/scalar
-    
-    if typeof (var).__Convertions[newType] then
-        return typeof (var).__Convertions[newType](var)
-    end
 
-    error ("No possible convertion existis", 2)
+    return conversion(var)
 end

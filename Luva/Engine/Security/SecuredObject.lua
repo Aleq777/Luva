@@ -58,12 +58,11 @@ end
 
 
 local ERR_UNDEFINED_FIELD = "Tried to access undefined field"
-local ERR_ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"empty\" instead. If the error persists, ensure that you have imported \"empty\" correctly."
+local ERR_ASSIGNED_NIL = "Tried to assign nil (remove property). Use \"maybe(-type-)\" instead. If the error persists, ensure that you have imported \"maybe\" correctly."
 local ERR_TRIED_MODIFY_CONSTANT= "Tried to modify a constant or read-only value"
 local ERR_TRIED_MODIFY_METHOD = "Tried to modify a method (which is read-only)"
 local ERR_NO_GET_OR_SET = "This accessor doesn't have a defined get or set method (it's read-only or write only)"
 local ERR_TEMPLATE_NOT_ENOUGH_TYPES = "Provided types count didn't match the required by the template/generic"
-local ERR_MISSING_INSTANCE_S_CLASS = "Tried to secure an instance of a class while not providing any class"
 
 
 
