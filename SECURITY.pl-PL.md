@@ -17,7 +17,7 @@
 
 | Branch | Wersja | Wsparcie |
 | --- | --- | :---: |
-| Official | 0.1.0-beta-1.0.0 | TEMP |
+| Official | 0.0-beta-1.4.0 | TEMP |
 
 ### Wersje Lua
 
