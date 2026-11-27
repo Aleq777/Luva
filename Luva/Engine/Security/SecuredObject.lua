@@ -342,9 +342,13 @@ _LUVA.SecuredObject.Metatables = {
             end
 
             for fieldName, fieldContent in pairs(argFirst) do
-                if self.__Fields[fieldName] then
-                    _LUVA.AssureType(fieldContent, self.__Fields[fieldName].Type, 3, fieldName)
+                local f = self.__Fields[fieldName]  ---@diagnostic disable-line : invisible
+                
+                if f then
+                    -- assure type only for fields, because accessors don't have auto-type-checks
+                    _LUVA.AssureType(fieldContent, f.Type, 3, fieldName)
                 end
+
                 self[fieldName] = fieldContent
             end
 

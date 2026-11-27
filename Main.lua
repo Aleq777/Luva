@@ -67,10 +67,20 @@ Human = class {
 
 
 
-local moose = Human("moose", 20)
-local aleq = Human("aleq", 20)
+local moose = Human()
+local aleq = Human()
+
+aleq {
+    Name = "aleq",
+    Age = 20
+}
+
+moose {
+    Name = "moose",
+    Age = 20
+}
 
 -- moose.RealName = ""
 
-print(moose + aleq)
+-- print(moose + aleq)
 
